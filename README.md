@@ -18,4 +18,4 @@
 <b> Nota: X / 20 </b>
 
 <h3><i>Keywords</i></h3>
-CP, Arquiteturas Aplicacionais, arquiteturas aplicacionais, Sistemas Interativos Confiáveis, sistemas interativos confiaveis, universidade do minho, uminho, miei, mei, engenharia informatica
+AA, SIC, Arquiteturas Aplicacionais, arquiteturas aplicacionais, Sistemas Interativos Confiáveis, sistemas interativos confiaveis, universidade do minho, uminho, miei, mei, engenharia informatica
