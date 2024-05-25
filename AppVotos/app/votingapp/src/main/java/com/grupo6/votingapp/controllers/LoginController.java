@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import jakarta.transaction.Transactional;
 @RestController
 @Transactional
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*") //! MUDAR ISTO PQ É PERIGOSO DEIXAR QUALQUER APLICAÇÃO FAZER PEDIDOS AO SERVIDOR
 public class LoginController {
     private AuthService authService;
 
