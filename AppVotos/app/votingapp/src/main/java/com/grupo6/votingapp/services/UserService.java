@@ -46,7 +46,11 @@ public class UserService  {
         User userToUpdate = userRepository.findById(user.getId()).orElse(null);
         if(userToUpdate != null){
             userToUpdate.updateFromUser(user);
-            userToUpdate.setPassword(passwordUtil.encodePassword(userToUpdate.getPassword()));
+            if(user.getPassword() != null && !user.getPassword().isEmpty()){
+                //* Só actualiza a password se a informação dela vier no pedido
+                //* Isto é feito porque a password é cifrada e se fizermos encode de "" ou null pode dar problemas
+                userToUpdate.setPassword(passwordUtil.encodePassword(userToUpdate.getPassword()));
+            }
             return userRepository.save(userToUpdate);
         }
         return null;

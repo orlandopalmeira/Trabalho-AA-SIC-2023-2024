@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,23 +75,22 @@ public class UserController {
         }
     }
 
-    @GetMapping
+    @GetMapping //* Funciona
     public ResponseEntity<Iterable<User>> getUsers() {
         //* Retorna todos os users
-        //! Rota de debug -> sem autenticação -> remover na entrega
+        //! Rota de debug -> sem autenticação -> remover na entrega do trabalho
         return ResponseEntity.ok(userService.getUsers());
     }
     
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") //* Parece funcionar
     public ResponseEntity<Object> getUserById(@PathVariable String id, @CookieValue(value = "token", defaultValue = "") String token) {
         //* Retorna o user em caso de sucesso ou uma mensagem de erro
-        System.out.println("TOKEN: " + token);
         return checkTokenUserIdMatch(token, id, id_ -> 
             ResponseEntity.ok(userService.getUser(id_))
         );
     }
 
-    @GetMapping("/email/{email}")
+    @GetMapping("/email/{email}") //* Parece funcionar
     public ResponseEntity<Object> getUserByEmail(@PathVariable String email, @CookieValue(value = "token", defaultValue = "") String token) {
         //* Retorna os dados do user em caso de sucesso ou uma mensagem de erro
         return checkTokenEmailMatch(token, email, email_ -> 
@@ -98,7 +98,7 @@ public class UserController {
         );
     }
 
-    @PostMapping
+    @PostMapping //* Parece funcionar
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         //* Regista um utilizador (não requer autenticação)
         User userInDB = userService.getUserByEmail(user.getEmail());
@@ -109,7 +109,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
     
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //* Parece funcionar
     public ResponseEntity<Object> updateUser(@PathVariable String id, @RequestBody User user, @CookieValue(value = "token", defaultValue = "") String token) {
         //* Retorna o user actualizado em caso de sucesso ou uma mensagem de erro
         return checkTokenUserIdMatch(token, id, id_ -> {
@@ -119,12 +119,13 @@ public class UserController {
         });
     }
     
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //* Parece funcionar 
     public ResponseEntity<Object> deleteUser(@PathVariable String id,  @CookieValue(value = "token", defaultValue = "") String token) {
         //* Retorna o user eliminado em caso de sucesso ou uma mensagem de erro
         return checkTokenUserIdMatch(token, id, id_ -> {
             User user = userService.getUser(Long.parseLong(id_));
             if (user != null) {
+                Hibernate.initialize(user.getVotings()); //! (ver melhor isto) Evita o erro "[org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: failed to lazily initialize a collection: could not initialize proxy - no Session]"
                 userService.deleteUser(Long.parseLong(id_));
             }
             return ResponseEntity.ok(user);
