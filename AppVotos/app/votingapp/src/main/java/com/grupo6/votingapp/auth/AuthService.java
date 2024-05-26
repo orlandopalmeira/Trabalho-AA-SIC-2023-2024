@@ -70,10 +70,24 @@ public class AuthService {
     }
 
     public boolean checkToken(String token) {
-        return token != null && jwtService.isTokenValid(token, userService.getUser(jwtService.extractUserId(token)));
+        try {
+            return token != null && jwtService.isTokenValid(token, userService.getUser(jwtService.extractUserId(token)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean checkTokenLight(String token) {
-        return token != null && jwtService.isTokenValid(token);
+        try {
+            return token != null && jwtService.isTokenValid(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getUserIdFromToken(String token) {
+        return jwtService.extractUserId(token);
     }
 }

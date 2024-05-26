@@ -1,7 +1,15 @@
 package com.grupo6.votingapp.models;
 
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -11,22 +19,38 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "votings")
 public class Voting{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
     private Long id;
-
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = true) //* Pode optar por não ter imagem
+    private String image;
+    //UNTESTED: Ver se de facto o createdDate é preenchido automaticamente
+    @Column(nullable = false, updatable = false)
+    private Date creationdate;
+    @Column(nullable = true) //* Se for NULL, é porque não tem um fim marcado
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC") //* Para evitar erros de parsing
+    private Date enddate;
+    @Column(nullable = false)
+    private boolean privatevoting;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
+    @JoinColumn(name = "creator_id", nullable = false)
+    @JsonBackReference  //* Para evitar recursividade infinita ao serializar para JSON em respostas HTTP (ver https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion)
     private User creator;
 
     @OneToMany(mappedBy = "voting")
+    @JsonManagedReference //* para evitar recursividade infinita
     private List<Question> questions;
 
     public Voting() {}
@@ -48,6 +72,18 @@ public class Voting{
         return description;
     }
 
+    public Date getCreationdate() {
+        return creationdate;
+    }
+
+    public Date getEnddate() {
+        return enddate;
+    }
+
+    public boolean getPrivatevoting() {
+        return privatevoting;
+    }
+
     public User getCreator() {
         return creator;
     }
@@ -66,6 +102,18 @@ public class Voting{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setCreationdate(Date creationdate) {
+        this.creationdate = creationdate;
+    }
+
+    public void setEnddate(Date enddate) {
+        this.enddate = enddate;
+    }
+
+    public void setPrivatevoting(boolean privatevoting) {
+        this.privatevoting = privatevoting;
     }
 
     public void setCreator(User creator) {

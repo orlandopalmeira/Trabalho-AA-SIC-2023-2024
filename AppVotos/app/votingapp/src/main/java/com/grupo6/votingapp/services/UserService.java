@@ -21,28 +21,28 @@ public class UserService  {
         this.passwordUtil = passwordUtil;
     }
 
-    public List<User> getUsers(){
+    public List<User> getUsers(){ //* Parece funcionar
         return userRepository.findAll();
     }
 
-    public User getUser(Long id){
+    public User getUser(Long id){ //* Parece funcionar
         return userRepository.findById(id).orElse(null);
     }
 
-    public User getUser(String id){
+    public User getUser(String id){ //* Parece funcionar
         return userRepository.findById(Long.parseLong(id)).orElse(null);
     }
 
-    public User getUserByEmail(String email){
+    public User getUserByEmail(String email){ //* Parece funcionar
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    public User saveUser(User user){
+    public User saveUser(User user){ //* Parece funcionar
         user.setPassword(passwordUtil.encodePassword(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public User updateUser(User user){
+    public User updateUser(User user){ //* Parece funcionar
         User userToUpdate = userRepository.findById(user.getId()).orElse(null);
         if(userToUpdate != null){
             userToUpdate.updateFromUser(user);
@@ -56,11 +56,11 @@ public class UserService  {
         return null;
     }
 
-    public void deleteUser(Long id){
+    public void deleteUser(Long id){ //* Parece funcionar
         userRepository.deleteById(id);
     }
 
-    public String getEmailFromUserId(String id){
+    public String getEmailFromUserId(String id){ //* Parece funcionar
         return userRepository.findEmailFromUserId(id).orElse(null);
     }
 

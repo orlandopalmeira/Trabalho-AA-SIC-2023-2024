@@ -2,6 +2,10 @@ package com.grupo6.votingapp.models;
 
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import java.time.LocalDate;
 import java.util.HashMap;
 
 import jakarta.persistence.Column;
@@ -25,8 +29,11 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private LocalDate birthdate;
 
     @OneToMany(mappedBy = "creator")
+    @JsonManagedReference //* Para evitar recursividade infinita ao serializar para JSON em respostas HTTP (ver https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion)
     private List<Voting> votings;
 
     public User() {}
@@ -61,6 +68,10 @@ public class User {
         return password;
     }
 
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+
     public List<Voting> getVotings() {
         return votings;
     }
@@ -79,6 +90,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setBirthdate(LocalDate birthDate) {
+        this.birthdate = birthDate;
     }
 
     public void setVotings(List<Voting> votings) {

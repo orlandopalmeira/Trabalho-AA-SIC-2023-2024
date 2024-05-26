@@ -112,6 +112,7 @@ public class UserController {
     @PutMapping("/{id}") //* Parece funcionar
     public ResponseEntity<Object> updateUser(@PathVariable String id, @RequestBody User user, @CookieValue(value = "token", defaultValue = "") String token) {
         //* Retorna o user actualizado em caso de sucesso ou uma mensagem de erro
+        //! Atenção, como são realizadas alterações ao utilizador, pode ser necessário proceder à renovação do token de autenticação porque ele contém informações do user e após a actualização de dados elas podem ficar desactualizadas no token.
         return checkTokenUserIdMatch(token, id, id_ -> {
             user.setId(Long.parseLong(id_));
             userService.updateUser(user);
