@@ -31,6 +31,7 @@ public class VotingController {
     private VotingService votingService;
     
     private static final String MESSAGE_FIELD = "message";
+    private static final String NOT_FOUND_VOTING_MESSAGE = "Voting with id '%s' and creator_id '%s' not found!";
     
     public VotingController(VotingService votingService, AuthService authService) {
         this.votingService = votingService;
@@ -55,8 +56,8 @@ public class VotingController {
     public ResponseEntity<Object> getVoting(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
         return checkTokenSimple(token, user_id -> {
             Voting voting = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);
-            if(voting == null){//* Não existe uma votação com id = voting_id e creator_id = user_id
-                Map<String, String> error = Map.of(MESSAGE_FIELD, "Voting with id '" + voting_id + "' and creator_id '" + user_id + "' not found!"); 
+            if(voting == null){//* Não existe uma votação com id = voting_id e creator_id = user_id 
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_MESSAGE, voting_id, user_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
             return ResponseEntity.ok(voting);
@@ -89,7 +90,7 @@ public class VotingController {
         return checkTokenSimple(token, user_id -> {
             Voting votingInDB = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);
             if(votingInDB == null){//* Não existe uma votação com id = voting_id e creator_id = user_id
-                Map<String, String> error = Map.of(MESSAGE_FIELD, "Voting with id '" + voting_id + "' and creator_id '" + user_id + "' not found!"); 
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_MESSAGE, voting_id, user_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
             updatedVoting.setId(voting_id);
@@ -103,7 +104,7 @@ public class VotingController {
         return checkTokenSimple(token, user_id -> {
             Voting votingInDB = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);
             if(votingInDB == null){//* Não existe uma votação com id = voting_id e creator_id = user_id
-                Map<String, String> error = Map.of(MESSAGE_FIELD, "Voting with id '" + voting_id + "' and creator_id '" + user_id + "' not found!"); 
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_MESSAGE, voting_id, user_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
             votingService.deleteVoting(votingInDB.getId());
