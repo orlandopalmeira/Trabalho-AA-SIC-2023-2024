@@ -1,9 +1,6 @@
 package com.grupo6.votingapp.services;
 
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.stereotype.Service;
 
