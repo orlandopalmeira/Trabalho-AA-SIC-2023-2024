@@ -2,6 +2,7 @@ package com.grupo6.votingapp.controllers;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.springframework.http.HttpStatus;
@@ -35,24 +36,6 @@ public class VotingController {
         this.authService = authService;
     }
 
-    private ResponseEntity<Object> checkTokenUserIdMatch(String token, String id, Function<String, ResponseEntity<Object>> callback){
-        try {
-            if(token == null || token.isEmpty() || !authService.checkTokenLight(token)){
-                Map<String, String> error = Map.of(MESSAGE_FIELD, "Invalid token: \"" + token + "\"!");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-            }
-            if (!authService.checkUserId(token, id)){
-                Map<String, String> error = Map.of(MESSAGE_FIELD, "The token \"" + token + "\" doesn't match userId '" + id + "'!");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
-            } 
-            return callback.apply(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
-    }
-
     private ResponseEntity<Object> checkTokenSimple(String token, Function<String, ResponseEntity<Object>> callback){
         try {
             if(token == null || token.isEmpty() || !authService.checkTokenLight(token)){
@@ -67,11 +50,16 @@ public class VotingController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getVoting(@PathVariable String id, @CookieValue(value = "token", defaultValue = "") String token) {
-        //UNTESTED: Ver se este método funciona
-        //TODO: process GET /:id request
-        return ResponseEntity.ok(null);
+    @GetMapping("/{voting_id}") //* Parece funcionar
+    public ResponseEntity<Object> getVoting(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
+        return checkTokenSimple(token, user_id -> {
+            Voting voting = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);
+            if(voting == null){//* Não existe uma votação com id = voting_id e creator_id = user_id
+                Map<String, String> error = Map.of(MESSAGE_FIELD, "Voting with id '" + voting_id + "' and creator_id '" + user_id + "' not found!"); 
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+            return ResponseEntity.ok(voting);
+        });
     }
 
     @PostMapping //* Parece funcionar
