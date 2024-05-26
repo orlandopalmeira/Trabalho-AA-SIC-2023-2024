@@ -1,7 +1,5 @@
 package com.grupo6.votingapp.services;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.grupo6.votingapp.models.User;
@@ -23,21 +21,6 @@ public class VotingService {
     }
 
     //* CRUD
-    public List<Voting> getVotings(){
-        //UNTESTED: Ver se este método funciona
-        return votingRepository.findAll();
-    }
-
-    public Voting getVoting(Long id){
-        //UNTESTED: Ver se este método funciona
-        return votingRepository.findById(id).orElse(null);
-    }
-
-    public Voting getVoting(String id){
-        //UNTESTED: Ver se este método funciona
-        return votingRepository.findById(Long.parseLong(id)).orElse(null);
-    }
-
     public Voting saveVoting(Voting voting){//* Parece funcionar
         return votingRepository.save(voting); //* Guarda a votação na base de dados
     }
@@ -49,9 +32,18 @@ public class VotingService {
         return saveVoting(voting);//* Guarda a votação na base de dados
     }
 
-    public Voting updateVoting(Voting voting){
-        //! TODO: Implementar isto se for realmente necessário
-        throw new UnsupportedOperationException("Not implemented yet");
+    public Voting updateVoting(Voting newVoting){ //* Parece funcionar (!!ver o TO DO!!)
+        Voting oldVoting = votingRepository.findById(newVoting.getId()).orElse(null);
+        if(oldVoting != null){
+            if(newVoting.getTitle() != null)       oldVoting.setTitle(newVoting.getTitle());
+            if(newVoting.getDescription() != null) oldVoting.setDescription(newVoting.getDescription());
+            if(newVoting.getImage() != null)       oldVoting.setImage(newVoting.getImage());
+            if(newVoting.getEnddate() != null)     oldVoting.setEnddate(newVoting.getEnddate());
+            // TODO: se passar de privada a pública, devemos apagar esta votação da tabela M:N que associa votações privadas a votantes (utilizadores) inscritos nela (tabela private_voters)
+            oldVoting.setPrivatevoting(newVoting.getPrivatevoting());
+            return votingRepository.save(oldVoting);
+        }
+        return null;
     }
 
     public void deleteVoting(Long id){ //* Parece funcionar

@@ -32,7 +32,6 @@ public class Voting{
     private String description;
     @Column(nullable = true) //* Pode optar por não ter imagem
     private String image;
-    //UNTESTED: Ver se de facto o createdDate é preenchido automaticamente
     @Column(nullable = false, updatable = false)
     private Date creationdate;
     @Column(nullable = true) //* Se for NULL, é porque não tem um fim marcado
@@ -69,6 +68,10 @@ public class Voting{
         return description;
     }
 
+    public String getImage() {
+        return image;
+    }
+
     public Date getCreationdate() {
         return creationdate;
     }
@@ -93,12 +96,20 @@ public class Voting{
         this.id = id;
     }
 
+    public void setId(String id) {
+        this.id = Long.parseLong(id);
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setCreationdate(Date creationdate) {
@@ -120,5 +131,4 @@ public class Voting{
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
-    
 }

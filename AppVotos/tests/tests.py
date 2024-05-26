@@ -222,6 +222,30 @@ def arg_deletevoting(arguments: list):
     except Exception as e: #* Qualquer outro erro
         print(e)
     
+def arg_updatevoting(arguments: list):
+    """Test for server update voting"""
+    if len(arguments) != 3:
+        print("Usage: python3 tests.py updatevoting <voting_id>")
+        exit(1)
+
+    try:
+        url = f'{SERVER}/votings/' + arguments[2]
+        update = {
+            "title": "Updated title",
+            "description": "Updated description",
+            "enddate": "2030-12-31 23:59:59"
+        }
+        token = login()
+        if token:
+            response = requests.put(url, json=update, cookies={'token': token})
+            print("Updated voting:")
+            print(json.dumps(response.json(), indent=2))
+        else:
+            print("Invalid credentials")
+    except requests.exceptions.ConnectionError:
+        print("Provavelmente o servidor aplicacional não está a correr")
+    except Exception as e: #* Qualquer outro erro
+        print(e)
 
 if __name__ == "__main__":
     functions_list = [function_name for (function_name,function_) in locals().items() if isinstance(function_, types.FunctionType) and function_name.startswith("arg_")]
