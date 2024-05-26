@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -45,7 +46,7 @@ public class Voting{
     @JsonBackReference  //* Para evitar recursividade infinita ao serializar para JSON em respostas HTTP (ver https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion)
     private User creator;
 
-    @OneToMany(mappedBy = "voting")
+    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference //* para evitar recursividade infinita
     private List<Question> questions;
 

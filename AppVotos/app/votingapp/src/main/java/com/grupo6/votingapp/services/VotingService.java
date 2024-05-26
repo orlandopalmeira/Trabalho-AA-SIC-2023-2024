@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.grupo6.votingapp.models.Option;
-import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.repositories.OptionRepository;
@@ -41,19 +39,7 @@ public class VotingService {
     }
 
     public Voting saveVoting(Voting voting){//* Parece funcionar
-        Voting votingInDB = votingRepository.save(voting); //* Guarda a votação na base de dados
-        //* Guarda as questões e opções de cada questão da votação na base de dados
-        for(Question question : voting.getQuestions()){
-            //* Guarda a questão na base de dados, associando-a à respectiva votação
-            question.setVoting(votingInDB);
-            questionRepository.save(question);
-            for(Option option : question.getOptions()){
-                //* Guarda a opção (de uma questão) na base de dados, associando-a à respectiva questão
-                option.setQuestion(question);
-                optionRepository.save(option);
-            }
-        }
-        return votingInDB;
+        return votingRepository.save(voting); //* Guarda a votação na base de dados
     }
 
     public Voting saveVoting(Voting voting, String creator_id) {//* Parece funcionar
@@ -68,18 +54,15 @@ public class VotingService {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public void deleteVoting(Long id){
-        //UNTESTED: Ver se este método funciona
+    public void deleteVoting(Long id){ //* Parece funcionar
         votingRepository.deleteById(id);
     }
 
-    public void deleteVoting(String id){
-        //UNTESTED: Ver se este método funciona
+    public void deleteVoting(String id){ //* Parece funcionar
         votingRepository.deleteById(Long.parseLong(id));
     }
 
-    public Voting getFromCreatorIdAndVotingId(String userId, String votingId){
-        //UNTESTED: Ver se este método funciona
+    public Voting getFromCreatorIdAndVotingId(String userId, String votingId){ //* Parece funcionar	
         return votingRepository.findByUserIdAndVotingId(userId, votingId).orElse(null);
     }
 }

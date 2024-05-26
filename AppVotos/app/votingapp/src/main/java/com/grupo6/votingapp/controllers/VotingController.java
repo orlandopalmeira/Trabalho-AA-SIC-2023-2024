@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import com.grupo6.votingapp.auth.AuthService;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.VotingService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -61,12 +63,42 @@ public class VotingController {
         });
     }
 
-    @PostMapping //* Parece funcionar
+    @PostMapping
     public ResponseEntity<Object> createVote(@RequestBody Voting newVoting, @CookieValue(value = "token", defaultValue = "") String token) {
         return checkTokenSimple(token, user_id -> {
             newVoting.setCreationdate(new Date()); //* para ser marcada a data em que foi criada a votação 
             Voting registeredVoting = votingService.saveVoting(newVoting, user_id); //* Guarda a votação na base de dados 
             return ResponseEntity.ok(registeredVoting); //* Retorna a votação registada
+        });
+    }
+
+    @PutMapping("/{voting_id}")
+    public ResponseEntity<Object> updateVote(@PathVariable String voting_id, @RequestBody Voting voting, @CookieValue(value = "token", defaultValue = "") String token) {
+        return checkTokenSimple(token, user_id -> {
+            Voting votingInDB = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);
+            if(votingInDB == null){//* Não existe uma votação com id = voting_id e creator_id = user_id
+                Map<String, String> error = Map.of(MESSAGE_FIELD, "Voting with id '" + voting_id + "' and creator_id '" + user_id + "' not found!"); 
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+            return ResponseEntity.ok(null);
+            //TODO: Implementar actualização de votação
+            // votingInDB.setQuestions(voting.getQuestions()); //* Actualiza as questões da votação
+            // votingInDB.setCreationdate(new Date()); //* Actualiza a data de criação da votação
+            // Voting updatedVoting = votingService.saveVoting(votingInDB); //* Actualiza a votação na base de dados
+            // return ResponseEntity.ok(updatedVoting); //* Retorna a votação actualizada
+        });
+    }
+
+    @DeleteMapping("/{voting_id}") //* Parece funcionar
+    public ResponseEntity<Object> deleteVote(@PathVariable String voting_id, @CookieValue (value = "token", defaultValue = "") String token) {
+        return checkTokenSimple(token, user_id -> {
+            Voting votingInDB = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);
+            if(votingInDB == null){//* Não existe uma votação com id = voting_id e creator_id = user_id
+                Map<String, String> error = Map.of(MESSAGE_FIELD, "Voting with id '" + voting_id + "' and creator_id '" + user_id + "' not found!"); 
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+            votingService.deleteVoting(votingInDB.getId());
+            return ResponseEntity.ok(votingInDB);
         });
     }
     
