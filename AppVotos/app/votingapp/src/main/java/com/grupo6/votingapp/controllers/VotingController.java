@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
-import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.VotingService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,9 +74,8 @@ public class VotingController {
         return ResponseEntity.ok(null);
     }
 
-    @PostMapping
+    @PostMapping //* Parece funcionar
     public ResponseEntity<Object> createVote(@RequestBody Voting newVoting, @CookieValue(value = "token", defaultValue = "") String token) {
-        //UNTESTED: Ver se este método funciona
         return checkTokenSimple(token, user_id -> {
             newVoting.setCreationdate(new Date()); //* para ser marcada a data em que foi criada a votação 
             Voting registeredVoting = votingService.saveVoting(newVoting, user_id); //* Guarda a votação na base de dados 

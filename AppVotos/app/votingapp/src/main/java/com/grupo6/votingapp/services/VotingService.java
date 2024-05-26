@@ -44,19 +44,13 @@ public class VotingService {
     }
 
     public Voting saveVoting(Voting voting){//* Parece funcionar
-        List<Question> questions = voting.getQuestions();
-        Map<Question, List<Option>> questionsOptions = new IdentityHashMap<>(questions.size());
-        for(Question question : questions){
-            questionsOptions.put(question, question.getOptions());
-        }
-        
         Voting votingInDB = votingRepository.save(voting); //* Guarda a votação na base de dados
-        for(Entry<Question, List<Option>> entry : questionsOptions.entrySet()){
+        //* Guarda as questões e opções de cada questão da votação na base de dados
+        for(Question question : voting.getQuestions()){
             //* Guarda a questão na base de dados, associando-a à respectiva votação
-            Question question = entry.getKey();
             question.setVoting(votingInDB);
             questionRepository.save(question);
-            for(Option option : entry.getValue()){
+            for(Option option : question.getOptions()){
                 //* Guarda a opção (de uma questão) na base de dados, associando-a à respectiva questão
                 option.setQuestion(question);
                 optionRepository.save(option);
