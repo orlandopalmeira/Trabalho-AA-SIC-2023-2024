@@ -63,6 +63,18 @@ public class VotingController {
         });
     }
 
+    @GetMapping("/user/{user_id}") //* Parece funcionar
+    public ResponseEntity<Object> getVotingsFromUser(@PathVariable String user_id, @CookieValue(value = "token", defaultValue = "") String token) {
+        // TODO: Pode ser necessário nesta rota ter query strings caso o utilizador queira alguma espécie de filtragem.
+        return checkTokenSimple(token, logged_user_id -> {
+            if(!logged_user_id.equals(user_id)){
+                Map<String, String> error = Map.of(MESSAGE_FIELD, "You can only see your own votings!");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            }
+            return ResponseEntity.ok(votingService.getVotingsFromCreatorId(user_id));
+        });
+    }
+
     @PostMapping //* Parece funcionar
     public ResponseEntity<Object> createVote(@RequestBody Voting newVoting, @CookieValue(value = "token", defaultValue = "") String token) {
         return checkTokenSimple(token, user_id -> {

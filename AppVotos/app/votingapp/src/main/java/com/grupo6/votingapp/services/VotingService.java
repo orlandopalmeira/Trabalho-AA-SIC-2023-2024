@@ -1,5 +1,7 @@
 package com.grupo6.votingapp.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.grupo6.votingapp.models.User;
@@ -57,4 +59,9 @@ public class VotingService {
     public Voting getFromCreatorIdAndVotingId(String userId, String votingId){ //* Parece funcionar	
         return votingRepository.findByUserIdAndVotingId(userId, votingId).orElse(null);
     }
+
+    public List<Voting> getVotingsFromCreatorId(String userId){ //* Parece funcionar
+        return votingRepository.findByUserId(userId);
+    }
+    
 }

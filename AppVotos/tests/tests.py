@@ -247,6 +247,25 @@ def arg_updatevoting(arguments: list):
     except Exception as e: #* Qualquer outro erro
         print(e)
 
+def arg_getvotingsofuser(arguments: list):
+    """Test for server get votings of user"""
+    if len(arguments) != 3:
+        print("Usage: python3 tests.py getvotingsofuser <user_id>")
+        exit(1)
+
+    try:
+        url = f'{SERVER}/votings/user/' + arguments[2] 
+        token = login()
+        if token:
+            response = requests.get(url, cookies={'token': token})
+            print(json.dumps(response.json(), indent=2))
+        else:
+            print("Invalid credentials")
+    except requests.exceptions.ConnectionError:
+        print("Provavelmente o servidor aplicacional não está a correr")
+    except Exception as e: #* Qualquer outro erro
+        print(e)
+
 if __name__ == "__main__":
     functions_list = [function_name for (function_name,function_) in locals().items() if isinstance(function_, types.FunctionType) and function_name.startswith("arg_")]
     valid_arguments = [function_name.split("_", maxsplit=1)[1] for function_name in functions_list]
