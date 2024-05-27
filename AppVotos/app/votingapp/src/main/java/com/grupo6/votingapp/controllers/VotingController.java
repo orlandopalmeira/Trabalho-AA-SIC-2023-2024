@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
-import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
-import com.grupo6.votingapp.services.UserService;
 import com.grupo6.votingapp.services.VotingService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -89,7 +87,7 @@ public class VotingController {
         });
     }
 
-    @PostMapping("/{voting_id}/privatevoters")
+    @PostMapping("/{voting_id}/privatevoters") //* Parece funcionar
     public ResponseEntity<Object> addPrivateVoter(@PathVariable String voting_id, @RequestBody List<Long> privateVotersIds, @CookieValue(value = "token", defaultValue = "") String token) {
         return checkTokenSimple(token, user_id -> {
             Voting votingInDB = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);

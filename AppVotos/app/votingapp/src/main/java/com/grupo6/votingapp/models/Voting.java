@@ -152,9 +152,10 @@ public class Voting implements Comparable<Voting>{
         this.questions = questions;
     }
 
-    public void setPrivatevoters(Collection<User> privatevoters) {
+    public void setPrivatevoters(Collection<User> privatevoters) { 
         this.privatevoters = privatevoters == null ? new HashSet<>() : new HashSet<>(privatevoters);
-        privatevoters.forEach(user -> user.addPrivateVoting(this));
+        if(privatevoters != null)
+            privatevoters.forEach(user -> user.addPrivateVoting(this));
     }
 
     //* Gestão da relação M:N com Users

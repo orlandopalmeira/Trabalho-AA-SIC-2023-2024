@@ -71,7 +71,7 @@ public class VotingService {
         return votingRepository.findByUserId(userId);
     }
 
-    public Voting setPrivateVoters(String voting_id, List<Long> privateVotersIds){
+    public Voting setPrivateVoters(String voting_id, List<Long> privateVotersIds){ //* Parece funcionar
         Voting votingInDB = votingRepository.findById(Long.parseLong(voting_id)).orElse(null);
         if(votingInDB != null){
             List<User> privateVoters = userRepository.findByIds(privateVotersIds); //! VER SE IMPLICA CARGA NA BD
