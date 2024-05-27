@@ -275,7 +275,7 @@ def arg_setprivatevoters(arguments: list):
     try:
         url = f'{SERVER}/votings/' + arguments[2] + '/privatevoters'
         token = login()
-        privatevoters = [3, 4]
+        privatevoters = [5,6]
         if token:
             response = requests.post(url, json=privatevoters, cookies={'token': token})
             print("Added private voters:")

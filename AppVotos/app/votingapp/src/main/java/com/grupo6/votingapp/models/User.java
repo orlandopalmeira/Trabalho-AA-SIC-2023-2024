@@ -42,7 +42,6 @@ public class User implements Comparable<User>{
     private List<Voting> votings;
 
     @ManyToMany(mappedBy = "privatevoters")
-    @JsonManagedReference
     private Set<Voting> privatevotings;
 
     public User() {}

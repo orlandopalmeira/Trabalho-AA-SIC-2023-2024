@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -62,7 +63,7 @@ public class Voting implements Comparable<Voting>{
         joinColumns = @JoinColumn(name = "voting_id"),
         inverseJoinColumns = @JoinColumn(name = "voter_id")
     )
-    @JsonBackReference
+    @JsonIgnore
     private Set<User> privatevoters;
     
     public Voting() {}
