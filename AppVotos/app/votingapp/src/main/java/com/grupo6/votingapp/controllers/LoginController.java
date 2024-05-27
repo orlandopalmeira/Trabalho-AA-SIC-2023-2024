@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,6 @@ import jakarta.transaction.Transactional;
 @RestController
 @Transactional
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*") //! MUDAR ISTO PQ É PERIGOSO DEIXAR QUALQUER APLICAÇÃO FAZER PEDIDOS AO SERVIDOR
 public class LoginController {
     private AuthService authService;
 
@@ -42,6 +40,7 @@ public class LoginController {
             String token = authService.login(email, password);
             Cookie cookie = new Cookie(TOKEN_FIELD, token);
             cookie.setHttpOnly(true); //* cookie escondido de scripts javascript no browser do cliente (utilizador)
+            cookie.setSecure(true);
             response.addCookie(cookie);
             
             return ResponseEntity.ok(Map.of(TOKEN_FIELD, token, 
