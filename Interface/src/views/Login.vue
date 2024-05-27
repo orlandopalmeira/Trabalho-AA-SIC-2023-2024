@@ -1,43 +1,49 @@
 <template>
-	<v-container fluid fill-height>
-		<v-card
-		class="mx-auto"
-		width="400"
-		>
-		<v-toolbar dark color="primary">
-			<v-toolbar-title>Login</v-toolbar-title>
-		</v-toolbar>
-		<v-card-text>
-			<v-form>
-				<v-text-field
-				id="email"
-				prepend-icon="mdi-account"
-				name="email"
-				label="Email"
-				type="text"
-				v-model="email"
-				></v-text-field>
-				<v-text-field
-				id="password"
-				prepend-icon="mdi-lock"
-				name="password"
-				label="Password"
-				type="password"
-				v-model="password"
-				></v-text-field>
-			</v-form>
-		</v-card-text>
-		<v-card-actions>
-			<v-spacer></v-spacer>
-			<v-btn @click="login" :disabled="email === '' || password === ''">Login</v-btn>
-		</v-card-actions>
-	</v-card>
-</v-container>
+	<default-layout>
+		<v-container fluid fill-height>
+			<v-card
+			class="mx-auto"
+			width="400"
+			>
+				<v-toolbar dark color="primary">
+					<v-toolbar-title>Login</v-toolbar-title>
+				</v-toolbar>
+				<v-card-text>
+					<v-form>
+						<v-text-field
+						id="email"
+						prepend-icon="mdi-account"
+						name="email"
+						label="Email"
+						type="text"
+						v-model="email"
+						></v-text-field>
+						<v-text-field
+						id="password"
+						prepend-icon="mdi-lock"
+						name="password"
+						label="Password"
+						type="password"
+						v-model="password"
+						></v-text-field>
+					</v-form>
+				</v-card-text>
+				<v-card-actions>
+					<v-spacer></v-spacer>
+					<v-btn @click="login" :disabled="email === '' || password === ''">Login</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-container>
+	</default-layout>
 </template>
 
 <script>
 import axios from '../axios';
+import DefaultLayout  from '../layouts/DefaultLayout.vue'
 export default {
+	components: {
+		DefaultLayout
+	},
 	data() {
 		return {
 			email: '',

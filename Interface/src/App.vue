@@ -1,16 +1,14 @@
 <template>
-  <NavBar :logout_button="true" :routes="routes"/>
-  <RouterView />
-  
+    <RouterView />
 </template>
 
-<script setup>
+<script>
 import { RouterView } from 'vue-router'
-import NavBar from './components/NavBar.vue'
-const routes = {
-  'Home': '/',
-  'Login': '/login',
-  'Register': '/register'
-}
+export default {
+    name: 'App',
+    components: {
+        RouterView
+    }
+};
 </script>
 
