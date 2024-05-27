@@ -57,7 +57,11 @@ public class UserService  {
     }
 
     public void deleteUser(Long id){ //* Parece funcionar
-        userRepository.deleteById(id);
+        User entity = userRepository.findById(id).orElse(null);
+        if(entity != null){
+            entity.removeAllPrivateVotings();
+            userRepository.delete(entity);
+        }
     }
 
     public String getEmailFromUserId(String id){ //* Parece funcionar

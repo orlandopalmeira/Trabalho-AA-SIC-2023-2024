@@ -2,23 +2,27 @@ package com.grupo6.votingapp.models;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Comparable<User>{
+    //* Atributos
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,9 +36,14 @@ public class User {
     @Column(nullable = false)
     private LocalDate birthdate;
 
+    //* Relações
     @OneToMany(mappedBy = "creator")
     @JsonManagedReference //* Para evitar recursividade infinita ao serializar para JSON em respostas HTTP (ver https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion)
     private List<Voting> votings;
+
+    @ManyToMany(mappedBy = "privatevoters")
+    @JsonManagedReference
+    private Set<Voting> privatevotings;
 
     public User() {}
 
@@ -76,6 +85,10 @@ public class User {
         return votings;
     }
 
+    public Set<Voting> getPrivatevotings() {
+        return privatevotings;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -100,6 +113,23 @@ public class User {
         this.votings = votings;
     }
 
+    //* Gestão da relação M:N com Votings
+    public void addPrivateVoting(Voting voting) {
+        this.privatevotings.add(voting);
+        voting.getPrivatevoters().add(this);
+    }
+
+    public void removePrivateVoting(Voting voting) {
+        this.privatevotings.remove(voting);
+        voting.getPrivatevoters().remove(this);
+    }
+
+    public void removeAllPrivateVotings(){
+        for(Voting voting : new HashSet<>(privatevotings)){
+            removePrivateVoting(voting);
+        }
+    }
+
     public void updateFromUser(User user) {
         this.name = user.getName() == null ? this.name : user.getName();
         this.email = user.getEmail() == null ? this.email : user.getEmail();
@@ -109,6 +139,28 @@ public class User {
     @Override
     public String toString() {
         return "User [email=" + email + ", id=" + id + ", name=" + name + ", password=" + password + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj){
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        User other = (User) obj;
+        return id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+
+    @Override
+    public int compareTo(User other) {
+        return id.compareTo(other.id);
     }
 
 }

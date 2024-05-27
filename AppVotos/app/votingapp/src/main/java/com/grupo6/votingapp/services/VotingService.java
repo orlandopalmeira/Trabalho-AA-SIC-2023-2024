@@ -8,6 +8,7 @@ import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.repositories.OptionRepository;
 import com.grupo6.votingapp.repositories.QuestionRepository;
+import com.grupo6.votingapp.repositories.UserRepository;
 import com.grupo6.votingapp.repositories.VotingRepository;
 
 @Service
@@ -15,11 +16,13 @@ public class VotingService {
     VotingRepository votingRepository;
     QuestionRepository questionRepository;
     OptionRepository optionRepository;
+    UserRepository userRepository;
 
-    public VotingService(VotingRepository votingRepository, QuestionRepository questionRepository, OptionRepository optionRepository) {
+    public VotingService(VotingRepository votingRepository, QuestionRepository questionRepository, OptionRepository optionRepository, UserRepository userRepository) {
         this.votingRepository = votingRepository;
         this.questionRepository = questionRepository;
         this.optionRepository = optionRepository;
+        this.userRepository = userRepository;
     }
 
     //* CRUD
@@ -49,11 +52,15 @@ public class VotingService {
     }
 
     public void deleteVoting(Long id){ //* Parece funcionar
-        votingRepository.deleteById(id);
+        Voting voting = votingRepository.findById(id).orElse(null);
+        if(voting != null){
+            voting.removeAllPrivateVoters();
+            votingRepository.delete(voting);
+        }
     }
 
     public void deleteVoting(String id){ //* Parece funcionar
-        votingRepository.deleteById(Long.parseLong(id));
+        deleteVoting(Long.parseLong(id));
     }
 
     public Voting getFromCreatorIdAndVotingId(String userId, String votingId){ //* Parece funcionar	
@@ -62,6 +69,16 @@ public class VotingService {
 
     public List<Voting> getVotingsFromCreatorId(String userId){ //* Parece funcionar
         return votingRepository.findByUserId(userId);
+    }
+
+    public Voting setPrivateVoters(String voting_id, List<Long> privateVotersIds){
+        Voting votingInDB = votingRepository.findById(Long.parseLong(voting_id)).orElse(null);
+        if(votingInDB != null){
+            List<User> privateVoters = userRepository.findByIds(privateVotersIds); //! VER SE IMPLICA CARGA NA BD
+            votingInDB.setPrivatevoters(privateVoters);
+            return votingRepository.save(votingInDB);
+        }
+        return null;
     }
     
 }

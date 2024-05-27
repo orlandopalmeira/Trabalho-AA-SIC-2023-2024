@@ -1,9 +1,11 @@
 package com.grupo6.votingapp.controllers;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
+import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
+import com.grupo6.votingapp.services.UserService;
 import com.grupo6.votingapp.services.VotingService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,6 +89,18 @@ public class VotingController {
         });
     }
 
+    @PostMapping("/{voting_id}/privatevoters")
+    public ResponseEntity<Object> addPrivateVoter(@PathVariable String voting_id, @RequestBody List<Long> privateVotersIds, @CookieValue(value = "token", defaultValue = "") String token) {
+        return checkTokenSimple(token, user_id -> {
+            Voting votingInDB = votingService.getFromCreatorIdAndVotingId(user_id, voting_id);
+            if(votingInDB == null){//* Não existe uma votação com id = voting_id e creator_id = user_id
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_MESSAGE, voting_id, user_id));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+            return ResponseEntity.ok(votingService.setPrivateVoters(voting_id, privateVotersIds));
+        });
+    }
+
     @PutMapping("/{voting_id}") //* Parece funcionar
     public ResponseEntity<Object> updateVote(@PathVariable String voting_id, @RequestBody Voting updatedVoting, @CookieValue(value = "token", defaultValue = "") String token) {
         return checkTokenSimple(token, user_id -> {
@@ -107,6 +123,8 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_MESSAGE, voting_id, user_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
+            Hibernate.initialize(votingInDB.getQuestions()); //! VER MELHOR ISTO
+            Hibernate.initialize(votingInDB.getPrivatevoters()); //! VER MELHOR ISTO
             votingService.deleteVoting(votingInDB.getId());
             return ResponseEntity.ok(votingInDB);
         });

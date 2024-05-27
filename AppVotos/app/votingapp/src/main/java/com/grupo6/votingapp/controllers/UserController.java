@@ -127,6 +127,7 @@ public class UserController {
             User user = userService.getUser(Long.parseLong(id_));
             if (user != null) {
                 Hibernate.initialize(user.getVotings()); //! (ver melhor isto) Evita o erro "[org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: failed to lazily initialize a collection: could not initialize proxy - no Session]"
+                Hibernate.initialize(user.getPrivatevotings()); //! (ver melhor isto) Evita o erro "[org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: failed to lazily initialize a collection: could not initialize proxy - no Session]"
                 userService.deleteUser(Long.parseLong(id_));
             }
             return ResponseEntity.ok(user);
