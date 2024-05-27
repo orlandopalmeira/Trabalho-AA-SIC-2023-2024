@@ -29,7 +29,7 @@ import axios from '../axios';
 		methods: {
       async logout() {
         try {
-    	    const response = await axios.post(`http://localhost:8080/auth/logout`, {}, {});
+    	    const response = await axios.get(`http://localhost:8080/auth/logout`);
 
           this.$router.push('/login');
   		  	if (response.status !== 200) {
