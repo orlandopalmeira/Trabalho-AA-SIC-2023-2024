@@ -14,4 +14,7 @@ public interface VotingRepository extends JpaRepository<Voting, Long>{
 
     @Query("SELECT v FROM Voting v WHERE v.creator.id = :userId")
     List<Voting> findByUserId(String userId); //* Parece funcionar
+
+    @Query("SELECT v FROM Voting v WHERE v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)")
+    List<Voting> findAccessibleVotingsToUser(String userId); //* Parece funcionar
 }

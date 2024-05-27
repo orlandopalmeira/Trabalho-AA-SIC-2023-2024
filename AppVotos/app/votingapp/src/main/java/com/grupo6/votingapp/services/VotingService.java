@@ -26,6 +26,10 @@ public class VotingService {
     }
 
     //* CRUD
+    public List<Voting> getAccessibleVotingsToUser(String userId){ //* Parece funcionar
+        return votingRepository.findAccessibleVotingsToUser(userId);
+    }
+
     public Voting saveVoting(Voting voting){//* Parece funcionar
         return votingRepository.save(voting); //* Guarda a votação na base de dados
     }

@@ -54,6 +54,13 @@ public class VotingController {
         }
     }
 
+    @GetMapping //* Parece funcionar
+    public ResponseEntity<Object> getVotings(@CookieValue(value = "token", defaultValue = "") String token) {
+        return checkTokenSimple(token, user_id -> 
+            ResponseEntity.ok(votingService.getAccessibleVotingsToUser(user_id))
+        );
+    }
+
     @GetMapping("/{voting_id}") //* Parece funcionar
     public ResponseEntity<Object> getVoting(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
         return checkTokenSimple(token, user_id -> {

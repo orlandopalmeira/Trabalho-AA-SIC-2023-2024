@@ -8,7 +8,7 @@
 <script setup>
 import NavBar from '../components/NavBar.vue'
 const routes = {
-    'Home': '/',
+    'About': '/',
     'Login': '/login',
     'Criar conta': '/register'
 }

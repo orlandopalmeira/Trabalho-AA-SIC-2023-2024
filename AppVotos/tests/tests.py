@@ -275,10 +275,25 @@ def arg_setprivatevoters(arguments: list):
     try:
         url = f'{SERVER}/votings/' + arguments[2] + '/privatevoters'
         token = login()
-        privatevoters = [5,6]
+        privatevoters = [2]
         if token:
             response = requests.post(url, json=privatevoters, cookies={'token': token})
             print("Added private voters:")
+            print(json.dumps(response.json(), indent=2))
+        else:
+            print("Invalid credentials")
+    except requests.exceptions.ConnectionError:
+        print("Provavelmente o servidor aplicacional não está a correr")
+    except Exception as e: #* Qualquer outro erro
+        print(e)
+
+def arg_getuseraccessiblevotings(arguments: list):
+    """Test for server get user accessible votings"""
+    try:
+        url = f'{SERVER}/votings'
+        token = login()
+        if token:
+            response = requests.get(url, cookies={'token': token})
             print(json.dumps(response.json(), indent=2))
         else:
             print("Invalid credentials")
