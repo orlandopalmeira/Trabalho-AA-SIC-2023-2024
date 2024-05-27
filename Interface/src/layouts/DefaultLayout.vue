@@ -1,6 +1,5 @@
 <template>
     <NavBar :logout_button="false" :routes="routes"/>
-    <RouterView />
     <main>
         <slot></slot> <!--Conteúdo da página fica aqui-->
     </main>
