@@ -4,29 +4,33 @@
 
 ### (Apenas para vscode) Com a extensão Springboot do Springboot Extension Pack
 
-1. Instalar o seguinte *extension pack* no caso de não ter instalado.
-<img src="./manual_server_images/extension_pack.png" />
+1. Instalar o seguinte *extension pack* no caso de não ter instalado.   
+<img src="./manual_server_images/extension_pack.png" width="300" height="auto" />
 
-2. No lado esquerdo da janela do vscode, localizar o seguinte ícone e clicar nele:
+2. Transferir o ficheiro da *serviceaccount* (que está nesta [mensagem](https://discord.com/channels/1198308313096536201/1243879448949035098/1245123722650718249) do grupo de Discord) para a diretoria `src/main/resources` do servidor aplicacional.
+
+
+3. No lado esquerdo da janela do vscode, deve aparecer o seguinte ícone ao abrir algum ficheiro Java no vscode e de seguida clicar nele:
 <div style="display: flex; justify-content: center">
-<img src="./manual_server_images/springboot_icon.png" />
+<img src="./manual_server_images/springboot_icon.png" width="50" />
 </div>
 
-3. Se algum dos ficheiros Java do servidor aplicacional estiver aberto, deverá aparecer o seguinte na parte de cima (no lado esquerdo):
+4. Se algum dos ficheiros Java do servidor aplicacional estiver aberto, deverá aparecer o seguinte na parte de cima (no lado esquerdo):
 <div style="display: flex; justify-content: center">
-<img src="./manual_server_images/springboot_appdetection.png" />
+<img src="./manual_server_images/springboot_appdetection.png" width="250"/>
 </div>
 
-4. Clicar no seguinte ícone destacado a vermelho para inicializar a aplicação:
+5. Clicar no seguinte ícone destacado a vermelho para inicializar a aplicação:
 <div style="display: flex; justify-content: center">
-<img src="./manual_server_images/springboot_startup.png" />
+<img src="./manual_server_images/springboot_startup.png" width="250"/>
 </div>
 
-5. O servidor começará a apresentar vários logs. Eis um exemplo:
+6. O servidor começará a apresentar vários logs. Eis um exemplo:
 <div style="display: flex; justify-content: center">
 <img src="./manual_server_images/springboot_logs.png" />
 </div>
 
+<br>
 
 **Notas importantes**:
 - O servidor deve arrancar com a base de dados ligada. Se tal não acontecer, dá erro e termina.
