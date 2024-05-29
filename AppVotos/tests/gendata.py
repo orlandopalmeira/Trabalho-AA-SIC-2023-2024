@@ -1,4 +1,5 @@
 import utils.json_examples as je
+from datetime import datetime
 import json
 
 if __name__ == '__main__':
@@ -7,6 +8,8 @@ if __name__ == '__main__':
     for d in data:
         d['id'] = id_
         d['image'] = None
+        d['creationdate'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        d['status'] = 'active'
         del d['questions']
         id_ += 1
     with open('votos.json', 'w') as f:
