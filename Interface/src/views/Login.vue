@@ -1,5 +1,10 @@
 <template>
 	<default-layout>
+		<ModalOk 
+			:isVisible="modal.opened"
+			:title="modal.title"
+			:message="modal.message"
+			@close-modal="modal.opened=false"/>
 		<v-container fluid fill-height>
 			<v-card
 			class="mx-auto"
@@ -40,14 +45,21 @@
 <script>
 import axios from '../axios';
 import DefaultLayout  from '../layouts/DefaultLayout.vue'
+import ModalOk from '../components/Modais/ModalOk.vue';
 export default {
 	components: {
-		DefaultLayout
+		DefaultLayout,
+		ModalOk
 	},
 	data() {
 		return {
 			email: '',
-			password: ''
+			password: '',
+			modal: {
+				opened: false,
+				title: 'Falha no login',
+				message: 'As credenciais inseridas são inválidas, por favor tente novamente.'
+			}
 		};
 	},
 	methods: {
@@ -56,22 +68,26 @@ export default {
 				const response = await axios.post(`/auth/login`, {
 					email: this.email,
 					password: this.password
-				}, {
-					headers: {
-						'Content-Type': 'application/json'
-					}
 				});
-				
-				if (response.status !== 200) {
-					throw new Error(`Error: ${response.statusText}`);
-				}
-				
-				console.log("Token: " + response.data.token);
-				
-				
-				this.$router.push('/');
+				// Se a response for diferente de 200, dá throw de um erro que tem de ser tratado no catch
+			
+				console.log("Token: " + response.data.token);		
+				this.$router.push('/home');
 			} catch (error) {
+				let response = error.response;
+				if (response.status == 401) {// Unauthorized
+					this.openModal('Falha no login', 'As credenciais inseridas são inválidas, por favor tente novamente.')
+				} else if(response.status != 200) {// Unexpected error
+					this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
+				}
 				console.error('Login failed:', error);
+			}
+		},
+		openModal(title,message) {
+			this.modal = {
+				opened: true,
+				title: title,
+				message: message
 			}
 		}
 	}

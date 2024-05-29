@@ -1,7 +1,7 @@
 <template>
     <nav>
         <!--Para ecrã de PC-->
-        <div style="width: 100%; justify-content: space-between;" class="nav flex" v-if="!phonePage">
+        <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2" v-if="!phonePage">
             <h2 class="ml-5">VotaçãoApp</h2>
             <ul class="flex">
                 <li v-for="(route,title) in routes" 
@@ -10,7 +10,7 @@
                 <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
             </ul>
         </div>
-
+        <!--Para ecrã de telemóvel-->
         <div class="nav flex" v-else>
             <div class="flex2">
                 <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2>
@@ -76,7 +76,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .nav {
     background-color: #C3C0C0;
     text-decoration: none;

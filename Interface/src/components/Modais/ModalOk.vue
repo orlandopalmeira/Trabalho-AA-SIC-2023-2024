@@ -1,0 +1,95 @@
+<template>
+    <div class="modal-overlay" v-if="isVisible">
+        <div class="modal">
+            <h3 class="margin10"><v-icon>{{ icon }}</v-icon> {{ title }}</h3>
+            <hr/>
+            <div class="margin20">
+                {{ message }}
+            </div>
+            <div class="margin20 modal-buttons" style="margin-top: 10px;">
+                <button class="button" type="submit" @click="handleClose">Ok</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    props: {
+        icon : {
+            type: String,
+            required: false,
+            default: 'mdi-information'
+        },
+        isVisible: {
+            type: Boolean,
+            required: true
+        },
+        title: {
+            type: String,
+            required: true
+        },
+        message: {
+            type: String,
+            required: true
+        }
+    },
+    methods: {
+        handleClose() {
+            this.$emit('close-modal');
+        }
+    }
+};
+</script>
+<style scoped>
+.margin10 {
+    margin: 10px;
+}
+.margin20 {
+    margin: 20px;
+}
+label{
+    margin-right: 10px;
+}
+h3 {
+    margin: 0;
+    text-align: left;
+}
+hr{
+    margin: 0;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+.modal {
+    background: white;
+    border-radius: 5px;
+    max-width: 500px;
+    width: auto;
+    z-index: 1000;
+}
+.modal-buttons {
+    display: flex;
+    justify-content: end;
+}
+.button {
+    padding: 5px 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.button:hover {
+    background: #0056b3;
+}
+</style>
