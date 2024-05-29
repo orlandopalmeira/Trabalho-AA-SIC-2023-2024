@@ -17,7 +17,7 @@ def login(email=EMAIL, password=PASSWORD):
     login_data = {'email': email, 'password': password}
     response = requests.post(login_url, json=login_data)
     if response.status_code == 200:
-        return response.cookies['token']
+        return response.json()['token']
     else:
         return None
 
