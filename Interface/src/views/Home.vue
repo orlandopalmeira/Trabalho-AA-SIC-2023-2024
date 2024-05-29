@@ -20,8 +20,8 @@
 
 <script>
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
-import SearchBar from '@/components/HomePage/SearchBar.vue'
-import OrderBy from '@/components/HomePage/OrderBy.vue'
+import SearchBar from '@/components/SearchBar.vue'
+import OrderBy from '@/components/OrderBy.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import VotingsContainer from '@/components/HomePage/VotingsContainer.vue'
