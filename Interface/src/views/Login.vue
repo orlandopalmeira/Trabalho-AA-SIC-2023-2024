@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { useUserInfoStore } from '@/stores/userInfoStore';
 import axios from '../axios';
 import DefaultLayout  from '../layouts/DefaultLayout.vue'
 import ModalOk from '../components/Modais/ModalOk.vue';
@@ -59,7 +60,8 @@ export default {
 				opened: false,
 				title: 'Falha no login',
 				message: 'As credenciais inseridas são inválidas, por favor tente novamente.'
-			}
+			},
+			useUserInfoStore
 		};
 	},
 	methods: {
@@ -70,8 +72,8 @@ export default {
 					password: this.password
 				});
 				// Se a response for diferente de 200, dá throw de um erro que tem de ser tratado no catch
-			
-				console.log("Token: " + response.data.token);		
+				console.log("Token: " + response.data.token);
+				useUserInfoStore().setUserId(response.data.id);		
 				this.$router.push('/home');
 			} catch (error) {
 				let response = error.response;

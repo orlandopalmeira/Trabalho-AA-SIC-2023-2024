@@ -30,12 +30,14 @@
 
 <script>
 import axios from '../axios';
+import { useUserInfoStore } from '@/stores/userInfoStore';
 export default {
     name: 'NavBar',
     data() {
         return {
             phonePage: false,
-            phoneMenu: false
+            phoneMenu: false,
+            useUserInfoStore
         }
     },
     props: {
@@ -48,6 +50,7 @@ export default {
                 const response = await axios.get('/auth/logout');
                 
                 this.$router.push('/login');
+                this.useUserInfoStore().logout();
                 if (response.status !== 200) {
                     throw new Error(`Error: ${response.statusText}`);
                 }
