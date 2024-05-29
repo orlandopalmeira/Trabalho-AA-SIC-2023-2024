@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
+import com.grupo6.votingapp.auth.JwtService;
 import com.grupo6.votingapp.auth.UnauthorizedException;
 
 import jakarta.servlet.http.Cookie;
@@ -23,13 +24,15 @@ import jakarta.transaction.Transactional;
 @RequestMapping("/auth")
 public class LoginController {
     private AuthService authService;
+    private JwtService jwtService;
 
     //* Nomes dos campos utilizados nas diversas respostas ao utilizador
     private static final String MESSAGE_FIELD = "message";
     private static final String TOKEN_FIELD = "token";
 
-    public LoginController(AuthService authService) {
+    public LoginController(AuthService authService, JwtService jwtService) {
         this.authService = authService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/login") //* Parece funcionar
@@ -47,7 +50,9 @@ public class LoginController {
             cookie.setPath("/"); // Set the path for the cookie
             response.addCookie(cookie);
             
-            return ResponseEntity.ok(Map.of(TOKEN_FIELD, token, 
+            String user_id = jwtService.extractUserId(token);
+            return ResponseEntity.ok(Map.of(TOKEN_FIELD, token,
+                                            "id", user_id,
                                             MESSAGE_FIELD, "Login successful (" + email + ")"));
         } catch (UnauthorizedException e) { //* user não existe ou password errada
             Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
