@@ -2,9 +2,6 @@ package com.grupo6.votingapp.services;
 
 import java.util.List;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.grupo6.votingapp.auth.PasswordUtil;
@@ -12,7 +9,7 @@ import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.repositories.UserRepository;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
     private UserRepository userRepository;
     private PasswordUtil passwordUtil;
 
@@ -69,12 +66,6 @@ public class UserService implements UserDetailsService {
 
     public String getEmailFromUserId(String id){ //* Parece funcionar
         return userRepository.findEmailFromUserId(id).orElse(null);
-    }
-
-    //* Métodos da interface UserDetailsService (Spring Security)
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
 }
