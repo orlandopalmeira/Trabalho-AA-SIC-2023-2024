@@ -1,5 +1,10 @@
 <template>
     <AuthenticatedLayout>
+        <ModalOk 
+			:isVisible="modal.opened"
+			:title="modal.title"
+			:message="modal.message"
+			@close-modal="modal.opened=false"/>
         <v-container>
             <div class="flex space-between mt-5 mb-5">
                 <SearchBar :onSearchFromParent="onSearch" class="mr-5" />
@@ -7,7 +12,8 @@
                     :fields="['Nenhum','Teste1', 'Teste2', 'Teste3']" 
                     :onSortFromParent="onSort"/>
             </div>
-            <VotingsContainer :votings="votings" />
+            <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
+            <VotingsContainer v-else :votings="votings" />
         </v-container>
     </AuthenticatedLayout>
 </template>
@@ -16,6 +22,8 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import SearchBar from '@/components/HomePage/SearchBar.vue'
 import OrderBy from '@/components/HomePage/OrderBy.vue'
+import ModalOk from '@/components/Modais/ModalOk.vue'
+import LoadingAlert from '@/components/LoadingAlert.vue'
 import VotingsContainer from '@/components/HomePage/VotingsContainer.vue'
 
 import axios from '@/axios'
@@ -429,13 +437,20 @@ export default {
         AuthenticatedLayout,
         SearchBar,
         OrderBy,
-        VotingsContainer
+        VotingsContainer,
+        ModalOk,
+        LoadingAlert
     },
     data() {
         return {
             loadingVotings: true,
-            votings: this.getVotings().then(votings => votings).catch(error => [])
-            // votings: getVotings()
+            votings: [],
+            // votings: temp_votings
+            modal: {
+				opened: false,
+				title: '',
+				message: ''
+			}
         }
     },
     methods: {
@@ -445,6 +460,13 @@ export default {
         onSort(field) {
             alert(field)
         },
+        openModal(title,message) {
+			this.modal = {
+				opened: true,
+				title: title,
+				message: message
+			}
+		},
         async getVotings() {
             try {
                 let response = await axios.get('/votings') // votações a que o user tem acesso
@@ -455,6 +477,17 @@ export default {
                 return []
             }
         }
+    }, 
+    created() {
+        this.getVotings()
+        .then(votings => {
+            this.votings = votings
+            this.loadingVotings = false
+        }).catch(error => {
+            let response = error.response
+            this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
+            console.error(error)
+        })
     }
 }
 </script>

@@ -37,7 +37,7 @@
         </v-row>
     </div>
 </template>
-<!-- TODO: talvez ter uma espécie de "loading..." se demorar a carregar as votações -->
+
 <script>
 import VotingCard from '@/components/HomePage/VotingCard.vue'
 export default {
