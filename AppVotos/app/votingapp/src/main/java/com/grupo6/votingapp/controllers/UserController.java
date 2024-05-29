@@ -99,11 +99,11 @@ public class UserController {
     }
 
     @PostMapping //* Parece funcionar
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
+    public ResponseEntity<Object> registerUser(@RequestBody User user) {
         //* Regista um utilizador (não requer autenticação)
         User userInDB = userService.getUserByEmail(user.getEmail());
         if (userInDB != null) {
-            return null;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_FIELD, "User with email \"" + user.getEmail() + "\" already exists!"));
         }
         userService.saveUser(user);
         return ResponseEntity.ok(user);

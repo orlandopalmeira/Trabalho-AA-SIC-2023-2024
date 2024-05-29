@@ -4,9 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -21,7 +26,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User implements Comparable<User>{
+public class User implements Comparable<User>, UserDetails{
     //* Atributos
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -160,6 +165,17 @@ public class User implements Comparable<User>{
     @Override
     public int compareTo(User other) {
         return id.compareTo(other.id);
+    }
+
+    //* Métodos da interface UserDetails (Spring Security)
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String getUsername() {
+        return getEmail();
     }
 
 }
