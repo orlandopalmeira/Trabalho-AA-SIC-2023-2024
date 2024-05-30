@@ -118,20 +118,13 @@ def arg_createuser(arguments: list):
     except Exception as e: #* Qualquer outro erro
         print(e)
 
-def arg_deleteuser(arguments: list):
-    """Test for server delete user"""
-    if len(arguments) != 4:
-        print("Usage: python3 tests.py deleteuser <user_id> <user_password>")
-        exit(1)
-
+def arg_getuseraccessiblevotings(arguments: list):
+    """Test for server get user accessible votings"""
     try:
-        url = f'{SERVER}/users/' + arguments[2]
-        user = get_user(arguments[2])
-
-        token = login(user['email'], arguments[3])
+        url = f'{SERVER}/votings'
+        token = login()
         if token:
-            response = requests.delete(url, cookies={'token': token})
-            print("Deleted user:")
+            response = requests.get(url, cookies={'token': token})
             print(json.dumps(response.json(), indent=2))
         else:
             print("Invalid credentials")
@@ -140,27 +133,35 @@ def arg_deleteuser(arguments: list):
     except Exception as e: #* Qualquer outro erro
         print(e)
 
-def arg_updateuser(arguments: list):
-    """Test for server update user"""
-    if len(arguments) != 4:
-        print("Usage: python3 tests.py updateuser <user_id> <user_password>")
-        exit(1)
-
+def arg_getuservotings(arguments: list):
+    """Test for server get user votings"""
     try:
-        url = f'{SERVER}/users/' + arguments[2]
-        user = get_user(arguments[2])
-        token = login(user['email'], arguments[3])
-
-        field_to_update = random.choice(['name', 'email'])
-        print('Field to update:', field_to_update)
-        update = {field_to_update: f'{user[field_to_update]}_updated'}
+        url = f'{SERVER}/votings/user'
+        token = login()
         if token:
-            response = requests.put(url, json=update, cookies={'token': token})
-            print("Updated user:")
+            response = requests.get(url, cookies={'token': token})
             print(json.dumps(response.json(), indent=2))
         else:
             print("Invalid credentials")
+    except requests.exceptions.ConnectionError:
+        print("Provavelmente o servidor aplicacional não está a correr")
+    except Exception as e: #* Qualquer outro erro
+        print(e)
 
+def arg_getuseraccessiblevoting(arguments: list):
+    """Test for server get user accessible voting"""
+    if len(arguments) != 3:
+        print("Usage: python3 tests.py getuseraccessiblevoting <voting_id>")
+        exit(1)
+
+    try:
+        url = f'{SERVER}/votings/' + arguments[2]
+        token = login()
+        if token:
+            response = requests.get(url, cookies={'token': token})
+            print(json.dumps(response.json(), indent=2))
+        else:
+            print("Invalid credentials")
     except requests.exceptions.ConnectionError:
         print("Provavelmente o servidor aplicacional não está a correr")
     except Exception as e: #* Qualquer outro erro
@@ -170,130 +171,10 @@ def arg_createvoting(arguments: list):
     """Test for server create voting"""
     try:
         url = f'{SERVER}/votings'
-        voting = je.get_sample_voting()
         token = login()
         if token:
-            response = requests.post(url, json=voting, cookies={'token': token})
-            print("Created voting:")
-            print(json.dumps(response.json(), indent=2))
-        else:
-            print("Invalid credentials")
-    except requests.exceptions.ConnectionError:
-        print("Provavelmente o servidor aplicacional não está a correr")
-    except Exception as e: #* Qualquer outro erro
-        print(e)
-
-def arg_getvoting(arguments: list):
-    """Test for server get voting"""
-    if len(arguments) != 3:
-        print("Usage: python3 tests.py getvoting <voting_id>")
-        exit(1)
-
-    try:
-        url = f'{SERVER}/votings/' + arguments[2]
-        token = login()
-        if token:
-            response = requests.get(url, cookies={'token': token})
-            print(json.dumps(response.json(), indent=2))
-        else:
-            print("Invalid credentials")
-    except requests.exceptions.ConnectionError:
-        print("Provavelmente o servidor aplicacional não está a correr")
-    except Exception as e: #* Qualquer outro erro
-        print(e)
-
-def arg_deletevoting(arguments: list):
-    """Test for server delete voting"""
-    if len(arguments) != 3:
-        print("Usage: python3 tests.py deletevoting <voting_id>")
-        exit(1)
-
-    try:
-        url = f'{SERVER}/votings/' + arguments[2]
-        token = login()
-        if token:
-            response = requests.delete(url, cookies={'token': token})
-            print("Deleted voting:")
-            print(json.dumps(response.json(), indent=2))
-        else:
-            print("Invalid credentials")
-    except requests.exceptions.ConnectionError:
-        print("Provavelmente o servidor aplicacional não está a correr")
-    except Exception as e: #* Qualquer outro erro
-        print(e)
-    
-def arg_updatevoting(arguments: list):
-    """Test for server update voting"""
-    if len(arguments) != 3:
-        print("Usage: python3 tests.py updatevoting <voting_id>")
-        exit(1)
-
-    try:
-        url = f'{SERVER}/votings/' + arguments[2]
-        update = {
-            "title": "Updated title",
-            "description": "Updated description",
-            "enddate": "2030-12-31 23:59:59"
-        }
-        token = login()
-        if token:
-            response = requests.put(url, json=update, cookies={'token': token})
-            print("Updated voting:")
-            print(json.dumps(response.json(), indent=2))
-        else:
-            print("Invalid credentials")
-    except requests.exceptions.ConnectionError:
-        print("Provavelmente o servidor aplicacional não está a correr")
-    except Exception as e: #* Qualquer outro erro
-        print(e)
-
-def arg_getvotingsofuser(arguments: list):
-    """Test for server get votings of user"""
-    if len(arguments) != 3:
-        print("Usage: python3 tests.py getvotingsofuser <user_id>")
-        exit(1)
-
-    try:
-        url = f'{SERVER}/votings/user/' + arguments[2] 
-        token = login()
-        if token:
-            response = requests.get(url, cookies={'token': token})
-            print(json.dumps(response.json(), indent=2))
-        else:
-            print("Invalid credentials")
-    except requests.exceptions.ConnectionError:
-        print("Provavelmente o servidor aplicacional não está a correr")
-    except Exception as e: #* Qualquer outro erro
-        print(e)
-
-def arg_setprivatevoters(arguments: list):
-    """Test for server set private voters"""
-    if len(arguments) != 3:
-        print("Usage: python3 tests.py setprivatevoters <voting_id>")
-        exit(1)
-
-    try:
-        url = f'{SERVER}/votings/' + arguments[2] + '/privatevoters'
-        token = login()
-        privatevoters = [2]
-        if token:
-            response = requests.post(url, json=privatevoters, cookies={'token': token})
-            print("Added private voters:")
-            print(json.dumps(response.json(), indent=2))
-        else:
-            print("Invalid credentials")
-    except requests.exceptions.ConnectionError:
-        print("Provavelmente o servidor aplicacional não está a correr")
-    except Exception as e: #* Qualquer outro erro
-        print(e)
-
-def arg_getuseraccessiblevotings(arguments: list):
-    """Test for server get user accessible votings"""
-    try:
-        url = f'{SERVER}/votings'
-        token = login()
-        if token:
-            response = requests.get(url, cookies={'token': token})
+            vote = je.get_sample_voting()
+            response = requests.post(url, json=vote, cookies={'token': token})
             print(json.dumps(response.json(), indent=2))
         else:
             print("Invalid credentials")
