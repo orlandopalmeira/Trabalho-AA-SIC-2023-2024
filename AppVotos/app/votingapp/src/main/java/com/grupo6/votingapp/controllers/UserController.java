@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
+import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.services.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,7 +84,7 @@ public class UserController {
     public ResponseEntity<Object> getUserById(@PathVariable String id, @CookieValue(value = "token", defaultValue = "") String token) {
         //* Retorna o user em caso de sucesso ou uma mensagem de erro
         return checkTokenUserIdMatch(token, id, id_ -> 
-            ResponseEntity.ok(userService.getUser(id_))
+            ResponseEntity.ok(new UsersWithNoRelationsDTO(userService.getUser(id_)))
         );
     }
 
@@ -91,7 +92,7 @@ public class UserController {
     public ResponseEntity<Object> getUserByEmail(@PathVariable String email, @CookieValue(value = "token", defaultValue = "") String token) {
         //* Retorna os dados do user em caso de sucesso ou uma mensagem de erro
         return checkTokenEmailMatch(token, email, email_ -> 
-            ResponseEntity.ok(userService.getUserByEmail(email_))
+            ResponseEntity.ok(new UsersWithNoRelationsDTO(userService.getUserByEmail(email_)))
         );
     }
 
@@ -102,8 +103,8 @@ public class UserController {
         if (userInDB != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_FIELD, "User with email \"" + user.getEmail() + "\" already exists!"));
         }
-        userService.saveUser(user);
-        return ResponseEntity.ok(user);
+        UsersWithNoRelationsDTO response = new UsersWithNoRelationsDTO(userService.saveUser(user));
+        return ResponseEntity.ok(response);
     }
     
 }
