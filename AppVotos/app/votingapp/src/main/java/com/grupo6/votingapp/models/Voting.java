@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,20 +30,13 @@ public class Voting implements Comparable<Voting>{
     //* Atributos
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
     private Long id;
-    @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
     private String description;
-    @Column(nullable = true) //* Pode optar por não ter imagem
     private String image;
-    @Column(nullable = false, updatable = false)
     private Date creationdate;
-    @Column(nullable = true) //* Se for NULL, é porque não tem um fim marcado
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC") //* Para evitar erros de parsing
     private Date enddate;
-    @Column(nullable = false)
     private boolean privatevoting;
 
     //* Relações
