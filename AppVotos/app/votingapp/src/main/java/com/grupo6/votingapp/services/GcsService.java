@@ -93,9 +93,16 @@ public class GcsService {
         }
     }
 
-    public void deleteFile(String objectName) {
+    public void deleteFile(String objectName) throws ImageServerException, ImageNotFoundException {
         BlobId blobId = BlobId.of(BUCKET_NAME, objectName);
-        storage.delete(blobId);
+        try{
+            Boolean res = storage.delete(blobId);
+            if (!res) {
+                throw new ImageNotFoundException("Image not found in Storage.");
+            }
+        } catch (StorageException e) {
+            throw new ImageServerException("Error downloading image: " + e.getMessage());
+        }
     }
 }
 
