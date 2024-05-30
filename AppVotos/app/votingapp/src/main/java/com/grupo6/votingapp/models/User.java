@@ -10,8 +10,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,21 +27,17 @@ public class User implements Comparable<User>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
-    @Column(nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
     private LocalDate birthdate;
 
     //* Relações
-    @OneToMany(mappedBy = "creator")
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
     @JsonManagedReference //* Para evitar recursividade infinita ao serializar para JSON em respostas HTTP (ver https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion)
     private List<Voting> votings;
 
-    @ManyToMany(mappedBy = "privatevoters")
+    @ManyToMany(mappedBy = "privatevoters", fetch = FetchType.LAZY)
     private Set<Voting> privatevotings;
 
     public User() {}

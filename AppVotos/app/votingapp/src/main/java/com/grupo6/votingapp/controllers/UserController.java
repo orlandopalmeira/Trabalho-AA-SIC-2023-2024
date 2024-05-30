@@ -5,12 +5,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +18,6 @@ import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.services.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @Transactional // This annotation is used to indicate that the data read from the database should be in a transactional context.
@@ -109,29 +106,4 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
     
-    @PutMapping("/{id}") //* Parece funcionar
-    public ResponseEntity<Object> updateUser(@PathVariable String id, @RequestBody User user, @CookieValue(value = "token", defaultValue = "") String token) {
-        //* Retorna o user actualizado em caso de sucesso ou uma mensagem de erro
-        //! Atenção, como são realizadas alterações ao utilizador, pode ser necessário proceder à renovação do token de autenticação porque ele contém informações do user e após a actualização de dados elas podem ficar desactualizadas no token.
-        return checkTokenUserIdMatch(token, id, id_ -> {
-            user.setId(Long.parseLong(id_));
-            userService.updateUser(user);
-            return ResponseEntity.ok(userService.getUser(Long.parseLong(id_)));
-        });
-    }
-    
-    @DeleteMapping("/{id}") //* Parece funcionar 
-    public ResponseEntity<Object> deleteUser(@PathVariable String id,  @CookieValue(value = "token", defaultValue = "") String token) {
-        //* Retorna o user eliminado em caso de sucesso ou uma mensagem de erro
-        return checkTokenUserIdMatch(token, id, id_ -> {
-            User user = userService.getUser(Long.parseLong(id_));
-            if (user != null) {
-                Hibernate.initialize(user.getVotings()); //! (ver melhor isto) Evita o erro "[org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: failed to lazily initialize a collection: could not initialize proxy - no Session]"
-                Hibernate.initialize(user.getPrivatevotings()); //! (ver melhor isto) Evita o erro "[org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: failed to lazily initialize a collection: could not initialize proxy - no Session]"
-                userService.deleteUser(Long.parseLong(id_));
-            }
-            return ResponseEntity.ok(user);
-        });
-    }
-
 }
