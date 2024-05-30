@@ -2,7 +2,6 @@ package com.grupo6.votingapp.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,9 +17,7 @@ public class Option {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
     private String description;
-    @Column(nullable = true)
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,6 +43,10 @@ public class Option {
         return question;
     }
 
+    public String getImage() {
+        return image;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -56,6 +57,10 @@ public class Option {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
 }
