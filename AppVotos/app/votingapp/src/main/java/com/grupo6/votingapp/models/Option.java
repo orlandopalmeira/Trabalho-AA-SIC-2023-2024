@@ -67,4 +67,9 @@ public class Option {
         this.image = image;
     }
 
+    @Override
+    public String toString() {
+        return "Option [id=" + id + ", description=" + description + "]";
+    }
+
 }

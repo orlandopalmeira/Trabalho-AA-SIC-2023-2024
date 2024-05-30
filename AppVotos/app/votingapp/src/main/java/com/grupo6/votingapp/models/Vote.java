@@ -1,11 +1,18 @@
 package com.grupo6.votingapp.models;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -16,26 +23,21 @@ public class Vote {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "voter_id", nullable = false)
+    @JoinColumn(name = "voter_id")
     private User voter;
     @ManyToOne
-    @JoinColumn(name = "voting_id", nullable = false)
+    @JoinColumn(name = "voting_id")
     private Voting voting;
-    @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
-    @ManyToOne
-    @JoinColumn(name = "option_id", nullable = false)
-    private Option option;
+    @OneToMany(mappedBy = "vote", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<VotesQuestionsOptions> votesQuestionsOptions;
 
     public Vote() {
     }
 
-    public Vote(User voter, Voting voting, Option option, Question question) {
+    public Vote(User voter, Voting voting, Set<VotesQuestionsOptions> votesQuestionsOptions) {
         this.voter = voter;
         this.voting = voting;
-        this.option = option;
-        this.question = question;
+        this.votesQuestionsOptions = votesQuestionsOptions;
     }
 
     public Long getId() {
@@ -46,6 +48,14 @@ public class Vote {
         return voter;
     }
 
+    public void setVotesQuestionsOptions(Collection<VotesQuestionsOptions> votesQuestionsOptions) {
+        this.votesQuestionsOptions = votesQuestionsOptions.stream().collect(Collectors.toSet());
+    }
+
+    public Set<VotesQuestionsOptions> getVotesQuestionsOptions() {
+        return votesQuestionsOptions;
+    }
+
     public void setVoter(User voter) {
         this.voter = voter;
     }
@@ -54,24 +64,8 @@ public class Vote {
         return voting;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
     public void setVoting(Voting voting) {
         this.voting = voting;
-    }
-
-    public Option getOption() {
-        return option;
-    }
-
-    public void setOption(Option option) {
-        this.option = option;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 
     @Override
@@ -80,7 +74,6 @@ public class Vote {
                 "id=" + id +
                 ", voter=" + voter +
                 ", voting=" + voting +
-                ", option=" + option +
                 '}';
     }
 

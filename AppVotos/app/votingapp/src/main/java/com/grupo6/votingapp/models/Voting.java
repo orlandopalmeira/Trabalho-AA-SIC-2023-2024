@@ -34,6 +34,7 @@ public class Voting implements Comparable<Voting>{
     private String title;
     private String description;
     private String image;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC") //* Para evitar erros de parsing
     private Date creationdate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC") //* Para evitar erros de parsing
     private Date enddate;
@@ -45,11 +46,11 @@ public class Voting implements Comparable<Voting>{
     @JsonBackReference  //* Para evitar recursividade infinita ao serializar para JSON em respostas HTTP (ver https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion)
     private User creator;
 
-    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference //* para evitar recursividade infinita
     private List<Question> questions;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "private_voters",
         joinColumns = @JoinColumn(name = "voting_id"),
@@ -149,23 +150,6 @@ public class Voting implements Comparable<Voting>{
         this.privatevoters = privatevoters == null ? new HashSet<>() : new HashSet<>(privatevoters);
         if(privatevoters != null)
             privatevoters.forEach(user -> user.addPrivateVoting(this));
-    }
-
-    //* Gestão da relação M:N com Users
-    public void addPrivateVoter(User user) {
-        privatevoters.add(user);
-        user.getPrivatevotings().add(this);
-    }
-
-    public void removePrivateVoter(User user) {
-        privatevoters.remove(user);
-        user.getPrivatevotings().remove(this);
-    }
-
-    public void removeAllPrivateVoters() {
-        for(User user : new HashSet<>(privatevoters)) {
-            removePrivateVoter(user);
-        }
     }
 
     @Override

@@ -1,0 +1,72 @@
+package com.grupo6.votingapp.models;
+
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+
+//* Tabela que representa uma relação ternária
+@Entity
+@Table(name = "votes_questions_options")
+public class VotesQuestionsOptions {
+    @EmbeddedId
+    private VotesQuestionsOptionsId id;
+
+    @ManyToOne
+    @MapsId("voteid")
+    @JoinColumn(name = "vote_id")
+    private Vote vote;
+
+    @ManyToOne
+    @MapsId("questionid")
+    @JoinColumn(name = "question_id")
+    private Question question;
+
+    @ManyToOne
+    @MapsId("optionid")
+    @JoinColumn(name = "option_id")
+    private Option option;
+
+    
+    // Getters and Setters
+    public VotesQuestionsOptionsId getId() {
+        return id;
+    }
+
+    public void setId(VotesQuestionsOptionsId id) {
+        this.id = id;
+    }
+
+    public Vote getVote() {
+        return vote;
+    }
+
+    public void setVote(Vote vote) {
+        this.vote = vote;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public Option getOption() {
+        return option;
+    }
+
+    public void setOption(Option option) {
+        this.option = option;
+    }
+
+    //tostring
+    @Override
+    public String toString() {
+        return "VotesQuestionsOptions [id=" + id + ", option=" + option + ", question=" + question + ", vote=" + vote + "]";
+    }
+
+}

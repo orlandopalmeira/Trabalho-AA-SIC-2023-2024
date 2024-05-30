@@ -5,7 +5,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +29,7 @@ public class Question {
     @JsonBackReference
     private Voting voting;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Option> options;
 
@@ -56,6 +55,10 @@ public class Question {
         return options;
     }
 
+    public void setId(String id) {
+        this.id = Long.parseLong(id);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -70,6 +73,11 @@ public class Question {
 
     public void setOptions(List<Option> options) {
         this.options = options;
+    }
+
+    @Override
+    public String toString() {
+        return "Question [id=" + id + ", description=" + description + "]";
     }
 
 }
