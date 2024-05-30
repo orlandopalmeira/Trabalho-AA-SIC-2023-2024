@@ -47,6 +47,10 @@ public class Option {
         return image;
     }
 
+    public void setId(String id) {
+        this.id = Long.parseLong(id);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
