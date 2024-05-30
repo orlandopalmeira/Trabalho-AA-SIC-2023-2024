@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
-import com.grupo6.votingapp.dtos.CreateVoteDTO;
+import com.grupo6.votingapp.dtos.votings.CreateVoteDTO;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.VoteService;
 import com.grupo6.votingapp.services.VotingService;

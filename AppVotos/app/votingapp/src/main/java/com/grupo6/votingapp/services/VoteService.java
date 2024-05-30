@@ -7,7 +7,7 @@ import java.util.Set;
 import org.hibernate.internal.util.collections.IdentitySet;
 import org.springframework.stereotype.Service;
 
-import com.grupo6.votingapp.dtos.CreateVoteDTO;
+import com.grupo6.votingapp.dtos.votings.CreateVoteDTO;
 import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;

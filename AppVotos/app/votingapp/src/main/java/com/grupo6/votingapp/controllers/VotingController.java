@@ -1,6 +1,7 @@
 package com.grupo6.votingapp.controllers;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
+import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
+import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.VotingService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,16 +55,26 @@ public class VotingController {
 
     @GetMapping //* Parece funcionar
     public ResponseEntity<Object> getVotings(@CookieValue(value = "token", defaultValue = "") String token) {
-        return checkTokenSimple(token, user_id -> 
-            ResponseEntity.ok(votingService.getAccessibleVotingsToUser(user_id))
-        );
+        return checkTokenSimple(token, user_id -> {
+            List<VotingWithNoRelationsDTO> response = 
+                votingService.getAccessibleVotingsToUser(user_id)
+                .stream()
+                .map(VotingWithNoRelationsDTO::new) //* Equivalente a "voting -> new VotingWithNoRelationsDTO(voting)"
+                .toList();
+            return ResponseEntity.ok(response);
+        });
     }
 
     @GetMapping("/user") //* Parece funcionar
     public ResponseEntity<Object> getVotingsFromUser(@CookieValue(value = "token", defaultValue = "") String token) {
-        return checkTokenSimple(token, user_id -> 
-            ResponseEntity.ok(votingService.getVotingsFromCreatorId(user_id))
-        );
+        return checkTokenSimple(token, user_id -> {
+            List<VotingWithNoRelationsDTO> response = 
+                votingService.getVotingsFromCreatorId(user_id)
+                .stream()
+                .map(VotingWithNoRelationsDTO::new) //* Equivalente a "voting -> new VotingWithNoRelationsDTO(voting)"
+                .toList();
+            return ResponseEntity.ok(response);
+        });
     }
 
     @GetMapping("/{voting_id}") //* Parece funcionar
@@ -72,7 +85,8 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, user_id, voting_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
-            return ResponseEntity.ok(voting);
+            VotingWithNoCreatorDTO response = new VotingWithNoCreatorDTO(voting);
+            return ResponseEntity.ok(response);
         });
     }
 
@@ -81,7 +95,8 @@ public class VotingController {
         return checkTokenSimple(token, user_id -> {
             newVoting.setCreationdate(new Date());
             Voting registeredVoting = votingService.saveVoting(newVoting, user_id);
-            return ResponseEntity.ok(registeredVoting);
+            VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
+            return ResponseEntity.ok(response);
         });
     }
 
