@@ -6,7 +6,10 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
+import com.grupo6.votingapp.exceptions.imageStorage.ImageNotFoundException;
+import com.grupo6.votingapp.exceptions.imageStorage.ImageServerException;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -37,18 +40,40 @@ public class GcsService {
         return StorageOptions.newBuilder().setCredentials(credentials).build().getService(); 
     }
 
-    public byte[] downloadImage(String objectName) {
-        Blob blob = storage.get(BlobId.of(BUCKET_NAME, objectName));
-        return blob.getContent();
+    /**
+     * Download an image from the Google Cloud Storage bucket.
+     * @param objectName The name of the object to download.
+     * @return The byte array of the image.
+     * @throws IOException If the image could not be downloaded.
+     */
+    public byte[] downloadImage(String objectName) throws ImageServerException, ImageNotFoundException{
+        try{
+            Blob blob = storage.get(BlobId.of(BUCKET_NAME, objectName));
+            if (blob == null) {
+                throw new ImageNotFoundException("Image not found in Storage.");
+            }
+            return blob.getContent();
+        } catch (StorageException e) {
+            // System.out.println("Error downloading image: " + e.getMessage());
+            throw new ImageServerException("Error downloading image: " + e.getMessage());
+        }
     }
 
+    /**
+     * Upload an image to the Google Cloud Storage bucket.
+     * @param file The image file to upload.
+     * @return The name of the object in the bucket.
+     * @throws IOException If the image could not be uploaded.
+     */
     public String uploadImage(MultipartFile file) throws IOException {
-        // first check if the objectname already exists
+        
         String originalFileName = file.getOriginalFilename();
         String fileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        // Adiciona um timestamp ao nome do arquivo para evitar duplicatas
         String objName = System.currentTimeMillis() + "_" + fileName + extension;
         
+        // Acrescenta um número ao nome do arquivo se ele já existir, até que seja gerado um nome único
         Blob blob = storage.get(BlobId.of(BUCKET_NAME, objName));
         int index = 1;
         while (blob != null) {
@@ -56,6 +81,7 @@ public class GcsService {
             System.out.println("Object name already exists. Renaming it to " + objName + ".");
             blob = storage.get(BlobId.of(BUCKET_NAME, objName));
         }
+
         BlobId blobId = BlobId.of(BUCKET_NAME, objName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         try {
