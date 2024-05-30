@@ -1,26 +1,53 @@
 package com.grupo6.votingapp.controllers;
 
+import java.io.IOException;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.grupo6.votingapp.services.GoogleCloudStorageService;
+import com.grupo6.votingapp.services.GcsService;
 
 @RestController
 @RequestMapping("/images")
 public class ImageController {
 
-    private GoogleCloudStorageService storageService;
-    private static final String BUCKET_NAME = "images-aa-sic";
+    private GcsService storageService;
+    
 
-    public ImageController(GoogleCloudStorageService storageService) {
+    public ImageController(GcsService storageService) {
         this.storageService = storageService;
     }
 
     @GetMapping(value = "/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImage(@PathVariable String imageName) {
-        return storageService.downloadImage(BUCKET_NAME, imageName);
+        return storageService.downloadImage(imageName);
+    }
+
+    // Posting an image to the bucket
+    // @PostMapping(value = "/{imageName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // public void postImage(@PathVariable String imageName, @RequestPart MultipartFile file) {
+    //     storageService.uploadImage(BUCKET_NAME, imageName, file);
+    // }
+    @PostMapping
+    public ResponseEntity<String> handleImageUpload(@RequestParam("image") MultipartFile file) {
+        if (file.isEmpty() || file.getContentType().startsWith("image") == false) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a valid image to upload.");
+        }
+        try {
+            String objName = storageService.uploadImage(file);
+            return ResponseEntity.ok("Image uploaded successfully: " + objName + ".");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image: " + e.getMessage());
+        }
     }
 }

@@ -32,6 +32,7 @@ build/
 AppVotos/tests/.env
 __pycache__/
 AppVotos/app/votingapp/src/main/resources/aa-sic-424610-eea4d305377e.json
+imageTest/
 
 ### VS Code ###
 .vscode/
