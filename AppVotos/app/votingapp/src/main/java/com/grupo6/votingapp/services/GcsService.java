@@ -83,7 +83,7 @@ public class GcsService {
         }
 
         BlobId blobId = BlobId.of(BUCKET_NAME, objName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
         try {
             storage.create(blobInfo, file.getBytes());
             return objName;
