@@ -84,6 +84,10 @@ public class User implements Comparable<User>{
         return privatevotings;
     }
 
+    public void setId(String id){
+        this.id = Long.parseLong(id);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
