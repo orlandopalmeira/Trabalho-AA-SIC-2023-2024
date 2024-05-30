@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
-import com.grupo6.votingapp.dtos.votings.CreateVoteDTO;
+import com.grupo6.votingapp.dtos.votes.CreateVoteDTO;
+import com.grupo6.votingapp.dtos.votes.VoteWithNoRelationsDTO;
+import com.grupo6.votingapp.models.Vote;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.VoteService;
 import com.grupo6.votingapp.services.VotingService;
@@ -51,7 +53,7 @@ public class VoteController {
         }
     }
 
-    @PostMapping
+    @PostMapping //* Parece funcionar
     public ResponseEntity<Object> createVote(@RequestBody CreateVoteDTO voteDto, @CookieValue(value = "token", defaultValue = "") String token) {
         return checkTokenSimple(token, userId -> {
             Voting voting = votingService.getAccessibleVotingToUser(voteDto.getVotingid(), userId);
@@ -65,8 +67,9 @@ public class VoteController {
             }
 
             try {
-                voteService.save(voteDto, userId); //! Objecto retornado aqui não vai na resposta HTTP porque dá um erro causado pelo lazy loading do Hibernate
-                return ResponseEntity.ok(voteDto);
+                Vote registeredVote = voteService.save(voteDto, userId);
+                VoteWithNoRelationsDTO response = new VoteWithNoRelationsDTO(registeredVote);
+                return ResponseEntity.ok(response);
             } catch (Exception e) {
                 e.printStackTrace();
                 Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());

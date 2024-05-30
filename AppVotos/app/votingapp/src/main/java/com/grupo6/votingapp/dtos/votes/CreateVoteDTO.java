@@ -1,4 +1,4 @@
-package com.grupo6.votingapp.dtos.votings;
+package com.grupo6.votingapp.dtos.votes;
 
 import java.util.List;
 import java.util.Map;
