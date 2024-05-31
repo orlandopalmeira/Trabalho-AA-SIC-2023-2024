@@ -1,7 +1,7 @@
 <template>
     <nav>
         <!--Para ecrã de PC-->
-        <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2" v-if="!phonePage">
+        <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
             <h2 class="ml-5">VotaçãoApp</h2>
             <ul class="flex">
                 <li v-for="(route,title) in routes" 

@@ -73,7 +73,7 @@ export default {
 				});
 				// Se a response for diferente de 200, dá throw de um erro que tem de ser tratado no catch
 				console.log("Token: " + response.data.token);
-				useUserInfoStore().setUserId(response.data.id);		
+				useUserInfoStore().setUserId(response.data.id);
 				this.$router.push('/home');
 			} catch (error) {
 				let response = error.response;

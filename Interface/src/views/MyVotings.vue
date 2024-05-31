@@ -95,7 +95,8 @@ export default {
         async getVotings(){
             this.loadingVotings = false;
             try {
-                let user_id = this.useUserInfoStore().getUserId
+                console.log(useUserInfoStore().getUserId)
+                let user_id = useUserInfoStore().getUserId;
                 const response = await axios.get(`/votings/user/${user_id}`)
                 return response.data
             } catch (error) {
@@ -116,6 +117,7 @@ export default {
         }
     }, 
     created() {
+
         this.getVotings()
         .then(votings => {
             this.votings = votings
