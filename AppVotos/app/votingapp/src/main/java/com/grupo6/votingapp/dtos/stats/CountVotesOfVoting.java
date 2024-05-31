@@ -1,6 +1,6 @@
 package com.grupo6.votingapp.dtos.stats;
 
-public class CountVotesOfVoting implements Stats{
+public class CountVotesOfVoting{
     private Long id;
     private Long numvotes;
 
