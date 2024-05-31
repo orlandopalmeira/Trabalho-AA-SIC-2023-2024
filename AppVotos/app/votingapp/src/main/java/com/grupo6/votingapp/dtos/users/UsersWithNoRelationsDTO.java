@@ -11,6 +11,9 @@ public class UsersWithNoRelationsDTO {
     private String password;
     private LocalDate birthdate;
 
+    public UsersWithNoRelationsDTO() {
+    }
+
     public UsersWithNoRelationsDTO(User user) {
         this.id = user.getId();
         this.name = user.getName();

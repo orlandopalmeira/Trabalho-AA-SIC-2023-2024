@@ -1,22 +1,13 @@
 package com.grupo6.votingapp;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.grupo6.votingapp.services.GcsService;
 
 @SpringBootTest
 public class GcsTest {
 
-    @Autowired
-    private GcsService gcsService;
+    // @Autowired
+    // private GcsService gcsService;
 
     // @Test
     // public void testDownload() {
