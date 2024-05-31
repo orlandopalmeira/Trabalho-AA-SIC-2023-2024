@@ -40,6 +40,7 @@ public class Voting implements Comparable<Voting>{
     private boolean privatevoting;
 
     //* Relações
+    //region Relações
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", nullable = false)
     @JsonBackReference  //* Para evitar recursividade infinita ao serializar para JSON em respostas HTTP (ver https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion)
@@ -56,14 +57,12 @@ public class Voting implements Comparable<Voting>{
         inverseJoinColumns = @JoinColumn(name = "voter_id")
     )
     private Set<User> privatevoters;
-    
-    public Voting() {}
 
-    public Voting(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
+    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Vote> votes;
+    //endregion
+    //region Getters e Setters
     public Long getId() {
         return id;
     }
@@ -102,6 +101,10 @@ public class Voting implements Comparable<Voting>{
 
     public Set<User> getPrivatevoters() {
         return privatevoters;
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
     }
 
     public void setId(Long id) {
@@ -150,6 +153,10 @@ public class Voting implements Comparable<Voting>{
             privatevoters.forEach(user -> user.addPrivateVoting(this));
     }
 
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -171,4 +178,5 @@ public class Voting implements Comparable<Voting>{
     public int compareTo(Voting voting) {
         return id.compareTo(voting.id);
     }
+    //endregion
 }

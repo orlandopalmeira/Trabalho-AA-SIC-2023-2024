@@ -18,6 +18,7 @@ import com.grupo6.votingapp.auth.AuthService;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Voting;
+import com.grupo6.votingapp.services.StatsService;
 import com.grupo6.votingapp.services.VotingService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,13 +31,15 @@ public class VotingController {
 
     private AuthService authService;
     private VotingService votingService;
+    private StatsService statsService;
     
     private static final String MESSAGE_FIELD = "message";
     private static final String NOT_FOUND_VOTING_WITH_USER_MESSAGE = "User with id '%s' does not have access to a voting with id '%s'!";
     
-    public VotingController(VotingService votingService, AuthService authService) {
+    public VotingController(VotingService votingService, AuthService authService, StatsService statsService) {
         this.votingService = votingService;
         this.authService = authService;
+        this.statsService = statsService;
     }
 
     private ResponseEntity<Object> checkTokenSimple(String token, Function<String, ResponseEntity<Object>> callback){
@@ -100,5 +103,16 @@ public class VotingController {
         });
     }
 
+    @GetMapping("{voting_id}/stats")
+    public ResponseEntity<Object> getVotingStats(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
+        return checkTokenSimple(token, user_id -> {
+            Voting voting = votingService.getAccessibleVotingToUser(voting_id, user_id);
+            if(voting == null){//* O user tem acesso à votação?
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, user_id, voting_id));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            }
+            return ResponseEntity.ok(statsService.getVotingStats(voting_id));
+        });
+    }
     
 }
