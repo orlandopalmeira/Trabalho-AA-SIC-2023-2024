@@ -38,10 +38,20 @@
 
 <script>
 import DefaultLayout  from '../layouts/DefaultLayout.vue'
+import { useUserInfoStore } from '@/stores/userInfoStore'
+import router from '@/router';
 export default {
     name: 'About',
     components: {
         DefaultLayout
+    },
+    setup() {
+
+        if (useUserInfoStore()) {
+            router.push('/home');
+        }
+
+        return {}
     }
 };
 </script>

@@ -50,6 +50,7 @@ import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import { useUserInfoStore } from '@/stores/userInfoStore'
 import axios from '@/axios'
+import router from '@/router'
 
 const table_headers = [
     { align: 'start', key: 'title',         title: 'Votação' },
@@ -82,8 +83,7 @@ export default {
     },
     methods: {
         onClickCreateVoting(){
-            //TODO: redirecionar para a página de criação de votação
-            alert('Not implemented yet')
+            router.push('/createvoting');
         },
         openModal(title,message) {
 			this.modal = {
@@ -95,7 +95,6 @@ export default {
         async getVotings(){
             this.loadingVotings = false;
             try {
-                console.log(useUserInfoStore().getUserId)
                 let user_id = useUserInfoStore().getUserId;
                 const response = await axios.get(`/votings/user/${user_id}`)
                 return response.data

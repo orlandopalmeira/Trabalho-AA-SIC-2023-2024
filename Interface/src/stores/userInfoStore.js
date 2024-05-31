@@ -9,6 +9,9 @@ export const useUserInfoStore = defineStore('userinfo', {
     getters: {
         getUserId() {
             return this.user_id;
+        },
+        isAutenticated() {
+            return this.user_id !== null;
         }
     },
     // acções, equivalentes aos métodos
