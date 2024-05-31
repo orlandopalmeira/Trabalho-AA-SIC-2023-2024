@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
 import com.grupo6.votingapp.auth.JwtService;
-import com.grupo6.votingapp.auth.UnauthorizedException;
+import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
