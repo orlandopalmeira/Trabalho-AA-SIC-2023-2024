@@ -29,15 +29,21 @@
                         type="text"
                         v-model="description"
                         ></v-textarea>
+                        <v-file-input
+                            id="image"
+                            prepend-icon="mdi-image"
+                            name="image"
+                            label="Imagem (opcional)"
+                            v-model="image"
+                            accept="image/*"
+                        ></v-file-input>
                         <v-checkbox
                         id="privatevoting"
                         name="privatevoting"
                         label="Votação Privada"
                         v-model="privatevoting"
                         ></v-checkbox>
-                        [add image] <br>
-                        [add questions]
-
+                        [botoes]
                     </v-form>
                 </v-card-text>
                 <v-card-actions>
@@ -72,8 +78,19 @@ export default {
 				title: '',
 				message: ''
 			},
-            useUserInfoStore
+            useUserInfoStore,
+            title: '',
+            description: '',
+            privatevoting: false
         }
     },
+
+    methods: {
+
+        createVoting(){
+            // TODO: confirmar todos os campos obrigatorios
+            console.log('TODO: method createVoting')
+        }
+    }
 }
 </script>
