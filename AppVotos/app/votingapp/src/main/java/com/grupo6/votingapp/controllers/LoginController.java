@@ -34,7 +34,7 @@ public class LoginController {
         this.authService = authService;
         this.jwtService = jwtService;
     }
-
+    //region Cookie generation
     private Cookie generateCookie(String email, String password){
         String token = authService.login(email, password);
         Cookie cookie = new Cookie(TOKEN_FIELD, token);
@@ -55,6 +55,7 @@ public class LoginController {
         cookie.setMaxAge(0); //* maxAge=0 => apaga o cookie
         return cookie;
     }
+    //endregion
 
     @PostMapping("/login") //* Parece funcionar
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials, HttpServletResponse response) {
