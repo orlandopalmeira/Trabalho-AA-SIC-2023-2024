@@ -48,7 +48,6 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
-import { useUserInfoStore } from '@/stores/userInfoStore'
 import axios from '@/axios'
 import router from '@/router'
 
@@ -77,8 +76,7 @@ export default {
 				opened: false,
 				title: '',
 				message: ''
-			},
-            useUserInfoStore
+			}
         }
     },
     methods: {
