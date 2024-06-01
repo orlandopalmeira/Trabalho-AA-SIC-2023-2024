@@ -97,7 +97,8 @@ export default {
                 axios.post('/users', user)
                     .then(() => {
                         //TODO: Meter lógica de ir para a página inicial, por exemplo.
-                        alert('Registo efectuado com sucesso!');
+                        alert('Registo efectuado com sucesso!\nEfectue o login para aceder à sua conta na página seguinte.');
+                        this.$router.push('/login');
                     })
                     .catch((error) => {
                         console.log(error);

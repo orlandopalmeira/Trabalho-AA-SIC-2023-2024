@@ -72,7 +72,9 @@ export default {
                 this.loadingVotings = false 
                 return response.data
             } catch (error) {
+                let response = error.response
                 console.error(error)
+                this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
                 return []
             }
         }
@@ -83,8 +85,6 @@ export default {
             this.votings = votings
             this.loadingVotings = false
         }).catch(error => {
-            let response = error.response
-            this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
             console.error(error)
         })
     }

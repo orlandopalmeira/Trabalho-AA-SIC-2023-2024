@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.grupo6.votingapp.dtos.users.RegisterUserDTO;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.services.UserService;
@@ -57,13 +58,18 @@ public class UserController {
     }
 
     @PostMapping //* Parece funcionar
-    public ResponseEntity<Object> registerUser(@RequestBody User user) {
+    public ResponseEntity<Object> registerUser(@RequestBody RegisterUserDTO user) {
         //* Regista um utilizador (não requer autenticação)
         User userInDB = userService.getUserByEmail(user.getEmail());
         if (userInDB != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_FIELD, "User with email \"" + user.getEmail() + "\" already exists!"));
         }
-        UsersWithNoRelationsDTO response = new UsersWithNoRelationsDTO(userService.saveUser(user));
+        User userToSave = new User();
+        userToSave.setName(user.getName());
+        userToSave.setEmail(user.getEmail());
+        userToSave.setBirthdate(user.getBirthdate());
+        userToSave.setPassword(user.getPassword());
+        UsersWithNoRelationsDTO response = new UsersWithNoRelationsDTO(userService.saveUser(userToSave));
         return ResponseEntity.ok(response);
     }
     
