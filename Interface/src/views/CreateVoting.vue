@@ -5,7 +5,7 @@
 			:title="modal.title"
 			:message="modal.message"
 			@close-modal="modal.opened=false"/>
-        <v-container>
+        <v-container v-if="stage == 1"> 
             <v-card flat>
                 <v-card-title>
                     <v-icon large class="mr-4">mdi-plus-circle</v-icon>
@@ -43,13 +43,59 @@
                         label="Votação Privada"
                         v-model="privatevoting"
                         ></v-checkbox>
-                        [botoes]
+                        <v-row class="mt-4">
+                            <v-col cols="6">
+                                <v-btn
+                                    color="secondary"
+                                    @click="leave"
+                                >
+                                    Voltar
+                                </v-btn>
+                            </v-col>
+                            <v-col cols="6" class="text-right">
+                                <v-btn
+                                    color="primary"
+                                    @click="goNext"
+                                >
+                                    Seguinte
+                                </v-btn>
+                            </v-col>
+                        </v-row>
                     </v-form>
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn @click="createVoting" :disabled="title === '' || description === ''">Criar</v-btn>
-                </v-card-actions>
+            </v-card>
+        </v-container>
+        <v-container v-if="stage == 2"> 
+            <v-card flat>
+                <v-card-title>
+                    <v-icon large class="mr-4">mdi-plus-circle</v-icon>
+                    Criar Votação - Adicionar Perguntas
+                </v-card-title>
+                <v-card-text>
+                    <v-form>
+
+                        [TODO]
+
+                        <v-row class="mt-4">
+                            <v-col cols="6">
+                                <v-btn
+                                    color="secondary"
+                                    @click="leave"
+                                >
+                                    Voltar
+                                </v-btn>
+                            </v-col>
+                            <v-col cols="6" class="text-right">
+                                <v-btn
+                                    color="primary"
+                                    @click="goNext"
+                                >
+                                    Seguinte
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-form>
+                </v-card-text>
             </v-card>
         </v-container>
     </AuthenticatedLayout>
@@ -81,11 +127,31 @@ export default {
             useUserInfoStore,
             title: '',
             description: '',
-            privatevoting: false
+            privatevoting: false,
+            stage: 1,
+
+
+            image: null,
         }
     },
 
     methods: {
+
+        leave() {
+            if(this.stage == 1){
+                this.$router.push('/myvotings')
+            } else {
+                this.stage = 1
+            }
+        },
+
+        goNext() {
+            if(this.stage == 1){
+                this.stage = 2
+            } else {
+                this.createVoting()
+            }
+        },
 
         createVoting(){
             // TODO: confirmar todos os campos obrigatorios
