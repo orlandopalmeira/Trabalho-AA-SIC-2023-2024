@@ -64,11 +64,7 @@ public class UserController {
         if (userInDB != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_FIELD, "User with email \"" + user.getEmail() + "\" already exists!"));
         }
-        User userToSave = new User();
-        userToSave.setName(user.getName());
-        userToSave.setEmail(user.getEmail());
-        userToSave.setBirthdate(user.getBirthdate());
-        userToSave.setPassword(user.getPassword());
+        User userToSave = user.toEntity();
         UsersWithNoRelationsDTO response = new UsersWithNoRelationsDTO(userService.saveUser(userToSave));
         return ResponseEntity.ok(response);
     }
