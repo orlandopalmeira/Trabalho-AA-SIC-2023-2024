@@ -97,7 +97,7 @@ export default {
                 return response.data
             } catch (error) {
                 let response = error.response
-                this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
+                //this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
                 console.log(error);
                 return []
             }

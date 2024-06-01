@@ -104,8 +104,12 @@
                                                     v-model="options[index]['option']"
                                                     prepend-icon="mdi-form-textbox"
                                                 ></v-text-field>
-                                                [TODO: add imagem]
-                                                [TODO: remove]
+                                                <v-btn icon @click="triggerFileInput(index)" style="margin-left: 10px;">
+                                                    <v-icon>mdi-image</v-icon>
+                                                </v-btn>
+                                                <v-btn icon @click="removeOption(index)" style="margin-left: 10px; background-color: #FF3333; color: white">
+                                                    <v-icon>mdi-delete</v-icon>
+                                                </v-btn>
                                             </v-row>
                                         </div>
 
