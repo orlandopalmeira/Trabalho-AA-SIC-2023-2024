@@ -6,7 +6,7 @@
 			:message="modal.message"
 			@close-modal="modal.opened=false"/>
         <v-container>
-            <v-card flat>
+            <v-card flat style="padding: 10px;" >
                 <v-row>
                     <v-col>
                         <div class="flex">
