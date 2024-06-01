@@ -22,19 +22,39 @@ public class StatsRepository {
     }
 
     public Optional<CountVotesOfVoting> getCountVotesOfVoting(Long votingId) {
-        String query = "select vs.id, coalesce(count(v.voting_id),0) as `numvotes` from votings vs left join votes v on vs.id = v.voting_id where vs.id = ?1 group by v.voting_id";
+        String query = "select v.voting_id as `id`, count(v.voting_id) as `num_votes` from votes v where v.voting_id = ?1;";
         var result = entityManager.createNativeQuery(query)
                                   .setParameter(1, votingId)
                                   .getResultList();
         if (!result.isEmpty()) {
             Object[] row = (Object[]) result.get(0);
-            return Optional.of(new CountVotesOfVoting((Long) row[0], (Long) row[1]));
+            if(row[0] != null && row[1] != null){
+                return Optional.of(new CountVotesOfVoting((Long) row[0], (Long) row[1]));
+            } else {
+                return Optional.empty();
+            }
         }
         return Optional.empty();
     }
 
     public Optional<CountVotesOfVoting> getCountVotesOfVoting(String votingId) {
         return getCountVotesOfVoting(Long.parseLong(votingId));
+    }
+
+    public Optional<List<CountVotesOfVoting>> getCountVotesOfVotings(List<Long> votingsIds) {
+        String query = "select v.voting_id as `id`, count(v.voting_id) as `num_votes` from votes v where v.voting_id in ?1 group by v.voting_id";   
+        var result = entityManager.createNativeQuery(query)
+                                  .setParameter(1, votingsIds)
+                                  .getResultList();
+        if (!result.isEmpty()) {
+            List<CountVotesOfVoting> countVotesOfVoting = new ArrayList<>();
+            for (Object row : result) {
+                Object[] r = (Object[]) row;
+                countVotesOfVoting.add(new CountVotesOfVoting((Long) r[0], (Long) r[1]));
+            }
+            return Optional.of(countVotesOfVoting);
+        }
+        return Optional.of(List.of());
     }
 
     public Optional<List<OptionStats>> getOptionStats(Long votingId) {

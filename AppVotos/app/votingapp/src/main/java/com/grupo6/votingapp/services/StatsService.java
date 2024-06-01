@@ -1,6 +1,9 @@
 package com.grupo6.votingapp.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -31,4 +34,19 @@ public class StatsService {
         List<UsersWithNoRelationsDTO> users = statsRepository.getUsersOfVoting(votingId).orElse(null);
         return new VotingStatsDTO(countVotesOfVoting, optionStats, users);
     }
+
+    public Long getVotesCount(Long votingId) {
+        Optional<CountVotesOfVoting> count = statsRepository.getCountVotesOfVoting(votingId);
+        return count.map(CountVotesOfVoting::getNumvotes).orElse(0L);
+    }
+
+    public Map<Long,Long> getVotesCount(List<Long> votingIds) {
+        List<CountVotesOfVoting> counts = statsRepository.getCountVotesOfVotings(votingIds).orElse(List.of());
+        Map<Long, Long> result = new HashMap<>();
+        for (CountVotesOfVoting count : counts) {
+            result.put(count.getId(), count.getNumvotes());
+        }
+        return result;
+    }
+
 }

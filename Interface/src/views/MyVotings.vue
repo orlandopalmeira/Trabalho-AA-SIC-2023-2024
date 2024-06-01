@@ -111,8 +111,7 @@ export default {
                 return {
                     ...voting,
                     privatevoting: voting.privatevoting ? 'mdi-lock' : 'mdi-lock-open-variant', // Ícone de cadeado fechado ou aberto
-                    active: active,
-                    votes: 0 //TODO: Esta contagem tem de ser feita no servidor aplicacional
+                    active: active
                 }
             })
         }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
+import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.StatsService;
@@ -55,11 +56,15 @@ public class VotingController {
     @GetMapping("/user") //* Parece funcionar
     public ResponseEntity<Object> getVotingsFromUser(@CookieValue(value = "token", defaultValue = "") String token) {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
-            List<VotingWithNoRelationsDTO> response = 
-                votingService.getVotingsFromCreatorId(user_id)
+            List<Voting> votings = votingService.getVotingsFromCreatorId(user_id);
+            List<Long> votingIds = votings.stream().map(Voting::getId).toList();
+            Map<Long, Long> votesCounts = statsService.getVotesCount(votingIds);
+            List<VotingWithNoRelationsDTO> response = votings
                 .stream()
-                .map(VotingWithNoRelationsDTO::new) //* Equivalente a "voting -> new VotingWithNoRelationsDTO(voting)"
-                .toList();
+                .map(voting -> {
+                    Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
+                    return (VotingWithNoRelationsDTO) new VotingNoRelationsVotesCountDTO(voting, votesCount);
+                }).toList();
             return ResponseEntity.ok(response);
         });
     }
