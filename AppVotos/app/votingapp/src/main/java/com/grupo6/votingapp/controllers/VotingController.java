@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
+import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Voting;
@@ -83,10 +84,10 @@ public class VotingController {
     }
 
     @PostMapping //* Parece funcionar
-    public ResponseEntity<Object> createVote(@RequestBody Voting newVoting, @CookieValue(value = "token", defaultValue = "") String token) {
+    public ResponseEntity<Object> createVote(@RequestBody RegisterVotingDTO newVoting, @CookieValue(value = "token", defaultValue = "") String token) {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
             newVoting.setCreationdate(new Date());
-            Voting registeredVoting = votingService.saveVoting(newVoting, user_id);
+            Voting registeredVoting = votingService.saveVoting(newVoting.toEntity(), user_id);
             VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
             return ResponseEntity.ok(response);
         });
