@@ -2,9 +2,10 @@ package com.grupo6.votingapp.dtos.users;
 
 import java.time.LocalDate;
 
+import com.grupo6.votingapp.dtos.interfaces.DTO;
 import com.grupo6.votingapp.models.User;
 
-public class UsersWithNoRelationsDTO {
+public class UsersWithNoRelationsDTO implements DTO<User> {
     private Long id;
     private String name;
     private String email;
@@ -61,6 +62,17 @@ public class UsersWithNoRelationsDTO {
 
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
+    }
+
+    @Override
+    public User toEntity() {
+        User user = new User();
+        user.setId(this.id);
+        user.setName(this.name);
+        user.setEmail(this.email);
+        user.setPassword(this.password);
+        user.setBirthdate(this.birthdate);
+        return user;
     }
     
 }

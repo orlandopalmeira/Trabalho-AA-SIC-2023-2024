@@ -3,9 +3,10 @@ package com.grupo6.votingapp.dtos.votings;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.grupo6.votingapp.dtos.interfaces.DTO;
 import com.grupo6.votingapp.models.Voting;
 
-public class VotingWithNoRelationsDTO {
+public class VotingWithNoRelationsDTO implements DTO<Voting> {
     private Long id;
     private String title;
     private String description;
@@ -80,5 +81,18 @@ public class VotingWithNoRelationsDTO {
 
     public void setPrivatevoting(boolean privatevoting) {
         this.privatevoting = privatevoting;
+    }
+
+    @Override
+    public Voting toEntity() {
+        Voting voting = new Voting();
+        voting.setId(id);
+        voting.setTitle(title);
+        voting.setDescription(description);
+        voting.setImage(image);
+        voting.setCreationdate(creationdate);
+        voting.setEnddate(enddate);
+        voting.setPrivatevoting(privatevoting);
+        return voting;
     }
 }

@@ -6,12 +6,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.grupo6.votingapp.dtos.interfaces.DTO;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
 
-public class VotingWithNoCreatorDTO {
+public class VotingWithNoCreatorDTO implements DTO<Voting> {
     private Long id;
     private String title;
     private String description;
@@ -106,5 +107,20 @@ public class VotingWithNoCreatorDTO {
 
     public void setPrivatevoters(Set<User> privatevoters) {
         this.privatevoters = privatevoters.stream().map(UsersWithNoRelationsDTO::new).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Voting toEntity() {
+        Voting voting = new Voting();
+        voting.setId(id);
+        voting.setTitle(title);
+        voting.setDescription(description);
+        voting.setImage(image);
+        voting.setCreationdate(creationdate);
+        voting.setEnddate(enddate);
+        voting.setPrivatevoting(privatevoting);
+        voting.setQuestions(questions);
+        voting.setPrivatevoters(privatevoters.stream().map(UsersWithNoRelationsDTO::toEntity).collect(Collectors.toSet()));
+        return voting;
     }
 }
