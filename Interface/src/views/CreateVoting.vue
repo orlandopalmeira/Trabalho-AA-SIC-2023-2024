@@ -12,22 +12,24 @@
                     Criar Votação - Informações Gerais (1/2)
                 </v-card-title>
                 <v-card-text>
-                    <v-form>
+                    <v-form @submit.prevent="goNext">
                         <v-text-field
-                        id="title"
-                        prepend-icon="mdi-format-title"
-                        name="title"
-                        label="Título"
-                        type="text"
-                        v-model="title"
+                            id="title"
+                            prepend-icon="mdi-format-title"
+                            name="title"
+                            label="Título"
+                            type="text"
+                            v-model="title"
+                            :rules="[rules.required]"
                         ></v-text-field>
                         <v-textarea
-                        id="description"
-                        prepend-icon="mdi-text"
-                        name="description"
-                        label="Descrição"
-                        type="text"
-                        v-model="description"
+                            id="description"
+                            prepend-icon="mdi-text"
+                            name="description"
+                            label="Descrição"
+                            type="text"
+                            v-model="description"
+                            :rules="[rules.required]"
                         ></v-textarea>
                         <v-file-input
                             id="image"
@@ -55,7 +57,7 @@
                             <v-col cols="6" class="text-right">
                                 <v-btn
                                     color="primary"
-                                    @click="goNext"
+                                    type="submit"
                                 >
                                     Seguinte
                                 </v-btn>
@@ -73,65 +75,59 @@
                 </v-card-title>
                 <v-card-text>
                     <v-form>
-                        
-                        <v-card style="background-color: #F2F2F2;">
-
+                        <v-card style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,index) in questions">
                             <v-card-title style="padding: 10px;">
-                                <v-icon large class="mr-4">mdi-plus-circle</v-icon>
-                                Adicionar Pergunta
+                                <v-icon large class="mr-4">mdi-comment-question</v-icon>
+                                Pergunta {{ index+1 }}:
                             </v-card-title>
                             <v-card-text>
                                 <v-text-field
-                                id="title"
                                 prepend-icon="mdi-format-title"
-                                name="title"
                                 label="Pergunta"
                                 type="text"
-                                v-model="title"
+                                v-model="questions[index]['title']"
                                 ></v-text-field>
-
                                 <v-card style="background-color: #F2F2F2;">
-
                                     <v-card-title>
                                         Opções:
                                     </v-card-title>
-
                                     <v-card-text style="padding: 20px;">
-                                        <div v-for="(option, index) in options" :key="index" style="padding: 10px;">
+                                        <div v-for="(option, index2) in questions[index].options" :key="index2" style="padding: 10px;">
                                             <v-row>
                                                 <v-text-field
-                                                    :label="'Opção ' + (index + 1)"
-                                                    v-model="options[index]['option']"
+                                                    :label="'Opção ' + (index2 + 1)"
+                                                    v-model="questions[index].options[index2]['option']"
                                                     prepend-icon="mdi-form-textbox"
                                                 ></v-text-field>
-                                                <v-btn icon @click="triggerFileInput(index)" style="margin-left: 10px;">
+                                                <v-btn icon @click="addImg()" style="margin-left: 10px;">
                                                     <v-icon>mdi-image</v-icon>
                                                 </v-btn>
-                                                <v-btn icon @click="removeOption(index)" style="margin-left: 10px; background-color: #FF3333; color: white">
+                                                <v-btn icon color="error" @click="removeOption(index,index2)" style="margin-left: 10px;">
                                                     <v-icon>mdi-delete</v-icon>
                                                 </v-btn>
                                             </v-row>
                                         </div>
-
-                                    <v-btn color="primary" @click="addOption" style="margin-top: 10px;">                                        
-                                        <v-icon left>mdi-plus</v-icon> Adicionar Opção
-                                    </v-btn>
-
-                                    <v-alert
-                                        v-if="options.length < 2"
-                                        type="info"
-                                        class="mt-4"
-                                    >
-                                        Você deve adicionar pelo menos duas opções.
-                                    </v-alert>
-
+                                        <v-btn color="secondary" @click="addOption(index)" style="margin-top: 10px;">                                        
+                                            <v-icon left>mdi-plus</v-icon> Adicionar Opção
+                                        </v-btn>
+                                        <v-alert
+                                            v-if="questions[index].options.length < 2"
+                                            type="info"
+                                            class="mt-4"
+                                        >
+                                            Você deve adicionar pelo menos duas opções.
+                                        </v-alert>
                                     </v-card-text>
-
                                 </v-card>
-
+                                <v-btn color="error" @click="removeQuestion(index)" style="margin-top: 10px;">                                        
+                                    <v-icon left>mdi-delete</v-icon> Remover Pergunta
+                                </v-btn>
                             </v-card-text>
-
                         </v-card>
+
+                        <v-btn color="primary" @click="addQuestion()" style="margin-bottom: 10px;">                                        
+                            <v-icon left>mdi-plus</v-icon> Adicionar Pergunta
+                        </v-btn>
 
                         <v-row class="mt-4">
                             <v-col cols="6">
@@ -160,7 +156,6 @@
 </template>
 
 <script>
-// TODO: garantir que hajam pelo menos duas opçoes
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
@@ -186,21 +181,28 @@ export default {
             useUserInfoStore,
             title: '',
             description: '',
+            image: null,
             privatevoting: false,
             stage: 1,
 
-            options: [{
+            rules: {
 
-                option: '',
-                img: null,
-            }, {
+                required: value => !!value || 'Campo obrigatório.',
+            },
 
-                option: '',
-                img: null,
+            questions: [{
+
+                title: '',
+                options: [{
+
+                    option: '',
+                    img: null,
+                }, {
+
+                    option: '',
+                    img: null,
+                }],
             }],
-
-
-            image: null,
         }
     },
 
@@ -216,18 +218,51 @@ export default {
 
         goNext() {
             if(this.stage == 1){
-                this.stage = 2
+                
+                if (this.title && this.description) {
+                    this.stage = 2
+                }
+
             } else {
                 this.createVoting()
             }
         },
 
-        addOption() {
-            console.log('TODO: method addOption');
+        addOption(indexQuestions) {
+            this.questions[indexQuestions].options.push({
+                option: '',
+                img: null,
+            });
+        },
+
+        removeOption(indexQuestion, indexOption) {
+            this.questions[indexQuestion].options.splice(indexOption, 1);
+        },
+        
+        addImg() {
+            console.log('TODO: method addImg')
+        },
+        
+        addQuestion() {
+            this.questions.push({
+                title: '',
+                options: [{
+                    option: '',
+                    img: null,
+                }, {
+                    option: '',
+                    img: null,
+                }],
+            });
+        },
+
+        removeQuestion(indexQuestion) {
+            this.questions.splice(indexQuestion, 1);
         },
 
         createVoting(){
             // TODO: confirmar todos os campos obrigatorios
+            // TODO: garantir que hajam pelo menos duas opçoes
             console.log('TODO: method createVoting')
         }
     }
