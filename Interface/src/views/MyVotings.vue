@@ -31,7 +31,7 @@
                 :items="processedVotings"
                 :search="search">
                     <template v-slot:item.status="{ item }">
-                        <p v-if="item.status==='active'" style="color: green">Activa</p>
+                        <p v-if="item.active" style="color: green">Activa</p>
                         <p v-else style="color: red">Terminada</p>
                     </template>
 
@@ -95,10 +95,11 @@ export default {
         async getVotings(){
             this.loadingVotings = false;
             try {
-                let user_id = useUserInfoStore().getUserId;
-                const response = await axios.get(`/votings/user/${user_id}`)
+                const response = await axios.get(`/votings/user`)
                 return response.data
             } catch (error) {
+                let response = error.response
+                this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
                 console.log(error);
                 return []
             }
@@ -106,24 +107,24 @@ export default {
     },
     computed: {
         processedVotings() {
+            let now = new Date().toISOString().replace('T', ' ').slice(0,19)
             return this.votings.map(voting => {
+                let active = voting.enddate > now
                 return {
                     ...voting,
                     privatevoting: voting.privatevoting ? 'mdi-lock' : 'mdi-lock-open-variant', // Ícone de cadeado fechado ou aberto
+                    active: active,
                     votes: 0 //TODO: Esta contagem tem de ser feita no servidor aplicacional
                 }
             })
         }
     }, 
     created() {
-
         this.getVotings()
         .then(votings => {
             this.votings = votings
             this.loadingVotings = false
         }).catch(error => {
-            let response = error.response
-            this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
             console.error(error)
         })
     }
