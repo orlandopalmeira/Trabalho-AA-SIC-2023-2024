@@ -81,7 +81,7 @@ export default {
 
 <style scoped>
 .nav {
-    background-color: #C3C0C0;
+    background-color: #9c9c9c;
     text-decoration: none;
 }
 
@@ -104,19 +104,20 @@ export default {
 }
 
 .btn-style {
-    padding: 10px;
+    padding: 10px 20px;
     margin: 5px 10px;
     cursor: pointer;
     border-radius: 10px;
 }
 
 .btn-style-active {
-    padding: 10px;
+    padding: 10px 20px; /* Add padding to the sides */
     margin: 5px 10px;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 5px;
     color: white;    
-    background-color: #a09f9f;
+    background-color: #7e82bb;
+    box-shadow: 1px 6px 9px rgba(0, 0, 0, 0.2);
 }
 
 .btn-style:hover {
@@ -124,7 +125,7 @@ export default {
 }
 
 .btn-logout-style {
-    padding: 10px;
+    padding: 15px;
     margin: 5px 10px;
     cursor: pointer;
     border-radius: 10px;

@@ -5,31 +5,28 @@
 			:title="modal.title"
 			:message="modal.message"
 			@close-modal="modal.opened=false"/>
-		<v-container fluid fill-height>
-			<v-card
-			class="mx-auto"
-			width="400"
-			>
-				<v-toolbar dark color="primary">
+		<v-container class="mt-5" fill-height>
+			<v-card class="mx-auto" width="500">
+				<v-toolbar class="mb-8" dark color="primary">
 					<v-toolbar-title>Login</v-toolbar-title>
 				</v-toolbar>
 				<v-card-text>
-					<v-form>
-						<v-text-field
-						id="email"
-						prepend-icon="mdi-account"
-						name="email"
-						label="Email"
-						type="text"
-						v-model="email"
+					<v-form @keydown.enter="login">
+						<v-text-field class="pl-2 pr-5 pb-2"
+							id="email"
+							prepend-icon="mdi-account"
+							name="email"
+							label="Email"
+							type="text"
+							v-model="email"
 						></v-text-field>
-						<v-text-field
-						id="password"
-						prepend-icon="mdi-lock"
-						name="password"
-						label="Password"
-						type="password"
-						v-model="password"
+						<v-text-field class="pl-2 pr-5"
+							id="password"
+							prepend-icon="mdi-lock"
+							name="password"
+							label="Password"
+							type="password"
+							v-model="password"
 						></v-text-field>
 					</v-form>
 				</v-card-text>

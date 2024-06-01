@@ -2,7 +2,7 @@
     <DefaultLayout>
         <v-container>
             <h1 class="mb-5">Registo de conta</h1>
-            <v-form ref="form" v-model="valid" lazy-validation>
+            <v-form @keydown.enter="submit" ref="form" v-model="valid" lazy-validation>
                 <v-text-field
                 v-model="name"
                 :rules="[rules.required]"
@@ -41,19 +41,8 @@
                 ></v-text-field>
                 
                 <div class="mt-5">
-                    <v-btn
-                    :disabled="!valid"
-                    color="success"
-                    class="mr-4"
-                    @click="submit">
-                    Submeter
-                    </v-btn>
-            
-                    <v-btn
-                        color="error"
-                        @click="reset">
-                        Reset
-                    </v-btn>
+                    <v-btn :disabled="!valid" color="success" class="mr-4" @click="submit"> Criar conta </v-btn>
+                    <v-btn color="error" @click="reset"> Reset </v-btn>
                 </div>
             </v-form>
         </v-container>
