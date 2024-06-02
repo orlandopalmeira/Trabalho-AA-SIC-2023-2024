@@ -1,357 +1,104 @@
-<template scoped>
-    <AuthenticatedLayout>
+<template>
+<AuthenticatedLayout>
         <ModalOk 
-			:isVisible="modal.opened"
-			:title="modal.title"
-			:message="modal.message"
-			@close-modal="modal.opened=false"/>
+            :isVisible="modal.opened"
+            :title="modal.title"
+            :message="modal.message"
+            @close-modal="modal.opened=false"/>
         <v-container v-if="stage == 1"> 
-            <v-card flat>
-                <v-card-title style="padding: 15px;">
-                    <v-icon large class="mr-4">mdi-plus-circle</v-icon>
-                    Criar Votação - Informações Gerais (1/2)
-                </v-card-title>
-                <v-card-text>
-                    <v-form @submit.prevent="goNext">
-                        <v-text-field
-                            id="title"
-                            prepend-icon="mdi-format-title"
-                            name="title"
-                            label="Título"
-                            type="text"
-                            v-model="title"
-                            :rules="[rules.required]"
-                        ></v-text-field>
-                        <v-textarea
-                            id="description"
-                            prepend-icon="mdi-text"
-                            name="description"
-                            label="Descrição"
-                            type="text"
-                            v-model="description"
-                            :rules="[rules.required]"
-                        ></v-textarea>
-                        <v-date-input
-                            v-model="endDate"
-                            label="Data de término da votação"
-                            :min="new Date().toISOString().substr(0, 10)"
-                            :rules="[rules.required]"
-                            required
-                        ></v-date-input>
-                        <v-file-input
-                            id="image"
-                            prepend-icon="mdi-image"
-                            name="image"
-                            label="Imagem (opcional)"
-                            v-model="image"
-                            accept="image/*"
-                        ></v-file-input>
-                        <v-checkbox
-                        id="privatevoting"
-                        name="privatevoting"
-                        label="Votação Privada"
-                        v-model="privatevoting"
-                        ></v-checkbox>
-                        <v-row class="mt-4">
-                            <v-col cols="6">
-                                <v-btn
-                                    color="secondary"
-                                    @click="leave"
-                                >
-                                    Voltar
-                                </v-btn>
-                            </v-col>
-                            <v-col cols="6" class="text-right">
-                                <v-btn
-                                    color="primary"
-                                    type="submit"
-                                >
-                                    Seguinte
-                                </v-btn>
-                            </v-col>
-                        </v-row>
-                    </v-form>
-                </v-card-text>
-            </v-card>
+            <CreateVotingStage1 @data="goNext" @leave="leave" :voting="this.voting"/>
         </v-container>
         <v-container v-else-if="stage == 2"> 
-            <v-card flat>
-                <v-card-title style="padding: 15px;" >
-                    <v-icon large class="mr-4">mdi-plus-circle</v-icon>
-                    Criar Votação - Adicionar Perguntas (2/2)
-                </v-card-title>
-                <v-card-text>
-                    <v-form @submit.prevent="goNext">
-                        <v-card style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,index) in questions">
-                            <v-card-title style="padding: 10px;">
-                                <v-icon large class="mr-4">mdi-comment-question</v-icon>
-                                Pergunta {{ index+1 }}:
-                            </v-card-title>
-                            <v-card-text>
-                                <v-text-field
-                                prepend-icon="mdi-format-title"
-                                label="Pergunta"
-                                type="text"
-                                v-model="questions[index]['description']"
-                                :rules="[rules.required]"
-                                ></v-text-field>
-                                <v-card style="background-color: #F2F2F2;">
-                                    <v-card-title>
-                                        Opções:
-                                    </v-card-title>
-                                    <v-card-text style="padding: 20px;">
-                                        <div v-for="(option, index2) in questions[index].options" :key="index2" style="padding: 10px;">
-                                            <v-row>
-                                                <v-text-field
-                                                    :label="'Opção ' + (index2 + 1)"
-                                                    v-model="questions[index].options[index2]['description']"
-                                                    prepend-icon="mdi-form-textbox"
-                                                    :rules="[rules.required]"
-                                                ></v-text-field>
-                                                <v-btn icon @click="addImg()" style="margin-left: 10px;">
-                                                    <v-icon>mdi-image</v-icon>
-                                                </v-btn>
-                                                <v-btn icon color="error" @click="removeOption(index,index2)" style="margin-left: 10px;">
-                                                    <v-icon>mdi-delete</v-icon>
-                                                </v-btn>
-                                            </v-row>
-                                        </div>
-                                        <v-btn color="secondary" @click="addOption(index)" style="margin-top: 10px;">                                        
-                                            <v-icon left>mdi-plus</v-icon> Adicionar Opção
-                                        </v-btn>
-                                        <v-alert
-                                            v-if="questions[index].options.length < 2"
-                                            type="info"
-                                            class="mt-4"
-                                        >
-                                            Você deve adicionar pelo menos duas opções.
-                                        </v-alert>
-                                    </v-card-text>
-                                </v-card>
-                                <v-btn color="error" @click="removeQuestion(index)" style="margin-top: 10px;">                                        
-                                    <v-icon left>mdi-delete</v-icon> Remover Pergunta
-                                </v-btn>
-                            </v-card-text>
-                        </v-card>
-
-                        <v-btn color="primary" @click="addQuestion()" style="margin-bottom: 10px;">                                        
-                            <v-icon left>mdi-plus</v-icon> Adicionar Pergunta
-                        </v-btn>
-                        <v-alert
-                            v-if="questions.length < 1"
-                            type="info"
-                            class="mt-4"
-                        >
-                            Você deve adicionar pelo menos uma pergunta.
-                        </v-alert>
-
-                        <v-row class="mt-4">
-                            <v-col cols="6">
-                                <v-btn
-                                    color="secondary"
-                                    @click="leave"
-                                >
-                                    Voltar
-                                </v-btn>
-                            </v-col>
-                            <v-col cols="6" class="text-right">
-                                <v-btn
-                                    color="primary"
-                                    type="submit"
-                                >
-                                <span v-if="stage === 1">Seguinte</span>
-                                <span v-else-if="stage === 2">Submeter</span>
-                                </v-btn>
-                            </v-col>
-                        </v-row>
-                    </v-form>
-                </v-card-text>
-            </v-card>
+            <CreateVotingStage2 @data="goNext" @leave="leave" :questions="this.voting.questions"/>
         </v-container>
-    </AuthenticatedLayout>
+</AuthenticatedLayout>
 </template>
 
 <script>
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
-import LoadingAlert from '@/components/LoadingAlert.vue'
-import { useUserInfoStore } from '@/stores/userInfoStore'
-
-import axios from 'axios';
-
+import CreateVotingStage1 from '@/components/CreateVoting/CreateVotingStage1.vue';
+import CreateVotingStage2 from '@/components/CreateVoting/CreateVotingStage2.vue';
+import axios from '@/axios'
 export default {
-
-    name: 'CreateVoting',
-
     components: {
         AuthenticatedLayout,
         ModalOk,
-        LoadingAlert
+        CreateVotingStage1,
+        CreateVotingStage2
     },
-
     data() {
         return {
-            modal: {
-				opened: false,
-				title: '',
-				message: ''
-			},
-            useUserInfoStore,
-            title: '',
-            description: '',
-            endDate: null,
-            image: null,
-            privatevoting: false,
             stage: 1,
-
-            rules: {
-
-                required: value => !!value || 'Campo obrigatório.',
-            },
-
-            questions: [{
-
+            modal: { opened: false, title: '', message: '' },
+            voting: {
+                title: '',
                 description: '',
-                options: [{
-
-                    description: '',
-                    image: null,
-                }, {
-
-                    description: '',
-                    image: null,
-                }],
-            }],
-
-            modal: {
-				opened: false,
-				title: '',
-				message: ''
-			}
+                enddate: null,
+                image: null,
+                privatevoting: false,
+                questions: []
+            }
         }
     },
-
     methods: {
-
-        leave() {
+        openModal(title, message) {
+            this.modal = { opened: true, title, message }
+        },
+        validateVoting(){
+            // garantir que haja pelo menos uma pergunta
+            if (!this.voting.questions.length) {
+                this.openModal('Erro', 'Deverá adicionar pelo menos uma pergunta.');
+                return false;
+            }
+            // garantir que haja pelo menos duas opções em cada pergunta
+            if (this.voting.questions.some(question => question.options.length < 2)) {
+                this.openModal('Erro', 'Deverá adicionar pelo menos duas opções em cada pergunta.');
+                return false;
+            }
+            return true;
+        },
+        goNext(data) {
+            if(this.stage == 1){
+                if (data.title && data.description) {
+                    this.voting = {...this.voting, ...data};
+                    this.stage = 2
+                }
+            } else {
+                this.voting = {...this.voting, ...data};
+                this.createVoting()
+            }
+        },
+        leave(data) {
             if(this.stage == 1){
                 this.$router.push('/myvotings')
             } else {
                 this.stage = 1
+                this.voting.questions = data;
             }
         },
-
-        goNext() {
-            if(this.stage == 1){
+        createVoting(){
+            if(this.validateVoting()){
+                let dataObj = {
+                    title: this.voting.title,
+                    description: this.voting.description,
+                    enddate: this.voting.enddate.toISOString().replace('T', ' ').slice(0,19),
+                    image: this.voting.image,
+                    privatevoting: this.voting.privatevoting,
+                    questions: this.voting.questions
+                }
                 
-                if (this.title && this.description) {
-                    this.stage = 2
-                }
-
-            } else {
-                this.createVoting()
+                axios.post('/votings', dataObj)
+                    .then(() => {
+                        this.openModal('Sucesso', 'Votação criada com sucesso.');
+                        //TODO: Implementar lógica de redireccionamento para a página de MyVotings ou outra que seja adequada
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.openModal('Erro', 'Ocorreu um erro ao criar a votação.');
+                    });
             }
-        },
-
-        addOption(indexQuestions) {
-            this.questions[indexQuestions].options.push({
-                description: '',
-                image: null,
-            });
-        },
-
-        removeOption(indexQuestion, indexOption) {
-            this.questions[indexQuestion].options.splice(indexOption, 1);
-        },
-        
-        addImg() {
-            console.log('TODO: method addImg')
-        },
-        
-        addQuestion() {
-            this.questions.push({
-                description: '',
-                options: [{
-                    description: '',
-                    image: null,
-                }, {
-                    description: '',
-                    image: null,
-                }],
-            });
-        },
-
-        removeQuestion(indexQuestion) {
-            this.questions.splice(indexQuestion, 1);
-        },
-
-        createVoting() {
-
-            // garantir que haja pelo menos uma pergunta
-
-            if (!this.questions.length) {
-
-                this.modal = {
-                    opened: true,
-                    title: 'Erro',
-                    message: 'Você deve adicionar pelo menos uma pergunta.'
-                }
-
-                return;
-            }
-
-            // garantir que hajam pelo menos duas opçoes em cada pergunta
-
-            if (this.questions.some(question => question.options.length < 2)) {
-
-                this.modal = {
-                    opened: true,
-                    title: 'Erro',
-                    message: 'Você deve adicionar pelo menos duas opções em cada pergunta.'
-                }
-
-                return;
-            }
-
-            const date = new Date(this.endDate);
-
-            // Extract the components of the date
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            let dataObj = {
-
-                title: this.title,
-                description: this.description,
-                enddate: `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`,
-                image: this.image,
-                privatevoting: this.privatevoting,
-                questions: this.questions
-            }
-
-            axios.post('/votings', dataObj)
-                .then(() => {
-                    this.modal = {
-                        opened: true,
-                        title: 'Sucesso',
-                        message: 'Votação criada com sucesso.'
-                    }
-                })
-                .catch((error) => {
-
-                    console.log(error);
-
-                    this.modal = {
-                        opened: true,
-                        title: 'Erro',
-                        message: 'Ocorreu um erro ao criar a votação.'
-                    }
-                });
         }
-    }
+    },
 }
 </script>
