@@ -313,11 +313,21 @@ export default {
                 return;
             }
 
+            const date = new Date(this.endDate);
+
+            // Extract the components of the date
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
             let dataObj = {
 
                 title: this.title,
                 description: this.description,
-                endDate: this.endDate,
+                enddate: `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`,
                 image: this.image,
                 privatevoting: this.privatevoting,
                 questions: this.questions
@@ -332,6 +342,9 @@ export default {
                     }
                 })
                 .catch((error) => {
+
+                    console.log(error);
+
                     this.modal = {
                         opened: true,
                         title: 'Erro',
