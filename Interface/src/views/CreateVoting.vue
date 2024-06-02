@@ -92,7 +92,7 @@
                                 prepend-icon="mdi-format-title"
                                 label="Pergunta"
                                 type="text"
-                                v-model="questions[index]['title']"
+                                v-model="questions[index]['description']"
                                 :rules="[rules.required]"
                                 ></v-text-field>
                                 <v-card style="background-color: #F2F2F2;">
@@ -104,7 +104,7 @@
                                             <v-row>
                                                 <v-text-field
                                                     :label="'Opção ' + (index2 + 1)"
-                                                    v-model="questions[index].options[index2]['option']"
+                                                    v-model="questions[index].options[index2]['description']"
                                                     prepend-icon="mdi-form-textbox"
                                                     :rules="[rules.required]"
                                                 ></v-text-field>
@@ -177,6 +177,8 @@ import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import { useUserInfoStore } from '@/stores/userInfoStore'
 
+import axios from 'axios';
+
 export default {
 
     name: 'CreateVoting',
@@ -209,15 +211,15 @@ export default {
 
             questions: [{
 
-                title: '',
+                description: '',
                 options: [{
 
-                    option: '',
-                    img: null,
+                    description: '',
+                    image: null,
                 }, {
 
-                    option: '',
-                    img: null,
+                    description: '',
+                    image: null,
                 }],
             }],
 
@@ -253,8 +255,8 @@ export default {
 
         addOption(indexQuestions) {
             this.questions[indexQuestions].options.push({
-                option: '',
-                img: null,
+                description: '',
+                image: null,
             });
         },
 
@@ -268,13 +270,13 @@ export default {
         
         addQuestion() {
             this.questions.push({
-                title: '',
+                description: '',
                 options: [{
-                    option: '',
-                    img: null,
+                    description: '',
+                    image: null,
                 }, {
-                    option: '',
-                    img: null,
+                    description: '',
+                    image: null,
                 }],
             });
         },
@@ -311,7 +313,31 @@ export default {
                 return;
             }
 
-            console.log('TODO: method createVoting')
+            let dataObj = {
+
+                title: this.title,
+                description: this.description,
+                endDate: this.endDate,
+                image: this.image,
+                privatevoting: this.privatevoting,
+                questions: this.questions
+            }
+
+            axios.post('/votings', dataObj)
+                .then(() => {
+                    this.modal = {
+                        opened: true,
+                        title: 'Sucesso',
+                        message: 'Votação criada com sucesso.'
+                    }
+                })
+                .catch((error) => {
+                    this.modal = {
+                        opened: true,
+                        title: 'Erro',
+                        message: 'Ocorreu um erro ao criar a votação.'
+                    }
+                });
         }
     }
 }
