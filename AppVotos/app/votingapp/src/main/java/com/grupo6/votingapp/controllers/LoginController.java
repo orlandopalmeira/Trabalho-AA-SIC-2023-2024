@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grupo6.votingapp.auth.AuthService;
-import com.grupo6.votingapp.auth.JwtService;
 import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 
@@ -24,38 +22,14 @@ import jakarta.transaction.Transactional;
 @RequestMapping("/auth")
 public class LoginController {
     private AuthService authService;
-    private JwtService jwtService;
 
     //* Nomes dos campos utilizados nas diversas respostas ao utilizador
     private static final String MESSAGE_FIELD = "message";
     private static final String TOKEN_FIELD = "token";
 
-    public LoginController(AuthService authService, JwtService jwtService) {
+    public LoginController(AuthService authService) {
         this.authService = authService;
-        this.jwtService = jwtService;
     }
-    //region Cookie generation
-    private Cookie generateCookie(String email, String password){
-        String token = authService.login(email, password);
-        Cookie cookie = new Cookie(TOKEN_FIELD, token);
-        cookie.setHttpOnly(true); //* cookie escondido de scripts javascript no browser do cliente (utilizador)
-        cookie.setSecure(true);
-        cookie.setDomain("localhost"); //! CUIDADO COM ISTO SE USARMOS DOCKER
-        cookie.setPath("/"); // Set the path for the cookie
-        cookie.setMaxAge(24 * 60 * 60); // Set the max age for 1 day
-        return cookie;
-    }
-
-    private Cookie deleteCookie(){
-        Cookie cookie = new Cookie(TOKEN_FIELD, ""); //* invalida o token de sessão no cliente
-        cookie.setHttpOnly(true); // Match the HttpOnly attribute
-        cookie.setSecure(true); // Match the Secure attribute
-        cookie.setDomain("localhost"); //! CUIDADO COM ISTO SE USARMOS DOCKER
-        cookie.setPath("/"); // Match the Path attribute
-        cookie.setMaxAge(0); //* maxAge=0 => apaga o cookie
-        return cookie;
-    }
-    //endregion
 
     @PostMapping("/login") //* Parece funcionar
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials, HttpServletResponse response) {
@@ -64,9 +38,9 @@ public class LoginController {
             String password = credentials.get("password");
 
             String token = authService.login(email, password);
-            response.addCookie(generateCookie(email, password));
+            response.addCookie(authService.generateCookie(email, password));
             
-            String user_id = jwtService.extractUserId(token);
+            String user_id = authService.extractUserId(token);
             return ResponseEntity.ok(Map.of(TOKEN_FIELD, token,
                                             "id", user_id,
                                             MESSAGE_FIELD, "Login successful (" + email + ")"));
@@ -81,7 +55,7 @@ public class LoginController {
 
     @GetMapping("/logout") //* Parece funcionar
     public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
-        response.addCookie(deleteCookie());
+        response.addCookie(authService.deleteCookie());
         return ResponseEntity.ok(Map.of(MESSAGE_FIELD, "Logout successful"));
     }
 }
