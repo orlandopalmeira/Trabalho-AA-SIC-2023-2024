@@ -8,7 +8,7 @@
 		<v-container class="mt-5" fill-height>
 			<v-card class="mx-auto" width="500">
 				<v-toolbar class="mb-8" dark color="primary">
-					<v-toolbar-title>Login</v-toolbar-title>
+					<v-toolbar-title class="pl-6">Login</v-toolbar-title>
 				</v-toolbar>
 				<v-card-text>
 					<v-form @keydown.enter="login">
@@ -23,6 +23,9 @@
 						<v-text-field class="pl-2 pr-5"
 							id="password"
 							prepend-icon="mdi-lock"
+							:append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                			:type="showPassword ? 'text' : 'password'"
+							@click:append="showPassword = !showPassword"
 							name="password"
 							label="Password"
 							type="password"
@@ -32,7 +35,7 @@
 				</v-card-text>
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					<v-btn @click="login" :disabled="email === '' || password === ''">Login</v-btn>
+					<v-btn :class="buttonClass" @click="login" :disabled="email === '' || password === ''">Login</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-container>
@@ -53,6 +56,7 @@ export default {
 		return {
 			email: '',
 			password: '',
+			showPassword: false,
 			modal: {
 				opened: false,
 				title: 'Falha no login',
@@ -89,6 +93,11 @@ export default {
 				message: message
 			}
 		}
+	},
+	computed: {
+		buttonClass() {
+			return this.email === '' || this.password === '' ? 'disabled-button' : 'active-button';
+		}
 	}
 };
 </script>
@@ -96,5 +105,14 @@ export default {
 <style scoped>
 .fill-height {
 	height: 100vh;
+}
+
+.active-button {
+  background-color: #1976d2;
+  color: white;
+}
+.disabled-button {
+  background-color: #000000;
+  color: #ffffff;
 }
 </style>

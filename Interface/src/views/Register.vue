@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { useUserInfoStore } from '@/stores/userInfoStore';
 import axios from '../axios';
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 export default {
@@ -73,6 +74,7 @@ export default {
                 return pattern.test(value) || 'Invalid e-mail.';
             },
         },
+        useUserInfoStore
     }),
     methods: {
         submit() {
@@ -84,10 +86,12 @@ export default {
                     password: this.password
                 };
                 axios.post('/users', user)
-                    .then(() => {
+                    .then((response) => {
                         //TODO: Meter lógica de ir para a página inicial, por exemplo.
-                        alert('Registo efectuado com sucesso!\nEfectue o login para aceder à sua conta na página seguinte.');
-                        this.$router.push('/login');
+                        // alert('Registo efectuado com sucesso!\nEfectue o login para aceder à sua conta na página seguinte.');
+                        // this.$router.push('/login');
+                        useUserInfoStore().setUserId(response.data.id);
+				        this.$router.push('/home');
                     })
                     .catch((error) => {
                         let response = error.response;
