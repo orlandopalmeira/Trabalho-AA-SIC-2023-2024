@@ -1,12 +1,12 @@
 <template>
     <div class="modal-overlay" v-if="isVisible">
         <div class="modal">
-            <h3 class="margin10"><v-icon>{{ icon }}</v-icon> {{ title }}</h3>
+            <h3 style="padding: 10px; color: white; background-color: #0056b3; "><v-icon>{{ icon }}</v-icon> {{ title }}</h3>
             <hr/>
-            <div class="margin20">
+            <div class="margin20" style="color: black;">
                 {{ message }}
             </div>
-            <div class="margin20 modal-buttons" style="margin-top: 10px;">
+            <div class="margin20 modal-buttons" style="margin-top: 10px">
                 <button class="button" type="submit" @click="handleClose">Ok</button>
             </div>
         </div>
@@ -71,7 +71,7 @@ hr{
     z-index: 999;
 }
 .modal {
-    background: white;
+    background:white;
     border-radius: 5px;
     max-width: 500px;
     width: auto;

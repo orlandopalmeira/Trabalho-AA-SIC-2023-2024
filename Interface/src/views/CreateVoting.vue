@@ -31,6 +31,13 @@
                             v-model="description"
                             :rules="[rules.required]"
                         ></v-textarea>
+                        <v-date-input
+                            v-model="endDate"
+                            label="Data de término da votação"
+                            :min="new Date().toISOString().substr(0, 10)"
+                            :rules="[rules.required]"
+                            required
+                        ></v-date-input>
                         <v-file-input
                             id="image"
                             prepend-icon="mdi-image"
@@ -74,7 +81,7 @@
                     Criar Votação - Adicionar Perguntas (2/2)
                 </v-card-title>
                 <v-card-text>
-                    <v-form>
+                    <v-form @submit.prevent="goNext">
                         <v-card style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,index) in questions">
                             <v-card-title style="padding: 10px;">
                                 <v-icon large class="mr-4">mdi-comment-question</v-icon>
@@ -86,6 +93,7 @@
                                 label="Pergunta"
                                 type="text"
                                 v-model="questions[index]['title']"
+                                :rules="[rules.required]"
                                 ></v-text-field>
                                 <v-card style="background-color: #F2F2F2;">
                                     <v-card-title>
@@ -98,6 +106,7 @@
                                                     :label="'Opção ' + (index2 + 1)"
                                                     v-model="questions[index].options[index2]['option']"
                                                     prepend-icon="mdi-form-textbox"
+                                                    :rules="[rules.required]"
                                                 ></v-text-field>
                                                 <v-btn icon @click="addImg()" style="margin-left: 10px;">
                                                     <v-icon>mdi-image</v-icon>
@@ -128,6 +137,13 @@
                         <v-btn color="primary" @click="addQuestion()" style="margin-bottom: 10px;">                                        
                             <v-icon left>mdi-plus</v-icon> Adicionar Pergunta
                         </v-btn>
+                        <v-alert
+                            v-if="questions.length < 1"
+                            type="info"
+                            class="mt-4"
+                        >
+                            Você deve adicionar pelo menos uma pergunta.
+                        </v-alert>
 
                         <v-row class="mt-4">
                             <v-col cols="6">
@@ -141,7 +157,7 @@
                             <v-col cols="6" class="text-right">
                                 <v-btn
                                     color="primary"
-                                    @click="goNext"
+                                    type="submit"
                                 >
                                 <span v-if="stage === 1">Seguinte</span>
                                 <span v-else-if="stage === 2">Submeter</span>
@@ -181,6 +197,7 @@ export default {
             useUserInfoStore,
             title: '',
             description: '',
+            endDate: null,
             image: null,
             privatevoting: false,
             stage: 1,
@@ -203,6 +220,12 @@ export default {
                     img: null,
                 }],
             }],
+
+            modal: {
+				opened: false,
+				title: '',
+				message: ''
+			}
         }
     },
 
@@ -260,9 +283,34 @@ export default {
             this.questions.splice(indexQuestion, 1);
         },
 
-        createVoting(){
-            // TODO: confirmar todos os campos obrigatorios
-            // TODO: garantir que hajam pelo menos duas opçoes
+        createVoting() {
+
+            // garantir que haja pelo menos uma pergunta
+
+            if (!this.questions.length) {
+
+                this.modal = {
+                    opened: true,
+                    title: 'Erro',
+                    message: 'Você deve adicionar pelo menos uma pergunta.'
+                }
+
+                return;
+            }
+
+            // garantir que hajam pelo menos duas opçoes em cada pergunta
+
+            if (this.questions.some(question => question.options.length < 2)) {
+
+                this.modal = {
+                    opened: true,
+                    title: 'Erro',
+                    message: 'Você deve adicionar pelo menos duas opções em cada pergunta.'
+                }
+
+                return;
+            }
+
             console.log('TODO: method createVoting')
         }
     }
