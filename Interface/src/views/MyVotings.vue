@@ -30,12 +30,12 @@
                 :headers="headers"
                 :items="processedVotings"
                 :search="search">
-                    <template v-slot:item.status="{ item }">
+                    <template v-slot:[`item.status`]="{ item }">
                         <p v-if="item.active" style="color: green">Activa</p>
                         <p v-else style="color: red">Terminada</p>
                     </template>
 
-                    <template v-slot:item.privatevoting="{ item }">
+                    <template v-slot:[`item.privatevoting`]="{ item }">
                         <v-icon>{{ item.privatevoting }}</v-icon>
                     </template>
                 </v-data-table>
@@ -107,7 +107,7 @@ export default {
         processedVotings() {
             let now = new Date().toISOString().replace('T', ' ').slice(0,19)
             return this.votings.map(voting => {
-                let active = voting.enddate > now
+                let active = voting.enddate > now || voting.enddate === null
                 return {
                     ...voting,
                     privatevoting: voting.privatevoting ? 'mdi-lock' : 'mdi-lock-open-variant', // Ícone de cadeado fechado ou aberto
