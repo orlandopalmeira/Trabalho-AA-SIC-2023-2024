@@ -15,4 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
     @Query("SELECT u.email FROM User u WHERE u.id = :id")
     Optional<String> findEmailFromUserId(String id);
+
+    @Query(value="SELECT EXISTS(SELECT 1 FROM users WHERE email = ?1)", nativeQuery = true)
+    Long emailExists(String email);
 }

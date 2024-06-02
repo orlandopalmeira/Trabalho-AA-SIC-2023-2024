@@ -60,9 +60,8 @@ public class UserController {
     @PostMapping //* Parece funcionar
     public ResponseEntity<Object> registerUser(@RequestBody RegisterUserDTO user) {
         //* Regista um utilizador (não requer autenticação)
-        User userInDB = userService.getUserByEmail(user.getEmail());
-        if (userInDB != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_FIELD, "User with email \"" + user.getEmail() + "\" already exists!"));
+        if (userService.emailExists(user.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(MESSAGE_FIELD, "User with email '" + user.getEmail() + "' already exists!"));
         }
         User userToSave = user.toEntity();
         UsersWithNoRelationsDTO response = new UsersWithNoRelationsDTO(userService.saveUser(userToSave));

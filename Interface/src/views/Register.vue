@@ -90,6 +90,12 @@ export default {
                         this.$router.push('/login');
                     })
                     .catch((error) => {
+                        let response = error.response;
+                        if (response.status === 409) {
+                            alert('Já existe uma conta com o email \'' + this.email + '\'.');
+                        } else {
+                            alert('Ocorreu um erro desconhecido ao registar a conta.');
+                        }
                         console.log(error);
                     });
             }

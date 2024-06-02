@@ -42,4 +42,8 @@ public class UserService {
         return userRepository.findEmailFromUserId(id).orElse(null);
     }
 
+    public boolean emailExists(String email){ //* Parece funcionar
+        return userRepository.emailExists(email) == 1L;
+    }
+
 }
