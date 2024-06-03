@@ -1,5 +1,10 @@
 package com.grupo6.votingapp.dtos.stats;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class OptionStats {
     //* Dados da opção (option)
     private Long id;
@@ -15,35 +20,4 @@ public class OptionStats {
         this.count = count;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public Long getCount() {
-        return count;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public void setCount(Long count) {
-        this.count = count;
-    }
 }

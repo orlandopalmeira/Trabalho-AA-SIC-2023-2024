@@ -10,7 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "options")
 public class Option {
@@ -29,42 +33,6 @@ public class Option {
 
     public Option(String description) {
         this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setId(String id) {
-        this.id = Long.parseLong(id);
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     @Override

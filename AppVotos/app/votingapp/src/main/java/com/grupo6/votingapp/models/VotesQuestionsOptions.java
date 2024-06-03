@@ -6,8 +6,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 //* Tabela que representa uma relação ternária
+@Getter
+@Setter
 @Entity
 @Table(name = "votes_questions_options")
 public class VotesQuestionsOptions {
@@ -29,39 +33,6 @@ public class VotesQuestionsOptions {
     @JoinColumn(name = "option_id")
     private Option option;
 
-    
-    // Getters and Setters
-    public VotesQuestionsOptionsId getId() {
-        return id;
-    }
-
-    public void setId(VotesQuestionsOptionsId id) {
-        this.id = id;
-    }
-
-    public Vote getVote() {
-        return vote;
-    }
-
-    public void setVote(Vote vote) {
-        this.vote = vote;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
-    public Option getOption() {
-        return option;
-    }
-
-    public void setOption(Option option) {
-        this.option = option;
-    }
 
     //tostring
     @Override

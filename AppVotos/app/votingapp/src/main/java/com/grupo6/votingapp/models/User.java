@@ -18,7 +18,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
 public class User implements Comparable<User>{
@@ -56,62 +62,6 @@ public class User implements Comparable<User>{
         return claims;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public LocalDate getBirthdate() {
-        return birthdate;
-    }
-
-    public List<Voting> getVotings() {
-        return votings;
-    }
-
-    public Set<Voting> getPrivatevotings() {
-        return privatevotings;
-    }
-
-    public void setId(String id){
-        this.id = Long.parseLong(id);
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setBirthdate(LocalDate birthDate) {
-        this.birthdate = birthDate;
-    }
-
-    public void setVotings(List<Voting> votings) {
-        this.votings = votings;
-    }
-
     //* Gestão da relação M:N com Votings
     public void addPrivateVoting(Voting voting) {
         this.privatevotings.add(voting);
@@ -127,12 +77,6 @@ public class User implements Comparable<User>{
         for(Voting voting : new HashSet<>(privatevotings)){
             removePrivateVoting(voting);
         }
-    }
-
-    public void updateFromUser(User user) {
-        this.name = user.getName() == null ? this.name : user.getName();
-        this.email = user.getEmail() == null ? this.email : user.getEmail();
-        this.password = user.getPassword() == null ? this.password : user.getPassword();
     }
 
     @Override

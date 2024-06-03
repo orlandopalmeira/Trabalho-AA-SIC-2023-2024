@@ -22,7 +22,11 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "votings")
 public class Voting implements Comparable<Voting>{
@@ -64,115 +68,11 @@ public class Voting implements Comparable<Voting>{
     @JsonManagedReference
     private List<Vote> votes;
     //endregion
-    //region Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public Date getCreationdate() {
-        return creationdate;
-    }
-
-    public Date getEnddate() {
-        return enddate;
-    }
-
-    public boolean getPrivatevoting() {
-        return privatevoting;
-    }
-
-    public boolean getShowstats() {
-        return showstats;
-    }
-
-    public boolean getShowstatsrealtime() {
-        return showstatsrealtime;
-    }
-
-    public User getCreator() {
-        return creator;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public Set<User> getPrivatevoters() {
-        return privatevoters;
-    }
-
-    public List<Vote> getVotes() {
-        return votes;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setId(String id) {
-        this.id = Long.parseLong(id);
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public void setCreationdate(Date creationdate) {
-        this.creationdate = creationdate;
-    }
-
-    public void setEnddate(Date enddate) {
-        this.enddate = enddate;
-    }
-
-    public void setPrivatevoting(boolean privatevoting) {
-        this.privatevoting = privatevoting;
-    }
-
-    public void setShowstats(boolean showstats) {
-        this.showstats = showstats;
-    }
-
-    public void setShowstatsrealtime(boolean showstatsrealtime) {
-        this.showstatsrealtime = showstatsrealtime;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
-    }
-
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
-    }
-
+    
     public void setPrivatevoters(Collection<User> privatevoters) { 
         this.privatevoters = privatevoters == null ? new HashSet<>() : new HashSet<>(privatevoters);
         if(privatevoters != null)
             privatevoters.forEach(user -> user.addPrivateVoting(this));
-    }
-
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
     }
 
     @Override

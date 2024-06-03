@@ -28,6 +28,7 @@ import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.ImageService;
 import com.grupo6.votingapp.services.StatsService;
 import com.grupo6.votingapp.services.VotingService;
+
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -102,7 +103,7 @@ public class VotingController {
     @PostMapping
     public ResponseEntity<Object> createVote(
         @RequestParam("voting") String jsonString, 
-        @RequestParam("images") List<MultipartFile> images,
+        @RequestParam(value = "images", required = false) List<MultipartFile> images,
         @CookieValue(value = "token", defaultValue = "") String token
     ) {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
@@ -111,20 +112,23 @@ public class VotingController {
                 RegisterVotingDTO newVoting = convertJsonToRegisterVotingDTO(jsonString);
                 newVoting.setCreationdate(new Date());
                 Voting voting = newVoting.toEntity();
-                uploadedImages = gcsService.uploadImages(images);
                 
-                voting.setImage(uploadedImages.getOrDefault(newVoting.getImage(), null));
-
-                for (Question question : voting.getQuestions()) {
-                    for(Option option : question.getOptions()) {
-                        option.setImage(uploadedImages.getOrDefault(option.getImage(), null));
+                if(images != null && !images.isEmpty()){
+                    uploadedImages = gcsService.uploadImages(images);
+                    
+                    voting.setImage(uploadedImages.getOrDefault(newVoting.getImage(), null));
+    
+                    for (Question question : voting.getQuestions()) {
+                        for(Option option : question.getOptions()) {
+                            option.setImage(uploadedImages.getOrDefault(option.getImage(), null));
+                        }
                     }
                 }
 
                 Voting registeredVoting = votingService.saveVoting(voting, user_id);
                 VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
                 return ResponseEntity.ok(response);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 for(String uploadedImageName : uploadedImages.values()) {
                     gcsService.deleteFile(uploadedImageName);

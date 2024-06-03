@@ -6,6 +6,9 @@ import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Vote;
 import com.grupo6.votingapp.models.Voting;
 
+import lombok.Getter;
+
+@Getter
 public class VoteWithNoRelationsDTO {
     private Long id;
     private UsersWithNoRelationsDTO voter;
@@ -16,25 +19,13 @@ public class VoteWithNoRelationsDTO {
         this.voter = new UsersWithNoRelationsDTO(vote.getVoter());
         this.voting = new VotingWithNoRelationsDTO(vote.getVoting());
     }
-
-    public Long getId() {
-        return id;
-    }
-
+    
     public void setId(Long id) {
         this.id = id;
     }
 
-    public UsersWithNoRelationsDTO getVoter() {
-        return voter;
-    }
-
     public void setVoter(User voter) {
         this.voter = new UsersWithNoRelationsDTO(voter);
-    }
-
-    public VotingWithNoRelationsDTO getVoting() {
-        return voting;
     }
 
     public void setVoting(Voting voting) {

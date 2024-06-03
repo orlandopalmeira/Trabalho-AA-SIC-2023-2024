@@ -1,8 +1,6 @@
 package com.grupo6.votingapp.models;
 
-import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -14,7 +12,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "votes")
 public class Vote {
@@ -38,34 +40,6 @@ public class Vote {
         this.voter = voter;
         this.voting = voting;
         this.votesQuestionsOptions = votesQuestionsOptions;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public User getVoter() {
-        return voter;
-    }
-
-    public void setVotesQuestionsOptions(Collection<VotesQuestionsOptions> votesQuestionsOptions) {
-        this.votesQuestionsOptions = votesQuestionsOptions.stream().collect(Collectors.toSet());
-    }
-
-    public Set<VotesQuestionsOptions> getVotesQuestionsOptions() {
-        return votesQuestionsOptions;
-    }
-
-    public void setVoter(User voter) {
-        this.voter = voter;
-    }
-
-    public Voting getVoting() {
-        return voting;
-    }
-
-    public void setVoting(Voting voting) {
-        this.voting = voting;
     }
 
     @Override

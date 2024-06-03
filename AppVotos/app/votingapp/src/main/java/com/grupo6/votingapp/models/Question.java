@@ -15,7 +15,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "questions")
 public class Question {
@@ -38,42 +42,6 @@ public class Question {
 
     public Question(String description) {
         this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Voting getVoting() {
-        return voting;
-    }
-
-    public List<Option> getOptions() {
-        return options;
-    }
-
-    public void setId(String id) {
-        this.id = Long.parseLong(id);
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setVoting(Voting voting) {
-        this.voting = voting;
-    }
-
-    public void setOptions(List<Option> options) {
-        this.options = options;
     }
 
     @Override

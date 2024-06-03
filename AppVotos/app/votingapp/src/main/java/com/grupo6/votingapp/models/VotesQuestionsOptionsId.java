@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Embeddable
 public class VotesQuestionsOptionsId implements Serializable {
     private Long voteid;
@@ -20,44 +24,6 @@ public class VotesQuestionsOptionsId implements Serializable {
         this.voteid = voteid;
         this.questionid = questionid;
         this.optionid = optionid;
-    }
-
-    // Getters
-    public Long getVoteid() {
-        return voteid;
-    }
-
-    public Long getQuestionid() {
-        return questionid;
-    }
-
-    public Long getOptionid() {
-        return optionid;
-    }
-
-    // Setters
-    public void setVoteid(Long voteId) {
-        this.voteid = voteId;
-    }
-
-    public void setQuestionid(Long questionId) {
-        this.questionid = questionId;
-    }
-
-    public void setOptionid(Long optionId) {
-        this.optionid = optionId;
-    }
-
-    public void setVoteid(String voteId) {
-        this.voteid = Long.parseLong(voteId);
-    }
-
-    public void setQuestionid(String questionId) {
-        this.questionid = Long.parseLong(questionId);
-    }
-
-    public void setOptionid(String optionId) {
-        this.optionid = Long.parseLong(optionId);
     }
 
     // Equals method

@@ -1,10 +1,14 @@
 package com.grupo6.votingapp.dtos.options;
 
-import com.grupo6.votingapp.dtos.interfaces.DTOOneParent;
 import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
 
-public class RegisterOptionsDTO implements DTOOneParent<Option, Question> {
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class RegisterOptionsDTO {
     private String description;
     private String image;
 
@@ -22,22 +26,6 @@ public class RegisterOptionsDTO implements DTOOneParent<Option, Question> {
         option.setImage(image);
         option.setQuestion(parent);
         return option;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
     
 }
