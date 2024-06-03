@@ -49,7 +49,6 @@ public class AuthService {
         return login(user);
     }
 
-    //! WIP
     /**
      * Regista um user, verificando se o email já existe. Se já existir, lança UnauthorizedException com uma mensagem descritiva do erro.
      * @param user
@@ -67,7 +66,6 @@ public class AuthService {
 
     }
 
-    //! WIP
     public User register(String name, String email, LocalDate birthDate, String password) throws UnauthorizedException {
         if(name == null) throw new UnauthorizedException("Name is null");
         if(email == null) throw new UnauthorizedException("Email is null");

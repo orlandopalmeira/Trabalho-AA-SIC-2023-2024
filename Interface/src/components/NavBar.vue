@@ -48,12 +48,11 @@ export default {
     methods: {
         async logout() {
             try {
-                //! WIP
+                // Alternativas para tentar remover o token, que servem como logout
                 const response = await axios.get('/auth/logout');
                 // Cookies.remove('token');
                 // Cookies.remove('token', { path: '/' })
                 // document.cookie = "token" +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                //! WIP
                 
                 this.$router.push('/login');
                 this.useUserInfoStore().logout();
