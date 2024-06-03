@@ -1,156 +1,153 @@
 <template>
-<AuthenticatedLayout>
-        <ModalOk 
-            :isVisible="modal.opened"
-            :title="modal.title"
-            :message="modal.message"
-            @close-modal="modal.opened=false"/>
-        <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
-        <v-card flat v-else style="max-width: 1000px; margin: 20px auto;">
-            <v-card-title style="padding: 15px; text-align: center;">
-                <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
-            </v-card-title>
-            <v-card-text>
-                <v-card style="background-color: lightgray;">
-                    <v-card-title style="padding: 15px; margin-bottom: 10px">
-                        <h4 style="font-weight: 600;">Pergunta {{ currentQuestionNumber }}: {{ voting.questions[currentQuestionNumber-1].description }}</h4>
-                    </v-card-title>
-                    <v-card-text style="background-color: white; margin: 10px;">
-                        <v-row>
-                            <v-col cols="12">
-                                <div 
-                                    v-for="(option, index) in voting.questions[currentQuestionNumber-1].options" 
-                                    :key="index" 
-                                    style="margin-right: 20px; margin-bottom: 20px; display: flex;">
-                                    <v-radio
-                                        v-model="option.selected"
-                                        :label="option.description"
-                                        :value="option.id"
-                                        @click="toggleOption(option)"
-                                    ></v-radio>
-                                    <img v-if="option.image != null"
-					    alt="Option background" 
-					    :src="'http://localhost:8080/images/' + option.image"
-					/>
-                                </div>
-                            </v-col>
-                        </v-row>
-                    </v-card-text>
-                </v-card>
-                <v-row class="mt-4">
-                    <v-col cols="6">
-                        <v-btn v-if="currentQuestionNumber > 1"
-                            color="secondary"
-                            @click="goPrevious"
-                        >
-                            Questão anterior
-                        </v-btn>
-                        <v-btn v-else
-                            color="secondary"
-                            @click="leave"
-                        >
-                            Sair
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="6" class="text-right">
-                        <v-btn v-if="currentQuestionNumber < voting.questions.length"
-                            color="primary"
-                            @click="goNext"
-                        >
-                            Questão seguinte
-                        </v-btn>
-                        <v-btn v-else
-                            color="primary"
-                            @click="submitAnswers"
-                        >
-                            Submeter respostas
-                        </v-btn>
-                    </v-col>
-                </v-row>
-            </v-card-text>
-        </v-card>
-</AuthenticatedLayout>
-</template>
-
-<script>
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
-import ModalOk from '@/components/Modais/ModalOk.vue'
-import LoadingAlert from '@/components/LoadingAlert.vue'
-
-import axios from '@/axios'
-
-export default {
-    name: 'Voting',
-
-    components: {
-        AuthenticatedLayout,
-        ModalOk,
-        LoadingAlert
-    },
-
-    data() {
-        return {
-            loadingVoting: true,
-            voting: null,
-            modal: {
-				opened: false,
-				title: '',
-				message: ''
-			},
-            currentQuestionNumber: 1,
-
-            answers: {},
-
-            defaultImage: './kitten.png'
-        }
-    },
-
-    methods: {
-
-        async getVoting() {
-            try {
-                let response = await axios.get(`/votings/${this.$route.params.id}`)
-                return response.data
-            } catch (error) {
-                let response = error.response
-                console.error(error)
-                this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
-                return null
+    <AuthenticatedLayout>
+            <ModalOk 
+                :isVisible="modal.opened"
+                :title="modal.title"
+                :message="modal.message"
+                @close-modal="modal.opened=false"/>
+            <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
+            <v-card flat v-else>
+                <v-card-title style="padding: 15px; text-align: center;">
+                    <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
+                </v-card-title>
+                <v-card-text>
+                    <QuestionCard :key="currentQuestionIndex"
+                        :questionIndex="currentQuestionIndex"
+                        :question="voting.questions[currentQuestionIndex]"
+                        @option-changed="optionChanged"/>
+                    <v-row class="mt-4">
+                        <v-col cols="6">
+                            <v-btn v-if="currentQuestionIndex > 0"
+                                color="secondary"
+                                @click="goPrevious">
+                                Questão anterior
+                            </v-btn>
+                            <v-btn v-else
+                                color="secondary"
+                                @click="leave">
+                                Sair
+                            </v-btn>
+                        </v-col>
+                        <v-col cols="6" class="text-right">
+                            <v-btn v-if="currentQuestionIndex < voting.questions.length-1"
+                                color="primary"
+                                @click="goNext"
+                            >
+                                Questão seguinte
+                            </v-btn>
+                            <v-btn v-else
+                                color="primary"
+                                @click="submitVote"
+                            >
+                                Submeter respostas
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+    </AuthenticatedLayout>
+    </template>
+    
+    <script>
+    import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
+    import ModalOk from '@/components/Modais/ModalOk.vue'
+    import LoadingAlert from '@/components/LoadingAlert.vue'
+    import QuestionCard from '@/components/Voting/QuestionCard.vue'
+    
+    import axios from '@/axios'
+    
+    export default {
+        name: 'Voting',
+    
+        components: {
+            AuthenticatedLayout,
+            ModalOk,
+            LoadingAlert,
+            QuestionCard
+        },
+    
+        data() {
+            return {
+                loadingVoting: true,
+                voting: null,
+                modal: {
+                    opened: false,
+                    title: '',
+                    message: ''
+                },
+                currentQuestionIndex: 0,
             }
         },
-
-        toggleOption(option) {
-            option.selected = !option.selected;
+    
+        methods: { 
+            validateVote(){
+                let vote = {
+                    votingid: this.voting.id,
+                    options: {}
+                };
+                this.voting.questions.forEach(question => {
+                    vote.options[`${question.id}`] = [`${question.selectedOption}`]
+                });
+                // Check if all questions have an option selected
+                const indexes = this.voting.questions.map((question,index) => {
+                    if(!question.selectedOption) return index+1
+                    else return -1
+                }).filter(index => index !== -1)
+    
+                if(indexes.length === 0) {
+                    return vote
+                } else {
+                    this.modal.title = 'Perguntas por responder'
+                    if (indexes.length === 1) {
+                        this.modal.message = `A pergunta ${indexes[0]} não foi respondida.`
+                    } else{
+                        this.modal.message = `As perguntas ${indexes.join(', ')} não foram respondidas.`
+                    }
+                    this.modal.opened = true
+                    this.currentQuestionIndex = indexes.reduce((a,b) => a < b ? a : b)-1 // Go to the first unanswered question
+                    return null
+                }
+            },
+            optionChanged(questionIndex, optionId){
+                this.voting.questions[questionIndex].selectedOption = optionId
+            },
+            goNext(){
+                this.currentQuestionIndex++
+            },
+            goPrevious(){
+                this.currentQuestionIndex--
+            },
+            leave() {
+                this.$router.push('/home')
+            },
+            submitVote() {
+                const vote = this.validateVote()
+                console.log(vote)
+                if (vote) {
+                    axios.post('/votes', vote)
+                    .then(() => {
+                        this.modal.title = 'Voto submetido'
+                        this.modal.message = 'O seu voto foi submetido com sucesso.'
+                        this.modal.opened = true
+                        this.$router.push('/home')
+                    }).catch(error => {
+                        console.error(error)
+                        this.modal.title = 'Erro ao submeter voto'
+                        this.modal.message = 'Ocorreu um erro ao submeter o seu voto. Por favor tente novamente.'
+                        this.modal.opened = true
+                    })
+                }
+            },
         },
-
-        goNext() {
-            this.currentQuestionNumber++
-        },
-
-        goPrevious() {
-            this.currentQuestionNumber--
-        },
-
-        leave() {
-            this.$router.push('/')
-        },
-
-        submitAnswers() {
-            alert('TODO: submit answers to server and redirect to home page')
-        },
-    },
-
-    created() {
-        this.getVoting()
-        .then(voting => {
-            this.voting = voting
-            this.loadingVoting = false
-        }).catch(error => {
-            console.error(error)
-        })
-
-        this.answers['votingid'] = this.$route.params.id
-        this.answers['options'] = {}
+    
+        created() {
+            axios.get(`/votings/${this.$route.params.id}`)
+            .then(response => {
+                this.voting = response.data
+                this.loadingVoting = false
+            }).catch(error => {
+                console.error(error)
+            })
+        }
     }
-}
-</script>
+    </script>
