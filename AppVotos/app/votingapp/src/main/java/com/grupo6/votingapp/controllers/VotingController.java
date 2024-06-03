@@ -1,7 +1,6 @@
 package com.grupo6.votingapp.controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
