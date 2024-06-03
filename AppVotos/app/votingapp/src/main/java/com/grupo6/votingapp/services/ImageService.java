@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GcsService {
+public class ImageService {
 
     private Storage storage;
     private static final String BUCKET_NAME = "images-aa-sic";
 
-    public GcsService() throws IOException {
+    public ImageService() throws IOException {
         this.storage = getStorage();
     }
 

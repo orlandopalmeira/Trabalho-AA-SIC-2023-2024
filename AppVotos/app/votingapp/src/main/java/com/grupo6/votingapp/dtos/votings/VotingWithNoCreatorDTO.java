@@ -22,6 +22,8 @@ public class VotingWithNoCreatorDTO implements DTO<Voting> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC") //* Para evitar erros de parsing
     private Date enddate;
     private boolean privatevoting;
+    private boolean showstats;
+    private boolean showstatsrealtime;
     private List<Question> questions;
     private Set<UsersWithNoRelationsDTO> privatevoters;
 
@@ -33,6 +35,8 @@ public class VotingWithNoCreatorDTO implements DTO<Voting> {
         this.creationdate = voting.getCreationdate();
         this.enddate = voting.getEnddate();
         this.privatevoting = voting.getPrivatevoting();
+        this.showstats = voting.getShowstats();
+        this.showstatsrealtime = voting.getShowstatsrealtime();
         this.questions = voting.getQuestions();
         this.privatevoters = voting.getPrivatevoters().stream().map(UsersWithNoRelationsDTO::new).collect(Collectors.toSet());
     }
@@ -93,6 +97,22 @@ public class VotingWithNoCreatorDTO implements DTO<Voting> {
         this.privatevoting = privatevoting;
     }
 
+    public boolean getShowstats() {
+        return showstats;
+    }
+
+    public void setShowstats(boolean showstats) {
+        this.showstats = showstats;
+    }
+
+    public boolean getShowstatsrealtime() {
+        return showstatsrealtime;
+    }
+
+    public void setShowstatsrealtime(boolean showstatsrealtime) {
+        this.showstatsrealtime = showstatsrealtime;
+    }
+
     public List<Question> getQuestions() {
         return questions;
     }
@@ -119,6 +139,8 @@ public class VotingWithNoCreatorDTO implements DTO<Voting> {
         voting.setCreationdate(creationdate);
         voting.setEnddate(enddate);
         voting.setPrivatevoting(privatevoting);
+        voting.setShowstats(showstats);
+        voting.setShowstatsrealtime(showstatsrealtime);
         voting.setQuestions(questions);
         voting.setPrivatevoters(privatevoters.stream().map(UsersWithNoRelationsDTO::toEntity).collect(Collectors.toSet()));
         return voting;

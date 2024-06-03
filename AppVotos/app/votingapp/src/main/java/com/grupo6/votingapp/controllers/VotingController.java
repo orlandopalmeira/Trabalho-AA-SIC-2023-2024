@@ -25,7 +25,7 @@ import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.Voting;
-import com.grupo6.votingapp.services.GcsService;
+import com.grupo6.votingapp.services.ImageService;
 import com.grupo6.votingapp.services.StatsService;
 import com.grupo6.votingapp.services.VotingService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,13 +39,13 @@ public class VotingController {
     private VotingService votingService;
     private StatsService statsService;
     private CheckTokenMiddlewares authMiddlewares;
-    private GcsService gcsService;
+    private ImageService gcsService;
     private final ObjectMapper objectMapper;
     
     private static final String MESSAGE_FIELD = "message";
     private static final String NOT_FOUND_VOTING_WITH_USER_MESSAGE = "User with id '%s' does not have access to a voting with id '%s'!";
     
-    public VotingController(VotingService votingService, StatsService statsService, CheckTokenMiddlewares authMiddlewares, GcsService gcsService, ObjectMapper objectMapper) {
+    public VotingController(VotingService votingService, StatsService statsService, CheckTokenMiddlewares authMiddlewares, ImageService gcsService, ObjectMapper objectMapper) {
         this.votingService = votingService;
         this.statsService = statsService;
         this.authMiddlewares = authMiddlewares;

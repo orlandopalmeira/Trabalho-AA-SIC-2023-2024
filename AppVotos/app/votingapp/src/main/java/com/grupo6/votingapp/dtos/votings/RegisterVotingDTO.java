@@ -17,12 +17,14 @@ public class RegisterVotingDTO implements DTO<Voting> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private Date enddate;
     private boolean privatevoting;
+    private boolean showstats;
+    private boolean showstatsrealtime;
     private List<RegisterQuestionsDTO> questions;
 
     public RegisterVotingDTO() {
     }
 
-    public RegisterVotingDTO(String title, String description, String image, Date creationdate, Date enddate, boolean privatevoting, List<RegisterQuestionsDTO> questions) {
+    public RegisterVotingDTO(String title, String description, String image, Date creationdate, Date enddate, boolean privatevoting, List<RegisterQuestionsDTO> questions, boolean showstats, boolean showstatesrealtime) {
         this.title = title;
         this.description = description;
         this.image = image;
@@ -30,6 +32,8 @@ public class RegisterVotingDTO implements DTO<Voting> {
         this.enddate = enddate;
         this.privatevoting = privatevoting;
         this.questions = questions;
+        this.showstats = showstats;
+        this.showstatsrealtime = showstatesrealtime;
     }
 
     //region methods
@@ -42,6 +46,8 @@ public class RegisterVotingDTO implements DTO<Voting> {
         voting.setEnddate(enddate);
         voting.setPrivatevoting(privatevoting);
         voting.setQuestions(questions.stream().map(q -> q.toEntity(voting)).toList());
+        voting.setShowstats(showstats);
+        voting.setShowstatsrealtime(showstatsrealtime);
         return voting;
     }
 
@@ -91,6 +97,22 @@ public class RegisterVotingDTO implements DTO<Voting> {
 
     public void setPrivatevoting(boolean privatevoting) {
         this.privatevoting = privatevoting;
+    }
+
+    public boolean getShowstats() {
+        return showstats;
+    }
+
+    public void setShowstats(boolean showstats) {
+        this.showstats = showstats;
+    }
+
+    public boolean getShowstatsrealtime() {
+        return showstatsrealtime;
+    }
+
+    public void setShowstatsrealtime(boolean showstatesrealtime) {
+        this.showstatsrealtime = showstatesrealtime;
     }
 
     public List<RegisterQuestionsDTO> getQuestions() {

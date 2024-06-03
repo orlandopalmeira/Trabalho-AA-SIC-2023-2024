@@ -18,16 +18,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.exceptions.imageStorage.ImageNotFoundException;
 import com.grupo6.votingapp.exceptions.imageStorage.ImageServerException;
-import com.grupo6.votingapp.services.GcsService;
+import com.grupo6.votingapp.services.ImageService;
 
 @RestController
 @RequestMapping("/images")
 public class ImageController {
 
-    private GcsService storageService;
+    private ImageService storageService;
     
 
-    public ImageController(GcsService storageService) {
+    public ImageController(ImageService storageService) {
         this.storageService = storageService;
     }
 

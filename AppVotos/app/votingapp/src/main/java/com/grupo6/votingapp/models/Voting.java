@@ -38,6 +38,8 @@ public class Voting implements Comparable<Voting>{
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC") //* Para evitar erros de parsing
     private Date enddate;
     private boolean privatevoting;
+    private boolean showstats;
+    private boolean showstatsrealtime;
 
     //* Relações
     //region Relações
@@ -91,6 +93,14 @@ public class Voting implements Comparable<Voting>{
         return privatevoting;
     }
 
+    public boolean getShowstats() {
+        return showstats;
+    }
+
+    public boolean getShowstatsrealtime() {
+        return showstatsrealtime;
+    }
+
     public User getCreator() {
         return creator;
     }
@@ -137,6 +147,14 @@ public class Voting implements Comparable<Voting>{
 
     public void setPrivatevoting(boolean privatevoting) {
         this.privatevoting = privatevoting;
+    }
+
+    public void setShowstats(boolean showstats) {
+        this.showstats = showstats;
+    }
+
+    public void setShowstatsrealtime(boolean showstatsrealtime) {
+        this.showstatsrealtime = showstatsrealtime;
     }
 
     public void setCreator(User creator) {

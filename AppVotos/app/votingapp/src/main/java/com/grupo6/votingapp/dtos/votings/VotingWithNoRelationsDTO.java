@@ -16,6 +16,8 @@ public class VotingWithNoRelationsDTO implements DTO<Voting> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC") //* Para evitar erros de parsing
     private Date enddate;
     private boolean privatevoting;
+    private boolean showstats;
+    private boolean showstatsrealtime;
 
     public VotingWithNoRelationsDTO(Voting voting){
         this.id = voting.getId();
@@ -25,6 +27,8 @@ public class VotingWithNoRelationsDTO implements DTO<Voting> {
         this.creationdate = voting.getCreationdate();
         this.enddate = voting.getEnddate();
         this.privatevoting = voting.getPrivatevoting();
+        this.showstats = voting.getShowstats();
+        this.showstatsrealtime = voting.getShowstatsrealtime();
     }
 
     public Long getId() {
@@ -83,6 +87,22 @@ public class VotingWithNoRelationsDTO implements DTO<Voting> {
         this.privatevoting = privatevoting;
     }
 
+    public boolean getShowstats() {
+        return showstats;
+    }
+
+    public void setShowstats(boolean showstats) {
+        this.showstats = showstats;
+    }
+
+    public boolean getShowstatsrealtime() {
+        return showstatsrealtime;
+    }
+
+    public void setShowstatsrealtime(boolean showstatesrealtime) {
+        this.showstatsrealtime = showstatesrealtime;
+    }
+
     @Override
     public Voting toEntity() {
         Voting voting = new Voting();
@@ -93,6 +113,8 @@ public class VotingWithNoRelationsDTO implements DTO<Voting> {
         voting.setCreationdate(creationdate);
         voting.setEnddate(enddate);
         voting.setPrivatevoting(privatevoting);
+        voting.setShowstats(showstats);
+        voting.setShowstatsrealtime(showstatsrealtime);
         return voting;
     }
 }
