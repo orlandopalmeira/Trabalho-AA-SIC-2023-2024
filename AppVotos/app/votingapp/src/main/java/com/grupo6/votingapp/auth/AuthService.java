@@ -2,6 +2,7 @@ package com.grupo6.votingapp.auth;
 
 import java.time.LocalDate;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
@@ -12,12 +13,13 @@ import jakarta.servlet.http.Cookie;
 @Service
 public class AuthService {
     private JwtService jwtService;
-    // private PasswordUtil passwordUtil;
     private UserService userService;
+
+    @Value("${app.domain}")
+    private String appDomain;
 
     public AuthService(JwtService jwtService, UserService userService) {
         this.jwtService = jwtService;
-        // this.passwordUtil = passwordUtil;
         this.userService = userService;
     }
 
@@ -135,7 +137,7 @@ public class AuthService {
         Cookie cookie = new Cookie("token", token);
         cookie.setHttpOnly(true); //* cookie escondido de scripts javascript no browser do cliente (utilizador)
         cookie.setSecure(true);
-        cookie.setDomain("localhost"); //! CUIDADO COM ISTO SE USARMOS DOCKER
+        cookie.setDomain(appDomain); //! CUIDADO COM ISTO SE USARMOS DOCKER
         cookie.setPath("/"); // Set the path for the cookie
         cookie.setMaxAge(24 * 60 * 60); // Set the max age for 1 day
         return cookie;
@@ -145,7 +147,7 @@ public class AuthService {
         Cookie cookie = new Cookie("token", ""); //* invalida o token de sessão no cliente
         cookie.setHttpOnly(true); // Match the HttpOnly attribute
         cookie.setSecure(true); // Match the Secure attribute
-        cookie.setDomain("localhost"); //! CUIDADO COM ISTO SE USARMOS DOCKER
+        cookie.setDomain(appDomain); //! CUIDADO COM ISTO SE USARMOS DOCKER
         cookie.setPath("/"); // Match the Path attribute
         cookie.setMaxAge(0); //* maxAge=0 => apaga o cookie
         return cookie;
