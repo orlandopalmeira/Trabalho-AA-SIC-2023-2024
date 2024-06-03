@@ -95,17 +95,7 @@ public class VotingController {
             return ResponseEntity.ok(response);
         });
     }
-/*
-    @PostMapping //* Parece funcionar
-    public ResponseEntity<Object> createVote(@RequestBody RegisterVotingDTO newVoting, @CookieValue(value = "token", defaultValue = "") String token) {
-        return authMiddlewares.checkTokenSimple(token, user_id -> {
-            newVoting.setCreationdate(new Date());
-            Voting registeredVoting = votingService.saveVoting(newVoting.toEntity(), user_id);
-            VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
-            return ResponseEntity.ok(response);
-        });
-    }
-*/
+
     private RegisterVotingDTO convertJsonToRegisterVotingDTO(String jsonString) throws IOException {
         return objectMapper.readValue(jsonString, RegisterVotingDTO.class);
     }
