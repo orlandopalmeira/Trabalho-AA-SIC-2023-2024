@@ -20,6 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class GcsService {
@@ -90,6 +93,24 @@ public class GcsService {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public Map<String, String> uploadImages(List<MultipartFile> images) throws IOException {
+        Map<String, String> uploadedImages = new HashMap<>();
+        try {
+            for(MultipartFile image : images) {
+                String imageName = image.getOriginalFilename();
+                String uploadedImageName = uploadImage(image);
+                uploadedImages.put(imageName, uploadedImageName);
+            }
+            
+            return uploadedImages;
+        } catch (IOException e) {
+            for(String uploadedImageName : uploadedImages.values()) {
+                deleteFile(uploadedImageName);
+            }
+            throw e;
         }
     }
 

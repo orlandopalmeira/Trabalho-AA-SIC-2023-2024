@@ -99,24 +99,6 @@ public class VotingController {
         return objectMapper.readValue(jsonString, RegisterVotingDTO.class);
     }
 
-    private Map<String, String> uploadImages(List<MultipartFile> images) throws IOException {
-        Map<String, String> uploadedImages = new HashMap<>();
-        try {
-            for(MultipartFile image : images) {
-                String imageName = image.getOriginalFilename();
-                String uploadedImageName = gcsService.uploadImage(image);
-                uploadedImages.put(imageName, uploadedImageName);
-            }
-            
-            return uploadedImages;
-        } catch (IOException e) {
-            for(String uploadedImageName : uploadedImages.values()) {
-                gcsService.deleteFile(uploadedImageName);
-            }
-            throw e;
-        }
-    }
-
     @PostMapping
     public ResponseEntity<Object> createVote(
         @RequestParam("voting") String jsonString, 
@@ -129,7 +111,7 @@ public class VotingController {
                 RegisterVotingDTO newVoting = convertJsonToRegisterVotingDTO(jsonString);
                 newVoting.setCreationdate(new Date());
                 Voting voting = newVoting.toEntity();
-                uploadedImages = uploadImages(images);
+                uploadedImages = gcsService.uploadImages(images);
                 
                 voting.setImage(uploadedImages.getOrDefault(newVoting.getImage(), null));
 
