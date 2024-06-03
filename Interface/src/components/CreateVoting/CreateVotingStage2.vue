@@ -32,9 +32,11 @@
                                             prepend-icon="mdi-form-textbox"
                                             :rules="[rules.required]"
                                         ></v-text-field>
-                                        <v-btn icon @click="addImg()" style="margin-left: 10px;">
-                                            <v-icon>mdi-image</v-icon>
-                                        </v-btn>
+                                        <UploadIconButton 
+                                            class="ml-2" 
+                                            @image-uploaded="(image) => addImg(indexQuestion, indexOption, image)" 
+                                            @image-removed="() => {removeOptionImg(indexQuestion, indexOption)}"
+                                            :imageprops="getOptionImage(indexQuestion,indexOption)"/>
                                         <v-btn icon color="error" @click="removeOption(indexQuestion,indexOption)" style="margin-left: 10px;">
                                             <v-icon>mdi-delete</v-icon>
                                         </v-btn>
@@ -93,13 +95,17 @@
 </template>
 
 <script>
+import UploadIconButton from '@/components/CreateVoting/UploadIconButton.vue';
 export default {
+    components: {
+        UploadIconButton
+    },
     props: {
-        questions: {type: Array},
+        questions_props: {type: Array},
     },
     data() {
         return {
-            questions: this.questions,
+            questions: this.questions_props,
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
             },
@@ -124,8 +130,14 @@ export default {
         removeOption(indexQuestion, indexOption) {
             this.questions[indexQuestion].options.splice(indexOption, 1);
         },
-        addImg() {
-            console.log('TODO: addImg');
+        addImg(indexQuestion, indexOption, image) {
+            this.questions[indexQuestion].options[indexOption].image = image;
+        },
+        removeOptionImg(indexQuestion, indexOption) {
+            this.questions[indexQuestion].options[indexOption].image = null;
+        },
+        getOptionImage(indexQuestion, indexOption){
+            return this.questions[indexQuestion].options[indexOption].image;
         },
         goNext() {
             this.$emit('data', this.questions);

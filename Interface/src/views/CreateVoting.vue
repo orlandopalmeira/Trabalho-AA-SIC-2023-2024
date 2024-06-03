@@ -9,7 +9,7 @@
             <CreateVotingStage1 @data="goNext" @leave="leave" :voting="this.voting"/>
         </v-container>
         <v-container v-else-if="stage == 2"> 
-            <CreateVotingStage2 @data="goNext" @leave="leave" :questions="this.voting.questions"/>
+            <CreateVotingStage2 @data="goNext" @leave="leave" :questions_props="this.voting.questions"/>
         </v-container>
 </AuthenticatedLayout>
 </template>
