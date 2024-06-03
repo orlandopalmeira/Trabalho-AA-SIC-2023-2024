@@ -79,6 +79,8 @@ export default {
         },
         createVoting(){
             if(this.validateVoting()){
+                let formData = new FormData();
+                let images = this.extractImages();
                 let dataObj = {
                     title: this.voting.title,
                     description: this.voting.description,
@@ -87,17 +89,48 @@ export default {
                     privatevoting: this.voting.privatevoting,
                     questions: this.voting.questions
                 }
+                // Dados da votação
+                formData.append('voting', JSON.stringify(dataObj));
+                // Imagens
+                images.forEach(image => {
+                    formData.append('images', image);
+                });
                 
-                axios.post('/votings', dataObj)
-                    .then(() => {
-                        this.openModal('Sucesso', 'Votação criada com sucesso.');
-                        //TODO: Implementar lógica de redireccionamento para a página de MyVotings ou outra que seja adequada
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        this.openModal('Erro', 'Ocorreu um erro ao criar a votação.');
-                    });
+                axios.post('/votings', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(() => {
+                    this.openModal('Sucesso', 'Votação criada com sucesso.');
+                    this.$router.push('/myvotings');
+                    //TODO: Implementar lógica de redireccionamento para a página de MyVotings ou outra que seja adequada
+                })
+                .catch((error) => {
+                    console.error(error);
+                    this.openModal('Erro', 'Ocorreu um erro ao criar a votação.');
+                });
             }
+        },
+        extractImages(){
+            // Extrai todas as imagens da votação
+            let images = [];
+            if(this.voting.image){
+                let image_name = 'v_' + this.voting.image.name; // tratamento do nome da imagem para lidar com repetições nesta votação
+                images.push(new File([this.voting.image], image_name, {type: this.voting.image.type}));
+                this.voting.image = image_name;
+            }
+
+            this.voting.questions.forEach((question, question_index) => {
+                question.options.forEach((option, option_index) => {
+                    if(option.image){
+                        let image_name_op = 'q_' + question_index + 'o_' + option_index +  option.image.name; // tratamento do nome da imagem numa opção para lidar com repetições nesta votação
+                        images.push(new File([option.image], image_name_op, {type: option.image.type}));
+                        option.image = image_name_op;
+                    }
+                });
+            });
+
+            return images;
         }
     },
 }

@@ -1,6 +1,7 @@
 <template scoped>
     <div @click="onClick" class="card levitate pa-5">
-        <img alt="Voting background" :src="voting.image == null ? defaultImage : voting.image"/>
+        <!-- TODO: ver melhor como definir a URL para a imagem -->
+        <img alt="Voting background" :src="voting.image == null ? defaultImage : 'http://localhost:8080/images/' + voting.image"/>
         <p class="title">{{ voting.title }}</p>
     </div>
 </template>
