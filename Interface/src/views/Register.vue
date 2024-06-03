@@ -85,7 +85,7 @@ export default {
                     birthdate: this.birthdate,
                     password: this.password
                 };
-                axios.post('/users', user)
+                axios.post('/auth/register', user)
                     .then((response) => {
                         //TODO: Meter lógica de ir para a página inicial, por exemplo.
                         // alert('Registo efectuado com sucesso!\nEfectue o login para aceder à sua conta na página seguinte.');

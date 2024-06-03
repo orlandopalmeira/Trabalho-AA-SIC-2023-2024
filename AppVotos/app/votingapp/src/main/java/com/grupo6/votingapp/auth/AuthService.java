@@ -1,10 +1,11 @@
 package com.grupo6.votingapp.auth;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Service;
 
 import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
 import com.grupo6.votingapp.models.User;
-import com.grupo6.votingapp.services.UserService;
 
 import jakarta.servlet.http.Cookie;
 
@@ -46,6 +47,39 @@ public class AuthService {
         user.setEmail(email);
         user.setPassword(password);
         return login(user);
+    }
+
+    //! WIP
+    /**
+     * Regista um user, verificando se o email já existe. Se já existir, lança UnauthorizedException com uma mensagem descritiva do erro.
+     * @param user
+     * @return Retorna a instância de User registado
+     * @throws UnauthorizedException
+     */
+    public User register(User user) throws UnauthorizedException{
+        // Verific
+        String email = user.getEmail();
+        if (userService.emailExists(email)) {
+            throw new UnauthorizedException("User with email '\" + user.getEmail() + \"' already exists!");
+            // return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(MESSAGE_FIELD, "User with email '" + user.getEmail() + "' already exists!"));
+        }
+        return userService.saveUser(user);
+
+    }
+
+    //! WIP
+    public User register(String name, String email, LocalDate birthDate, String password) throws UnauthorizedException {
+        if(name == null) throw new UnauthorizedException("Name is null");
+        if(email == null) throw new UnauthorizedException("Email is null");
+        if(birthDate == null) throw new UnauthorizedException("BirthDate is null");
+        if(password == null) throw new UnauthorizedException("Password is null");
+
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setBirthdate(birthDate);
+        user.setPassword(password);
+        return register(user);
     }
 
     public boolean checkUserId(String token, String userId) {

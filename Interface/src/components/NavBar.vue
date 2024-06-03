@@ -30,6 +30,7 @@
 
 <script>
 import axios from '../axios';
+import Cookies from 'js-cookie'; // If using cookies
 import { useUserInfoStore } from '@/stores/userInfoStore';
 export default {
     name: 'NavBar',
@@ -47,7 +48,12 @@ export default {
     methods: {
         async logout() {
             try {
+                //! WIP
                 const response = await axios.get('/auth/logout');
+                // Cookies.remove('token');
+                // Cookies.remove('token', { path: '/' })
+                // document.cookie = "token" +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                //! WIP
                 
                 this.$router.push('/login');
                 this.useUserInfoStore().logout();
