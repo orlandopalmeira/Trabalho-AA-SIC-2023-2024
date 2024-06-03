@@ -19,6 +19,21 @@ public class CheckTokenMiddlewares {
         this.authService = authService;
     }
 
+    public ResponseEntity<Object> checkTokenSimple(String token, Function<String, ResponseEntity<Object>> callback){
+        try {
+            if(token == null || token.isEmpty() || !authService.checkTokenLight(token)){
+                Map<String, String> error = Map.of(MESSAGE_FIELD, "Invalid token: \"" + token + "\"!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+            return callback.apply(authService.getUserIdFromToken(token));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    //! Unused method
     public ResponseEntity<Object> checkTokenUserIdMatch(String token, String id, Function<String, ResponseEntity<Object>> callback){
         try {
             if(token == null || token.isEmpty() || !authService.checkTokenLight(token)){
@@ -37,6 +52,7 @@ public class CheckTokenMiddlewares {
         }
     }
 
+    //! Unused method
     public ResponseEntity<Object> checkTokenEmailMatch(String token, String email, Function<String, ResponseEntity<Object>> callback){
         try {
             if(token == null || token.isEmpty() || !authService.checkTokenLight(token)){
@@ -48,20 +64,6 @@ public class CheckTokenMiddlewares {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
             } 
             return callback.apply(email);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
-    }
-
-    public ResponseEntity<Object> checkTokenSimple(String token, Function<String, ResponseEntity<Object>> callback){
-        try {
-            if(token == null || token.isEmpty() || !authService.checkTokenLight(token)){
-                Map<String, String> error = Map.of(MESSAGE_FIELD, "Invalid token: \"" + token + "\"!");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-            }
-            return callback.apply(authService.getUserIdFromToken(token));
         } catch (Exception e) {
             e.printStackTrace();
             Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());

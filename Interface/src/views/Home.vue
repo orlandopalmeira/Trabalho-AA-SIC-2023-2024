@@ -72,10 +72,15 @@ export default {
                 this.loadingVotings = false 
                 return response.data
             } catch (error) {
-                let response = error.response
-                console.error(error)
-                this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
-                return []
+                let status = error.response.status
+                if (status === 401) {
+                    this.$router.push('/login')
+                }
+                else{
+                    console.error(error)
+                    this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
+                    return []
+                }
             }
         }
     }, 
