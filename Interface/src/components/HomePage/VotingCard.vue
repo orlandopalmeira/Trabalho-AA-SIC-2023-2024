@@ -17,9 +17,7 @@ export default {
     },
     methods: {
         onClick() {
-            //TODO: Redireccionar para a página da votação
-            //this.$router.push({ name: 'Voting', params: { id: this.voting.id } });
-            alert('Voting ' + this.voting.id + ' clicked');
+            this.$router.push({ name: 'Voting', params: { id: this.voting.id } });
         }
     }
 }

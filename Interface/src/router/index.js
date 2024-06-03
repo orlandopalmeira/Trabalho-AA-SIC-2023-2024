@@ -32,6 +32,11 @@ const router = createRouter({
       path: '/createvoting',
       name: 'createvoting',
       component: () => import('../views/CreateVoting.vue')
+    },
+    {
+      path: '/voting/:id',
+      name: 'Voting',
+      component: () => import('../views/Voting.vue')
     }
   ]
 })
