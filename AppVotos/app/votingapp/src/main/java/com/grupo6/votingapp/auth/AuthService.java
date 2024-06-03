@@ -12,12 +12,12 @@ import jakarta.servlet.http.Cookie;
 @Service
 public class AuthService {
     private JwtService jwtService;
-    private PasswordUtil passwordUtil;
+    // private PasswordUtil passwordUtil;
     private UserService userService;
 
-    public AuthService(JwtService jwtService, PasswordUtil passwordUtil, UserService userService) {
+    public AuthService(JwtService jwtService, UserService userService) {
         this.jwtService = jwtService;
-        this.passwordUtil = passwordUtil;
+        // this.passwordUtil = passwordUtil;
         this.userService = userService;
     }
 
@@ -33,7 +33,7 @@ public class AuthService {
             throw new UnauthorizedException("User not found");
         }
         //* A password do user na base de dados é a "encoded"
-        if (!passwordUtil.checkPassword(user.getPassword(), userInDB.getPassword())) {
+        if (!userService.checkPassword(user.getPassword(), userInDB.getPassword())) {
             throw new UnauthorizedException("Invalid password");
         }
         return jwtService.generateToken(userInDB);

@@ -56,4 +56,8 @@ public class UserService {
         return userRepository.emailExists(email) == 1L;
     }
 
+    public boolean checkPassword(String password, String encodedPassword){ //* Parece funcionar
+        return passwordUtil.checkPassword(password, encodedPassword);
+    }
+
 }

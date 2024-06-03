@@ -20,7 +20,9 @@ get_repo_path() {
 repo_path=$(get_repo_path)
 pom_xml="${repo_path}/AppVotos/app/votingapp/pom.xml"
 
+
 #* Compilar o projecto
+mvn clean
 mvn -f $pom_xml package &&
 
 #* Executar o projecto

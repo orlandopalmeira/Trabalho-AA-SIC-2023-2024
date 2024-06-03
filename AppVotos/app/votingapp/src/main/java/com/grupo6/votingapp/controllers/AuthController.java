@@ -22,14 +22,14 @@ import jakarta.transaction.Transactional;
 @RestController
 @Transactional
 @RequestMapping("/auth")
-public class LoginController {
+public class AuthController {
     private AuthService authService;
 
     //* Nomes dos campos utilizados nas diversas respostas ao utilizador
     private static final String TOKEN_FIELD = "token";
     private static final String MESSAGE_FIELD = "message";
 
-    public LoginController(AuthService authService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
