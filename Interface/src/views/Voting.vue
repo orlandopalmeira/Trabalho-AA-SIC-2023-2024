@@ -28,10 +28,10 @@
                                         :value="option.id"
                                         @click="toggleOption(option)"
                                     ></v-radio>
-                                    <img 
-                                        alt="Option background" 
-                                        :src="option.image == null ? defaultImage : 'http://localhost:8080/images/' + option.image"
-                                    />
+                                    <img v-if="option.image != null"
+					    alt="Option background" 
+					    :src="'http://localhost:8080/images/' + option.image"
+					/>
                                 </div>
                             </v-col>
                         </v-row>
