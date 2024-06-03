@@ -101,19 +101,17 @@ public class VotingController {
     }
 
     private Map<String, String> uploadImages(List<MultipartFile> images) throws IOException {
-        List<String> uploadedImagesNames = new ArrayList<>();
+        Map<String, String> uploadedImages = new HashMap<>();
         try {
-            Map<String, String> uploadedImages = new HashMap<>();
-    
             for(MultipartFile image : images) {
                 String imageName = image.getOriginalFilename();
                 String uploadedImageName = gcsService.uploadImage(image);
-                uploadedImagesNames.add(uploadedImageName);
                 uploadedImages.put(imageName, uploadedImageName);
             }
+            
             return uploadedImages;
         } catch (IOException e) {
-            for(String uploadedImageName : uploadedImagesNames) {
+            for(String uploadedImageName : uploadedImages.values()) {
                 gcsService.deleteFile(uploadedImageName);
             }
             throw e;
