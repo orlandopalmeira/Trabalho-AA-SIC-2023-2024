@@ -4,7 +4,8 @@
 			:isVisible="modal.opened"
 			:title="modal.title"
 			:message="modal.message"
-			@close-modal="modal.opened=false"/>
+            :buttonText="modal.buttonText"
+			@close-modal="redirectToLogin"/>
         <v-container>
             <div class="flex space-between mt-5 mb-5">
                 <SearchBar :onSearchFromParent="onSearch" class="mr-5" />
@@ -46,7 +47,8 @@ export default {
             modal: {
 				opened: false,
 				title: '',
-				message: ''
+				message: '',
+                buttonText: 'daddas'
 			}
         }
     },
@@ -59,13 +61,17 @@ export default {
             // TODO: lógica de ordenação
             alert(field)
         },
-        openModal(title,message) {
+        openModal(title, message, buttonText = 'Ok') {
 			this.modal = {
 				opened: true,
 				title: title,
-				message: message
+				message: message,
+                buttonText: buttonText
 			}
 		},
+        redirectToLogin() {
+            this.$router.push('/login')
+        },
         async getVotings() {
             try {
                 let response = await axios.get('/votings') // votações a que o user tem acesso
@@ -74,7 +80,8 @@ export default {
             } catch (error) {
                 let status = error.response.status
                 if (status === 401) {
-                    this.$router.push('/login')
+                    // this.$router.push('/login')
+                    this.openModal('Credenciais inválidas','Faça primeiro login para aceder às votações!', "Ir para login")
                 }
                 else{
                     console.error(error)

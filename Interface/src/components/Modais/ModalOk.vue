@@ -7,7 +7,7 @@
                 {{ message }}
             </div>
             <div class="margin20 modal-buttons" style="margin-top: 10px">
-                <button class="button" type="submit" @click="handleClose">Ok</button>
+                <button class="button" type="submit" @click="this.$emit('close-modal');">{{ buttonText }}</button>
             </div>
         </div>
     </div>
@@ -32,13 +32,14 @@ export default {
         message: {
             type: String,
             required: true
+        },
+        buttonText: {
+            type: String,
+            required: false,
+            default: 'Ok'
         }
     },
-    methods: {
-        handleClose() {
-            this.$emit('close-modal');
-        }
-    }
+    emits: ['close-modal']
 };
 </script>
 <style scoped>
