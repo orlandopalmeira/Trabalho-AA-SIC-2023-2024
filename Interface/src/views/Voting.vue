@@ -6,7 +6,7 @@
             :message="modal.message"
             @close-modal="modal.opened=false"/>
         <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
-        <v-card flat v-else>
+        <v-card flat v-else style="max-width: 1000px; margin: 20px auto;">
             <v-card-title style="padding: 15px; text-align: center;">
                 <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
             </v-card-title>
@@ -18,20 +18,21 @@
                     <v-card-text style="background-color: white; margin: 10px;">
                         <v-row>
                             <v-col cols="12">
-                                <v-radio-group v-model="voting.questions[currentQuestionNumber-1].selectedOption" row>
-                                    <div style="display: flex;" v-for="(option, index) in voting.questions[currentQuestionNumber-1].options">
-                                        <v-radio   
-                                            :key="index"
-                                            :label="option.description"
-                                            :value="option.id"
-                                        ></v-radio>
-                                        <img 
-                                            alt="Option background" 
-                                            :src="option.image == null ? 
-                                                defaultImage : 
-                                                'http://localhost:8080/images/' + option.image"/>
-                                    </div>
-                                </v-radio-group>
+                                <div 
+                                    v-for="(option, index) in voting.questions[currentQuestionNumber-1].options" 
+                                    :key="index" 
+                                    style="margin-right: 20px; margin-bottom: 20px; display: flex;">
+                                    <v-radio
+                                        v-model="option.selected"
+                                        :label="option.description"
+                                        :value="option.id"
+                                        @click="toggleOption(option)"
+                                    ></v-radio>
+                                    <img 
+                                        alt="Option background" 
+                                        :src="option.image == null ? defaultImage : 'http://localhost:8080/images/' + option.image"
+                                    />
+                                </div>
                             </v-col>
                         </v-row>
                     </v-card-text>
@@ -60,7 +61,7 @@
                         </v-btn>
                         <v-btn v-else
                             color="primary"
-                            type="submit"
+                            @click="submitAnswers"
                         >
                             Submeter respostas
                         </v-btn>
@@ -98,6 +99,8 @@ export default {
 			},
             currentQuestionNumber: 1,
 
+            answers: {},
+
             defaultImage: './kitten.png'
         }
     },
@@ -114,7 +117,27 @@ export default {
                 this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
                 return null
             }
-        }
+        },
+
+        toggleOption(option) {
+            option.selected = !option.selected;
+        },
+
+        goNext() {
+            this.currentQuestionNumber++
+        },
+
+        goPrevious() {
+            this.currentQuestionNumber--
+        },
+
+        leave() {
+            this.$router.push('/')
+        },
+
+        submitAnswers() {
+            alert('TODO: submit answers to server and redirect to home page')
+        },
     },
 
     created() {
@@ -125,6 +148,9 @@ export default {
         }).catch(error => {
             console.error(error)
         })
+
+        this.answers['votingid'] = this.$route.params.id
+        this.answers['options'] = {}
     }
 }
 </script>
