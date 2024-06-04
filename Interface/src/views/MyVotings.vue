@@ -30,7 +30,8 @@
                 :headers="headers"
                 :items="processedVotings"
                 :search="search"
-                @click:row="rowClicked">
+                @click:row="rowClicked"
+                hover=true>
                     <template v-slot:[`item.status`]="{ item }">
                         <p v-if="item.active" style="color: green">Activa</p>
                         <p v-else style="color: red">Terminada</p>
