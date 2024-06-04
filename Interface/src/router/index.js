@@ -37,6 +37,11 @@ const router = createRouter({
       path: '/voting/:id',
       name: 'Voting',
       component: () => import('../views/Voting.vue')
+    },
+    {
+      path: '/history',
+      name: 'History',
+      component: () => import('../views/History.vue')
     }
   ]
 })
