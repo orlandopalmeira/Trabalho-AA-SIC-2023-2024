@@ -6,10 +6,10 @@
             :message="modal.message"
             @close-modal="modal.opened=false"/>
         <v-container v-if="stage == 1"> 
-            <CreateVotingStage1 @data="goNext" @leave="leave" :voting="this.voting"/>
+            <CreateVotingStage1 @data="goNext" @leave="leave"/>
         </v-container>
         <v-container v-else-if="stage == 2"> 
-            <CreateVotingStage2 @data="goNext" @leave="leave" :questions_props="this.voting.questions"/>
+            <CreateVotingStage2 @data="goNext" @leave="leave" />
         </v-container>
 </AuthenticatedLayout>
 </template>
@@ -19,7 +19,9 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import CreateVotingStage1 from '@/components/CreateVoting/CreateVotingStage1.vue';
 import CreateVotingStage2 from '@/components/CreateVoting/CreateVotingStage2.vue';
+import { useVotingInfoStore } from '@/stores/votingInfoStore';
 import axios from '@/axios'
+
 export default {
     components: {
         AuthenticatedLayout,
@@ -31,14 +33,15 @@ export default {
         return {
             stage: 1,
             modal: { opened: false, title: '', message: '' },
-            voting: {
-                title: '',
-                description: '',
-                enddate: null,
-                image: null,
-                privatevoting: false,
-                questions: []
-            }
+            // voting: {
+            //     title: '',
+            //     description: '',
+            //     enddate: null,
+            //     image: null,
+            //     privatevoting: false,
+            //     questions: []
+            // },
+            useVotingInfoStore
         }
     },
     methods: {
@@ -47,34 +50,33 @@ export default {
         },
         validateVoting(){
             // garantir que haja pelo menos uma pergunta
-            if (!this.voting.questions.length) {
+            if (!this.useVotingInfoStore().getQuestions.length) {
                 this.openModal('Erro', 'Deverá adicionar pelo menos uma pergunta.');
                 return false;
             }
             // garantir que haja pelo menos duas opções em cada pergunta
-            if (this.voting.questions.some(question => question.options.length < 2)) {
+            if (this.useVotingInfoStore().questions.some(question => question.options.length < 2)) {
                 this.openModal('Erro', 'Deverá adicionar pelo menos duas opções em cada pergunta.');
                 return false;
             }
             return true;
         },
-        goNext(data) {
+        goNext() {
             if(this.stage == 1){
-                if (data.title && data.description) {
-                    this.voting = {...this.voting, ...data};
+                if (useVotingInfoStore().getTitle && useVotingInfoStore().getDescription) {
                     this.stage = 2
                 }
+                // else - Não faz nada, e a interface indica os campos em falta.
             } else {
-                this.voting = {...this.voting, ...data};
+                // console.log(this.votingInfoStore.questions)
                 this.createVoting()
             }
         },
-        leave(data) {
+        leave() {
             if(this.stage == 1){
                 this.$router.push('/myvotings')
             } else {
                 this.stage = 1
-                this.voting.questions = data;
             }
         },
         createVoting(){
@@ -82,12 +84,12 @@ export default {
                 let formData = new FormData();
                 let images = this.extractImages();
                 let dataObj = {
-                    title: this.voting.title,
-                    description: this.voting.description,
-                    enddate: this.voting.enddate.toISOString().replace('T', ' ').slice(0,19),
-                    image: this.voting.image,
-                    privatevoting: this.voting.privatevoting,
-                    questions: this.voting.questions
+                    title: this.useVotingInfoStore().title,
+                    description: this.useVotingInfoStore().description,
+                    enddate: this.useVotingInfoStore().enddate.toISOString().replace('T', ' ').slice(0,19),
+                    image: this.useVotingInfoStore().image,
+                    privatevoting: this.useVotingInfoStore().privatevoting,
+                    questions: this.useVotingInfoStore().questions
                 }
                 // Dados da votação
                 formData.append('voting', JSON.stringify(dataObj));
@@ -102,6 +104,7 @@ export default {
                     }
                 }).then(() => {
                     this.openModal('Sucesso', 'Votação criada com sucesso.');
+                    useVotingInfoStore().reset(); // Para que os dados saiam e não fiquem na próxima votação
                     this.$router.push('/myvotings');
                     //TODO: Implementar lógica de redireccionamento para a página de MyVotings ou outra que seja adequada
                 })
@@ -114,13 +117,13 @@ export default {
         extractImages(){
             // Extrai todas as imagens da votação
             let images = [];
-            if(this.voting.image){
-                let image_name = 'v_' + this.voting.image.name; // tratamento do nome da imagem para lidar com repetições nesta votação
-                images.push(new File([this.voting.image], image_name, {type: this.voting.image.type}));
-                this.voting.image = image_name;
+            if(this.useVotingInfoStore().image){
+                let image_name = 'v_' + this.useVotingInfoStore().image.name; // tratamento do nome da imagem para lidar com repetições nesta votação
+                images.push(new File([this.useVotingInfoStore().image], image_name, {type: this.useVotingInfoStore().image.type}));
+                this.useVotingInfoStore().image = image_name;
             }
 
-            this.voting.questions.forEach((question, question_index) => {
+            this.useVotingInfoStore().questions.forEach((question, question_index) => {
                 question.options.forEach((option, option_index) => {
                     if(option.image){
                         let image_name_op = 'q_' + question_index + 'o_' + option_index +  option.image.name; // tratamento do nome da imagem numa opção para lidar com repetições nesta votação

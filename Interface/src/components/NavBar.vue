@@ -2,7 +2,7 @@
     <nav>
         <!--Para ecrã de PC-->
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
-            <h2 class="ml-5">VotaçãoApp</h2>
+            <h2 class="ml-5">{{ title }}</h2>
             <ul class="flex">
                 <li v-for="(route,title) in routes" 
                     :class="buttonClass(route)" 
@@ -42,7 +42,8 @@ export default {
         }
     },
     props: {
-        logout_button: {type: Boolean,required: true},
+        title: {type: String, required: false, default: 'VotaçãoApp'},
+        logout_button: {type: Boolean, required: true},
         routes: {type: Object, required: true}
     },
     methods: {
