@@ -22,9 +22,9 @@
                     <p class="text-h6" style="font-weight: bold;">Número de votos</p>
                     <p style="font-size: 20pt;">{{ stats.numvotes }}</p>
                 </v-col>
-                <v-col class="vcol1">
+                <v-col class="vcol1" cols="3.5">
                     <p class="text-h6" style="font-weight: bold;">Mais votado</p>
-                    <p style="font-size: 20pt;">{{ winner.description }}</p>
+                    <p style="font-size: 20pt; word-break: break-word;">{{ winner.description }}</p>
                     <p>Com {{ winner.count }} votos</p>
                 </v-col>
                 <v-col class="vcol1">
@@ -43,7 +43,7 @@
                         </v-col>
                     </v-row>
                 </v-col>
-                <v-col class="vcol1" >
+                <v-col class="vcol1" style="height: 400px" >
                     <Bar id="my-chart-id" :data="chart.data" :options="chart.options" />
                 </v-col>
             </v-row>
@@ -90,7 +90,8 @@ export default {
                     }]
                 },
                 options: {
-                    responsive: true
+                    responsive: true,
+                    maintainAspectRatio: false,
                 }
             }
         },
@@ -144,5 +145,8 @@ export default {
 }
 .votantes:hover {
     overflow-y: auto; /* Show the scrollbar on hover */
+}
+.fill-height {
+    flex-grow: 1;
 }
 </style>
