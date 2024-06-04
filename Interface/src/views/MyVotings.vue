@@ -29,7 +29,8 @@
                 <v-data-table v-else
                 :headers="headers"
                 :items="processedVotings"
-                :search="search">
+                :search="search"
+                @click:row="rowClicked">
                     <template v-slot:[`item.status`]="{ item }">
                         <p v-if="item.active" style="color: green">Activa</p>
                         <p v-else style="color: red">Terminada</p>
@@ -101,12 +102,18 @@ export default {
                 console.log(error);
                 return []
             }
+        },
+        rowClicked(event, item) {
+            // Access the item here using item.item retorna o objeto inputed
+            // console.log(item.item.id);
+            // Aceder à pagina do item clicado.
+            this.$router.push(`/voting/${item.item.id}`)
         }
     },
     computed: {
         processedVotings() {
             let now = new Date().toISOString().replace('T', ' ').slice(0,19)
-            return this.votings.map(voting => {
+            let processedVotings = this.votings.map(voting => {
                 let active = voting.enddate > now || voting.enddate === null
                 return {
                     ...voting,
@@ -114,6 +121,7 @@ export default {
                     active: active
                 }
             })
+            return processedVotings
         }
     }, 
     created() {

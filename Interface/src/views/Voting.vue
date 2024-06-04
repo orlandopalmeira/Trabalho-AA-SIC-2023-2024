@@ -61,7 +61,7 @@
                     </v-tabs-window-item>
                     <!--Tab para estatísticas-->
                     <v-tabs-window-item value="estatisticas">
-                        <StatsTab />
+                        <StatsTab :voting-id="voting.id" />
                     </v-tabs-window-item>
                     <!--Tab para detalhes-->
                     <v-tabs-window-item value="detalhes">

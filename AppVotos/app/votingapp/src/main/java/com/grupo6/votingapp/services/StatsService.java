@@ -1,14 +1,11 @@
 package com.grupo6.votingapp.services;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.grupo6.votingapp.dtos.stats.CountVotesOfVoting;
-import com.grupo6.votingapp.dtos.stats.OptionStats;
+import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.repositories.StatsRepository;
@@ -22,31 +19,22 @@ public class StatsService {
     }
 
     public VotingStatsDTO getVotingStats(Long votingId) {
-        CountVotesOfVoting countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId).orElse(null);
-        List<OptionStats> optionStats = statsRepository.getOptionStats(votingId).orElse(null);
+        Long countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId);
+        List<QuestionStats> questionsStats = statsRepository.getQuestionStats(votingId);
         List<UsersWithNoRelationsDTO> users = statsRepository.getUsersOfVoting(votingId).orElse(null);
-        return new VotingStatsDTO(countVotesOfVoting, optionStats, users);
+        return new VotingStatsDTO(countVotesOfVoting, questionsStats, users);
     }
 
     public VotingStatsDTO getVotingStats(String votingId) {
-        CountVotesOfVoting countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId).orElse(null);
-        List<OptionStats> optionStats = statsRepository.getOptionStats(votingId).orElse(null);
-        List<UsersWithNoRelationsDTO> users = statsRepository.getUsersOfVoting(votingId).orElse(null);
-        return new VotingStatsDTO(countVotesOfVoting, optionStats, users);
+        return getVotingStats(Long.parseLong(votingId));
     }
 
     public Long getVotesCount(Long votingId) {
-        Optional<CountVotesOfVoting> count = statsRepository.getCountVotesOfVoting(votingId);
-        return count.map(CountVotesOfVoting::getNumvotes).orElse(0L);
+        return statsRepository.getCountVotesOfVoting(votingId);
     }
 
     public Map<Long,Long> getVotesCount(List<Long> votingIds) {
-        List<CountVotesOfVoting> counts = statsRepository.getCountVotesOfVotings(votingIds).orElse(List.of());
-        Map<Long, Long> result = new HashMap<>();
-        for (CountVotesOfVoting count : counts) {
-            result.put(count.getId(), count.getNumvotes());
-        }
-        return result;
+        return statsRepository.getCountVotesOfVotings(votingIds);
     }
 
 }

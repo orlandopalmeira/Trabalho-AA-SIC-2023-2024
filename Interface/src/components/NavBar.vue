@@ -2,18 +2,34 @@
     <nav>
         <!--Para ecrã de PC-->
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
-            <h2 class="ml-5">VotaçãoApp</h2>
+            <div :class="button" @click="goTo('home')" style="cursor: pointer;">
+                <h2 class="ml-5">{{ title }}</h2>
+            </div>
             <ul class="flex">
+                <!-- <v-icon v-if="isDarkMode">mdi-weather-night</v-icon>
+                <v-icon v-else>mdi-weather-sunny</v-icon> -->
+                <li>
+                    <v-switch class="center"
+                        v-model="isDarkMode"
+                        :title="`Dark Mode: ${isDarkMode ? 'On' : 'Off'}`"
+                        @click="toggleDarkMode"
+                        prepend-icon="mdi-theme-light-dark"
+                    />
+                </li>
                 <li v-for="(route,title) in routes" 
                     :class="buttonClass(route)" 
-                    @click="goTo(route)">{{ title }}</li>
+                    @click="goTo(route)">{{ title }}
+                </li>
                 <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
             </ul>
         </div>
         <!--Para ecrã de telemóvel-->
         <div class="nav flex" v-else>
             <div class="flex2">
-                <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2>
+                <!-- <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2> -->
+                <div :class="button" @click="goTo('home')" style="cursor: pointer;">
+                    <h2 class="ml-5">{{ title }}</h2>
+                </div>
                 <button style="width: auto;" class="btn-style" @click="togglePhoneMenu">
                     <v-icon>mdi-menu</v-icon>
                 </button>
@@ -38,11 +54,16 @@ export default {
         return {
             phonePage: false,
             phoneMenu: false,
-            useUserInfoStore
+            useUserInfoStore,
+            isDarkMode: document.documentElement.classList.contains('dark-mode'),
         }
     },
+    created() {
+        this.isDarkMode = document.documentElement.classList.contains('dark-mode');
+    },
     props: {
-        logout_button: {type: Boolean,required: true},
+        title: {type: String, required: false, default: 'VotaçãoApp'},
+        logout_button: {type: Boolean, required: true},
         routes: {type: Object, required: true}
     },
     methods: {
@@ -73,6 +94,14 @@ export default {
             return {
                 'btn-style': true,
                 'btn-style-active': this.$route.path === route
+            }
+        },
+        toggleDarkMode() {
+            this.isDarkMode = !this.isDarkMode;
+            if (this.isDarkMode) {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
             }
         }
     },
@@ -108,6 +137,12 @@ export default {
     width: 100%;
 }
 
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .btn-style {
     padding: 10px 20px;
     margin: 5px 10px;
@@ -126,7 +161,8 @@ export default {
 }
 
 .btn-style:hover {
-    background-color: #E0E0E0;
+    background-color: #b4b4b4;
+    transition: 0.5s ease;
 }
 
 .btn-logout-style {
@@ -140,6 +176,7 @@ export default {
 
 .btn-logout-style:hover {
     background-color: #ff4d4d;
+    transition: 0.5s ease;
 }
 
 /* Responsive styles */

@@ -2,11 +2,11 @@
     <v-card flat>
         <v-card-title style="padding: 15px;" >
             <v-icon large class="mr-4">mdi-plus-circle</v-icon>
-            Criar Votação - Adicionar Perguntas (2/2)
+            {{ useVotingInfoStore().title }} - Adicionar Perguntas (2/2)
         </v-card-title>
         <v-card-text>
             <v-form @submit.prevent="goNext">
-                <v-card style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,indexQuestion) in questions" :key="indexQuestion">
+                <v-card style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,indexQuestion) in useVotingInfoStore().questions" :key="indexQuestion">
                     <v-card-title style="padding: 10px;">
                         <v-icon large class="mr-4">mdi-comment-question</v-icon>
                         Pergunta {{ indexQuestion+1 }}:
@@ -16,7 +16,7 @@
                         prepend-icon="mdi-format-title"
                         label="Pergunta"
                         type="text"
-                        v-model="questions[indexQuestion]['description']"
+                        v-model="useVotingInfoStore().questions[indexQuestion]['description']"
                         :rules="[rules.required]"
                         ></v-text-field>
                         <v-card style="background-color: #F2F2F2;">
@@ -24,11 +24,11 @@
                                 Opções:
                             </v-card-title>
                             <v-card-text style="padding: 20px;">
-                                <div v-for="(option, indexOption) in questions[indexQuestion].options" :key="indexOption" style="padding: 10px;">
+                                <div v-for="(option, indexOption) in useVotingInfoStore().questions[indexQuestion].options" :key="indexOption" style="padding: 10px;">
                                     <v-row>
                                         <v-text-field
                                             :label="'Opção ' + (indexOption + 1)"
-                                            v-model="questions[indexQuestion].options[indexOption]['description']"
+                                            v-model="useVotingInfoStore().questions[indexQuestion].options[indexOption]['description']"
                                             prepend-icon="mdi-form-textbox"
                                             :rules="[rules.required]"
                                         ></v-text-field>
@@ -46,7 +46,7 @@
                                     <v-icon left>mdi-plus</v-icon> Adicionar Opção
                                 </v-btn>
                                 <v-alert
-                                    v-if="questions[indexQuestion].options.length < 2"
+                                    v-if="useVotingInfoStore().questions[indexQuestion].options.length < 2"
                                     type="info"
                                     class="mt-4"
                                 >
@@ -64,7 +64,7 @@
                     <v-icon left>mdi-plus</v-icon> Adicionar Pergunta
                 </v-btn>
                 <v-alert
-                    v-if="questions.length < 1"
+                    v-if="useVotingInfoStore().questions.length < 1"
                     type="info"
                     class="mt-4"
                 >
@@ -95,25 +95,25 @@
 </template>
 
 <script>
+import { useVotingInfoStore } from '@/stores/votingInfoStore';
 import UploadIconButton from '@/components/CreateVoting/UploadIconButton.vue';
 export default {
     components: {
         UploadIconButton
     },
-    props: {
-        questions_props: {type: Array},
-    },
+    emits: ['data', 'leave'],
     data() {
         return {
-            questions: this.questions_props,
+            useVotingInfoStore,
+            // useVotingInfoStore().questions: useVotingInfoStore().questions,
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
-            },
+            }
         }
     },
     methods: {
         addQuestion() {
-            this.questions.push({
+            this.useVotingInfoStore().questions.push({
                 description: '',
                 options: [
                     { description: '', image: null },
@@ -122,22 +122,22 @@ export default {
             });
         },
         removeQuestion(index) {
-            this.questions.splice(index, 1);
+            this.useVotingInfoStore().questions.splice(index, 1);
         },
         addOption(indexQuestion) {
-            this.questions[indexQuestion].options.push({ description: '', image: null });
+            this.useVotingInfoStore().questions[indexQuestion].options.push({ description: '', image: null });
         },
         removeOption(indexQuestion, indexOption) {
-            this.questions[indexQuestion].options.splice(indexOption, 1);
+            this.useVotingInfoStore().questions[indexQuestion].options.splice(indexOption, 1);
         },
         addImg(indexQuestion, indexOption, image) {
-            this.questions[indexQuestion].options[indexOption].image = image;
+            this.useVotingInfoStore().questions[indexQuestion].options[indexOption].image = image;
         },
         removeOptionImg(indexQuestion, indexOption) {
-            this.questions[indexQuestion].options[indexOption].image = null;
+            this.useVotingInfoStore().questions[indexQuestion].options[indexOption].image = null;
         },
         getOptionImage(indexQuestion, indexOption){
-            return this.questions[indexQuestion].options[indexOption].image;
+            return this.useVotingInfoStore().questions[indexQuestion].options[indexOption].image;
         },
         validateAspectRatio(file) {
             return new Promise((resolve, reject) => {
@@ -159,26 +159,11 @@ export default {
                 reader.readAsDataURL(file);
             });
         },
-        async goNext() {
-
-            for (let i = 0; i < this.questions.length; i++) {
-                for (let j = 0; j < this.questions[i].options.length; j++) {
-
-                    if (!this.questions[i].options[j].image) continue;
-
-                    let imgValid = await this.validateAspectRatio(this.questions[i].options[j].image); 
-
-                    if (!imgValid) {
-                        this.$emit('error', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem tem de ter uma proporção entre 0.8 e 1.2 (largura / altura).');
-                        return;
-                    }
-                }
-            }
-
-            this.$emit('data', this.questions);
+        goNext() {
+            this.$emit('data');
         },
         leave() {
-            this.$emit('leave', this.questions);
+            this.$emit('leave');
         }
     }
 }
