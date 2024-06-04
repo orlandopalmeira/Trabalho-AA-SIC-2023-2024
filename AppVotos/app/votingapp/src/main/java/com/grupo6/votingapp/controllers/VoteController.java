@@ -47,7 +47,7 @@ public class VoteController {
             }
             if(voteService.userAlreadyVoted(voting.getId(), Long.parseLong(userId))){
                 Map<String, String> error = Map.of(MESSAGE_FIELD, "User already voted in this voting!");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
             }
 
             try {
