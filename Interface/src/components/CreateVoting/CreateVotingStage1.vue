@@ -86,7 +86,42 @@ export default {
         };
     },
     methods: {
-        goNext() {
+
+        validateAspectRatio(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const aspectRatio = img.width / img.height;
+                        resolve(aspectRatio >= 1 && aspectRatio <= 2);
+                    };
+                    img.onerror = () => {
+                        reject(false);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.onerror = () => {
+                    reject(false);
+                };
+                reader.readAsDataURL(file);
+            });
+        },
+
+        async goNext() {
+
+            if (this.image != null) {
+
+                const isValid = await this.validateAspectRatio(this.image);
+
+                if (!isValid) {
+
+                    this.$emit('error', 'A imagem tem de ter uma proporção entre 1 e 2 (largura / altura).');
+
+                    return;
+                }
+            }
+
             this.$emit('data', {
                 title: this.title,
                 description: this.description,

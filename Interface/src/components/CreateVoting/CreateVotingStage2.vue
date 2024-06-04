@@ -139,7 +139,42 @@ export default {
         getOptionImage(indexQuestion, indexOption){
             return this.questions[indexQuestion].options[indexOption].image;
         },
-        goNext() {
+        validateAspectRatio(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const aspectRatio = img.width / img.height;
+                        resolve(aspectRatio >= 0.8 && aspectRatio <= 1.2);
+                    };
+                    img.onerror = () => {
+                        reject(false);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.onerror = () => {
+                    reject(false);
+                };
+                reader.readAsDataURL(file);
+            });
+        },
+        async goNext() {
+
+            for (let i = 0; i < this.questions.length; i++) {
+                for (let j = 0; j < this.questions[i].options.length; j++) {
+
+                    if (!this.questions[i].options[j].image) continue;
+
+                    let imgValid = await this.validateAspectRatio(this.questions[i].options[j].image); 
+
+                    if (!imgValid) {
+                        this.$emit('error', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem tem de ter uma proporção entre 0.8 e 1.2 (largura / altura).');
+                        return;
+                    }
+                }
+            }
+
             this.$emit('data', this.questions);
         },
         leave() {

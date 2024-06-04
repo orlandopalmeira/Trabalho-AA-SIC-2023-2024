@@ -6,10 +6,10 @@
             :message="modal.message"
             @close-modal="modal.opened=false"/>
         <v-container v-if="stage == 1"> 
-            <CreateVotingStage1 @data="goNext" @leave="leave" :voting="this.voting"/>
+            <CreateVotingStage1 @data="goNext" @leave="leave" @error="error" :voting="this.voting"/>
         </v-container>
         <v-container v-else-if="stage == 2"> 
-            <CreateVotingStage2 @data="goNext" @leave="leave" :questions_props="this.voting.questions"/>
+            <CreateVotingStage2 @data="goNext" @leave="leave" @error="error" :questions_props="this.voting.questions"/>
         </v-container>
 </AuthenticatedLayout>
 </template>
@@ -76,6 +76,9 @@ export default {
                 this.stage = 1
                 this.voting.questions = data;
             }
+        },
+        error(data) {
+            this.openModal('Erro', data);
         },
         createVoting(){
             if(this.validateVoting()){
