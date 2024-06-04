@@ -61,14 +61,13 @@
                     </v-tabs-window-item>
                     <!--Tab para estatísticas-->
                     <v-tabs-window-item value="estatisticas">
-                        estatisticas
+                        <StatsTab />
                     </v-tabs-window-item>
                     <!--Tab para detalhes-->
                     <v-tabs-window-item value="detalhes">
                         detalhes
                     </v-tabs-window-item>
                   </v-tabs-window>
-                
             </v-card>
     </AuthenticatedLayout>
     </template>
@@ -78,6 +77,7 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import QuestionCard from '@/components/Voting/QuestionCard.vue'
+import StatsTab from '@/components/Voting/StatsTab.vue'
 import SimpleAlert from '@/components/SimpleAlert.vue'
 
 import { useUserInfoStore } from '@/stores/userInfoStore';
@@ -92,6 +92,7 @@ export default {
         ModalOk,
         LoadingAlert,
         QuestionCard,
+        StatsTab,
         SimpleAlert
     },
 
