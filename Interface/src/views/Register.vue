@@ -39,6 +39,20 @@
                 counter
                 required
                 ></v-text-field>
+
+                <v-text-field
+                v-model="password_confirm"
+                :append-icon="showPassword_confirm ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="showPassword_confirm ? 'text' : 'password'"
+                @click:append="showPassword_confirm = !showPassword_confirm"
+                :rules="[rules.required, rules.min]"
+                :error-messages="passwordConfirmed"
+                label="Confirme a Password"
+                hint="Insira pelo menos 8 caracteres"
+                prepend-icon="mdi-lock"
+                counter
+                required
+                ></v-text-field>
                 
                 <div class="mt-5">
                     <v-btn :disabled="!valid" color="success" class="mr-4" @click="submit"> Criar conta </v-btn>
@@ -64,18 +78,25 @@ export default {
         email: '',
         birthdate: null,
         password: '',
+        password_confirm: '',
         showPassword: false,
+        showPassword_confirm: false,
         menu: false,
         rules: {
             required: value => !!value || 'Campo obrigatório',
             min: v => v.length >= 8 || 'Pelo menos 8 caracteres',
             email: value => {
                 const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return pattern.test(value) || 'Invalid e-mail.';
+                return pattern.test(value) || 'E-mail inválido';
             },
         },
         useUserInfoStore
     }),
+    computed: {
+        passwordConfirmed() {
+            return this.password === this.password_confirm || 'Passwords não coincidem';
+        }
+    },
     methods: {
         submit() {
             if (this.$refs.form.validate()) {
