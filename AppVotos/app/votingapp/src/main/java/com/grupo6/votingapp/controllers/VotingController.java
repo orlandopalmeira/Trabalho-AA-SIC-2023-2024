@@ -40,7 +40,7 @@ public class VotingController {
     private VotingService votingService;
     private StatsService statsService;
     private CheckTokenMiddlewares authMiddlewares;
-    private ImageService gcsService;
+    private ImageService imageService;
     private final ObjectMapper objectMapper;
     
     private static final String MESSAGE_FIELD = "message";
@@ -50,7 +50,7 @@ public class VotingController {
         this.votingService = votingService;
         this.statsService = statsService;
         this.authMiddlewares = authMiddlewares;
-        this.gcsService = gcsService;
+        this.imageService = gcsService;
         this.objectMapper = objectMapper;
     }
 
@@ -114,7 +114,7 @@ public class VotingController {
                 Voting voting = newVoting.toEntity();
                 
                 if(images != null && !images.isEmpty()){
-                    uploadedImages = gcsService.uploadImages(images);
+                    uploadedImages = imageService.uploadImages(images);
                     
                     voting.setImage(uploadedImages.getOrDefault(newVoting.getImage(), null));
     
@@ -131,7 +131,7 @@ public class VotingController {
             } catch (Exception e) {
                 e.printStackTrace();
                 for(String uploadedImageName : uploadedImages.values()) {
-                    gcsService.deleteFile(uploadedImageName);
+                    imageService.deleteFile(uploadedImageName);
                 }
                 Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
