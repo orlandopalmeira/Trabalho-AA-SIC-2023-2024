@@ -4,9 +4,20 @@
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
             <h2 class="ml-5">{{ title }}</h2>
             <ul class="flex">
+                <!-- <v-icon v-if="isDarkMode">mdi-weather-night</v-icon>
+                <v-icon v-else>mdi-weather-sunny</v-icon> -->
+                <li>
+                    <v-switch class="center"
+                        v-model="isDarkMode"
+                        :title="`Dark Mode: ${isDarkMode ? 'On' : 'Off'}`"
+                        @click="toggleDarkMode"
+                        prepend-icon="mdi-theme-light-dark"
+                    />
+                </li>
                 <li v-for="(route,title) in routes" 
                     :class="buttonClass(route)" 
-                    @click="goTo(route)">{{ title }}</li>
+                    @click="goTo(route)">{{ title }}
+                </li>
                 <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
             </ul>
         </div>
@@ -38,8 +49,12 @@ export default {
         return {
             phonePage: false,
             phoneMenu: false,
-            useUserInfoStore
+            useUserInfoStore,
+            isDarkMode: document.documentElement.classList.contains('dark-mode'),
         }
+    },
+    created() {
+        this.isDarkMode = document.documentElement.classList.contains('dark-mode');
     },
     props: {
         title: {type: String, required: false, default: 'VotaçãoApp'},
@@ -75,6 +90,14 @@ export default {
                 'btn-style': true,
                 'btn-style-active': this.$route.path === route
             }
+        },
+        toggleDarkMode() {
+            this.isDarkMode = !this.isDarkMode;
+            if (this.isDarkMode) {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
         }
     },
     created(){
@@ -109,6 +132,12 @@ export default {
     width: 100%;
 }
 
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .btn-style {
     padding: 10px 20px;
     margin: 5px 10px;
@@ -127,7 +156,8 @@ export default {
 }
 
 .btn-style:hover {
-    background-color: #E0E0E0;
+    background-color: #b4b4b4;
+    transition: 0.5s ease;
 }
 
 .btn-logout-style {
@@ -141,6 +171,7 @@ export default {
 
 .btn-logout-style:hover {
     background-color: #ff4d4d;
+    transition: 0.5s ease;
 }
 
 /* Responsive styles */
