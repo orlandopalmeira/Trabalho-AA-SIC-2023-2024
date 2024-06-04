@@ -22,6 +22,8 @@ public class VotingWithNoRelationsDTO {
     private boolean privatevoting;
     private boolean showstats;
     private boolean showstatsrealtime;
+    //* Variáveis auxiliares à UI
+    private boolean useralreadyvoted;
 
     public VotingWithNoRelationsDTO(Voting voting){
         this.id = voting.getId();

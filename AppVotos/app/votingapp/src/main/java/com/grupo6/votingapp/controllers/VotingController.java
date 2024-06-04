@@ -65,7 +65,13 @@ public class VotingController {
             List<VotingWithNoRelationsDTO> response = 
                 votingService.getAccessibleVotingsToUser(user_id)
                 .stream()
-                .map(VotingWithNoRelationsDTO::new) //* Equivalente a "voting -> new VotingWithNoRelationsDTO(voting)"
+                //.map(VotingWithNoRelationsDTO::new) //* Equivalente a "voting -> new VotingWithNoRelationsDTO(voting)"
+                .map(voting -> {
+                    VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingWithNoRelationsDTO(voting);
+                    boolean userAlreadyVoted = voteService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
+                    votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
+                    return votingWithNoRelationsDTO;
+                })
                 .toList();
             return ResponseEntity.ok(response);
         });
@@ -81,7 +87,10 @@ public class VotingController {
                 .stream()
                 .map(voting -> {
                     Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
-                    return (VotingWithNoRelationsDTO) new VotingNoRelationsVotesCountDTO(voting, votesCount);
+                    VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
+                    boolean userAlreadyVoted = voteService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
+                    votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
+                    return votingWithNoRelationsDTO;
                 }).toList();
             return ResponseEntity.ok(response);
         });
