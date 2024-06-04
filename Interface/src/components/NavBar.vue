@@ -2,7 +2,9 @@
     <nav>
         <!--Para ecrã de PC-->
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
-            <h2 class="ml-5">{{ title }}</h2>
+            <div :class="button" @click="goTo('home')" style="cursor: pointer;">
+                <h2 class="ml-5">{{ title }}</h2>
+            </div>
             <ul class="flex">
                 <!-- <v-icon v-if="isDarkMode">mdi-weather-night</v-icon>
                 <v-icon v-else>mdi-weather-sunny</v-icon> -->
@@ -24,7 +26,10 @@
         <!--Para ecrã de telemóvel-->
         <div class="nav flex" v-else>
             <div class="flex2">
-                <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2>
+                <!-- <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2> -->
+                <div :class="button" @click="goTo('home')" style="cursor: pointer;">
+                    <h2 class="ml-5">{{ title }}</h2>
+                </div>
                 <button style="width: auto;" class="btn-style" @click="togglePhoneMenu">
                     <v-icon>mdi-menu</v-icon>
                 </button>
