@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
@@ -27,6 +28,7 @@ import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.ImageService;
 import com.grupo6.votingapp.services.StatsService;
+import com.grupo6.votingapp.services.VoteService;
 import com.grupo6.votingapp.services.VotingService;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class VotingController {
 
     private VotingService votingService;
+    private VoteService voteService;
     private StatsService statsService;
     private CheckTokenMiddlewares authMiddlewares;
     private ImageService imageService;
@@ -46,8 +49,9 @@ public class VotingController {
     private static final String MESSAGE_FIELD = "message";
     private static final String NOT_FOUND_VOTING_WITH_USER_MESSAGE = "User with id '%s' does not have access to a voting with id '%s'!";
     
-    public VotingController(VotingService votingService, StatsService statsService, CheckTokenMiddlewares authMiddlewares, ImageService gcsService, ObjectMapper objectMapper) {
+    public VotingController(VotingService votingService, VoteService voteService, StatsService statsService, CheckTokenMiddlewares authMiddlewares, ImageService gcsService, ObjectMapper objectMapper) {
         this.votingService = votingService;
+        this.voteService = voteService;
         this.statsService = statsService;
         this.authMiddlewares = authMiddlewares;
         this.imageService = gcsService;
@@ -92,6 +96,9 @@ public class VotingController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
             VotingWithNoCreatorDTO response = new VotingWithNoCreatorDTO(voting);
+            boolean userAlreadyVoted = voteService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
+            response.setUseralreadyvoted(userAlreadyVoted);
+            response.setCreator(new UsersWithNoRelationsDTO(voting.getCreator()));
             return ResponseEntity.ok(response);
         });
     }

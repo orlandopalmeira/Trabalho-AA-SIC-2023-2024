@@ -30,6 +30,9 @@ public class VotingWithNoCreatorDTO {
     private boolean showstatsrealtime;
     private List<Question> questions;
     private Set<UsersWithNoRelationsDTO> privatevoters;
+    //* Variáveis auxiliares à UI
+    private UsersWithNoRelationsDTO creator;
+    private boolean useralreadyvoted;
 
     public VotingWithNoCreatorDTO(Voting voting){
         this.id = voting.getId();
@@ -43,6 +46,7 @@ public class VotingWithNoCreatorDTO {
         this.showstatsrealtime = voting.isShowstatsrealtime();
         this.questions = voting.getQuestions();
         this.privatevoters = voting.getPrivatevoters().stream().map(UsersWithNoRelationsDTO::new).collect(Collectors.toSet());
+        this.creator = new UsersWithNoRelationsDTO(voting.getCreator());
     }
 
     public Voting toEntity() {
