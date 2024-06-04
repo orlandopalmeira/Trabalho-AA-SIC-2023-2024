@@ -46,8 +46,15 @@ export default {
         axios.get('/votings')
         .then(response => {
             
-            // TODO: filtrar por aqueles que ja acabaram
-            // TODO: filtrar por aqueles em que user votou
+            // filtrar por aqueles que ja acabaram
+
+            let now = new Date().toISOString().replace('T', ' ').slice(0,19);
+
+            let responseFiltered = response.data.filter(voting => voting.enddate > now || voting.enddate === null);
+
+            // filtrar por aqueles em que user votou
+
+            responseFiltered = response.data.filter(voting => voting.useralreadyvoted);
 
             this.loadingHistory = false
         })
