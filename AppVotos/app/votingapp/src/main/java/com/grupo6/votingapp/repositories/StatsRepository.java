@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.OptionStats;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 
@@ -49,26 +50,31 @@ public class StatsRepository {
         return countVotesOfVotings;
     }
 
-    public Map<Long,List<OptionStats>> getOptionStats(Long votingId) {
-        String query = "select o.id, o.question_id, o.description, o.image, coalesce(count(vqo.option_id),0) from options o left join votes_questions_options vqo on o.id = vqo.option_id where o.id in (select o.id from questions q join options o on q.id= o.question_id where q.voting_id=?1) group by o.id";
+    public List<QuestionStats> getQuestionStats(Long votingId) {
+        String query = "SELECT o.id, o.description, o.image, COALESCE(vote_count, 0) AS vote_count, o.question_id, q.description FROM options o JOIN questions q ON o.question_id = q.id LEFT JOIN (SELECT option_id, COUNT(*) AS vote_count FROM votes_questions_options GROUP BY option_id) vqo ON o.id = vqo.option_id WHERE q.voting_id = ?1;";
         var result = entityManager.createNativeQuery(query)
                                   .setParameter(1, votingId)
                                   .getResultList();
-
-        Map<Long, List<OptionStats>> optionStats = new HashMap<>(); //* formato: { questionId: [OptionStats] }
+        Map<Long, QuestionStats> questionStatsMap = new HashMap<>(); //* formato: { questionId: QuestionStats }
         if (!result.isEmpty()) {
             for (Object row : result) {
                 Object[] r = (Object[]) row;
-                Long questionId = (Long) r[1];
-                optionStats.computeIfAbsent(questionId, k -> new ArrayList<>()); // Cria uma lista para a questionId caso ela não exista
-                optionStats.get(questionId).add(new OptionStats((Long) r[0], (String) r[2], (String) r[3], (Long) r[4]));
+                Long optionId = (Long) r[0];
+                String optionDescription = (String) r[1];
+                String optionImage = (String) r[2];
+                Long voteCount = (Long) r[3];
+                Long questionId = (Long) r[4];
+                String questionDescription = (String) r[5];
+
+                questionStatsMap.computeIfAbsent(questionId, k -> new QuestionStats(questionId, questionDescription, new ArrayList<>())); // Cria uma QuestionStats para a questionId caso ela não exista
+                questionStatsMap.get(questionId).addOption(new OptionStats(optionId, optionDescription, optionImage, voteCount));
             }
         }
-        return optionStats;
+        return questionStatsMap.values().stream().toList();
     }
 
-    public Map<Long,List<OptionStats>> getOptionStats(String votingId) {
-        return getOptionStats(Long.parseLong(votingId));
+    public List<QuestionStats> getQuestionStats(String votingId){
+        return getQuestionStats(Long.parseLong(votingId));
     }
 
     public Optional<List<UsersWithNoRelationsDTO>> getUsersOfVoting(Long votingId) {

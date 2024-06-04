@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.grupo6.votingapp.dtos.stats.OptionStats;
+import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.repositories.StatsRepository;
@@ -20,9 +20,9 @@ public class StatsService {
 
     public VotingStatsDTO getVotingStats(Long votingId) {
         Long countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId);
-        Map<Long, List<OptionStats>> optionStats = statsRepository.getOptionStats(votingId);
+        List<QuestionStats> questionsStats = statsRepository.getQuestionStats(votingId);
         List<UsersWithNoRelationsDTO> users = statsRepository.getUsersOfVoting(votingId).orElse(null);
-        return new VotingStatsDTO(countVotesOfVoting, optionStats, users);
+        return new VotingStatsDTO(countVotesOfVoting, questionsStats, users);
     }
 
     public VotingStatsDTO getVotingStats(String votingId) {
