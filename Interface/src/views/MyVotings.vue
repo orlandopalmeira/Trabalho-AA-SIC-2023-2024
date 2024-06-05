@@ -30,13 +30,16 @@
                 :headers="headers"
                 :items="processedVotings"
                 :search="search"
-                @click:row="rowClicked"
-                hover=true>
+                hover>
+                <template v-slot:[`item.title`]="{ item }">
+                    <button @click="votingClicked(item.id)" class="clickable-button">
+                        {{ item.title }}
+                    </button>
+                </template>
                     <template v-slot:[`item.status`]="{ item }">
                         <p v-if="item.active" style="color: green">Activa</p>
                         <p v-else style="color: red">Terminada</p>
                     </template>
-
                     <template v-slot:[`item.privatevoting`]="{ item }">
                         <v-icon>{{ item.privatevoting }}</v-icon>
                     </template>
@@ -104,11 +107,15 @@ export default {
                 return []
             }
         },
-        rowClicked(event, item) {
+        rowClicked(event, item) { // Para usar se quisermos clicar na linha inteira da tabela e levar para a votação específica
             // Access the item here using item.item retorna o objeto inputed
-            // console.log(item.item.id);
+            console.log(item.item.id);
             // Aceder à pagina do item clicado.
             this.$router.push(`/voting/${item.item.id}`)
+        },
+        votingClicked(id){
+            console.log(id)
+            this.$router.push(`/voting/${id}`)
         }
     },
     computed: {
@@ -137,6 +144,20 @@ export default {
 }
 </script>
 <style scoped>
+.clickable-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: color 0.3s ease;
+  text-decoration: underline; /* Underline text */
+}
+
+.clickable-button:hover {
+    color: #1976d2; /* Change color on hover */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+}
+.highlighted-row {
+  border-bottom: 2px solid #868686; /* Grey line under the row */
+}
 .flex {
     display: flex;
     

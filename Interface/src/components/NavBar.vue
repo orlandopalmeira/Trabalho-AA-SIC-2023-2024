@@ -2,7 +2,7 @@
     <nav>
         <!--Para ecrã de PC-->
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
-            <div :class="button" @click="goTo('home')" style="cursor: pointer;">
+            <div class="button" @click="goTo('home')" style="cursor: pointer;">
                 <h2 class="ml-5">{{ title }}</h2>
             </div>
             <ul class="flex">
