@@ -41,10 +41,11 @@
                                         ></v-text-field>
                                         <UploadIconButton 
                                             class="ml-2" 
+                                            title="Inserir imagem"
                                             @image-uploaded="(image) => addImg(indexQuestion, indexOption, image)" 
                                             @image-removed="() => {removeOptionImg(indexQuestion, indexOption)}"
                                             :imageprops="getOptionImage(indexQuestion,indexOption)"/>
-                                        <v-btn icon color="error" @click="removeOption(indexQuestion,indexOption)" style="margin-left: 10px;">
+                                        <v-btn icon color="error" title="Eliminar opção" @click="removeOption(indexQuestion,indexOption)" style="margin-left: 10px;">
                                             <v-icon>mdi-delete</v-icon>
                                         </v-btn>
                                     </v-row>
@@ -230,7 +231,7 @@ export default {
     color: white;
 }
 .dark-mode .dark-light {
-    background-color: #3f4f6e !important;
+    background-color: #26334e !important;
     color: white;
 }
 </style>
