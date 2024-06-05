@@ -7,14 +7,26 @@
             :buttonText="modal.buttonText"
 			@close-modal="redirectToLogin"/>
         <v-container>
-            <div class="flex space-between mt-5 mb-5">
-                <SearchBar :onSearchFromParent="onSearch" class="mr-5" />
-                <OrderBy 
+            <v-row class="mt-5">
+                <v-col>
+                    <v-text-field class="mr-5" style="width: 60%" v-model="searchQuery" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
+                </v-col>
+                <v-col>
+                    <v-select style="width: 30%"
+                        label="Ordenar por"
+                        :items="selectItems"
+                        variant="outlined"
+                        density="compact"
+                        v-model="orderBy"
+                        clearable
+                        hide-details />
+                    <!-- <OrderBy style="width: 30%"
                     :fields="['Nenhum','Teste1', 'Teste2', 'Teste3']" 
-                    :onSortFromParent="onSort"/>
-            </div>
+                    :onSortFromParent="onSort"/> -->
+                </v-col>
+            </v-row>
             <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
-            <VotingsContainer v-else :votings="votings" />
+            <VotingsContainer v-else :votings="filteredSortedList" />
         </v-container>
     </AuthenticatedLayout>
 </template>
@@ -43,24 +55,24 @@ export default {
         return {
             loadingVotings: true,
             votings: [],
-            // votings: temp_votings
+            searchQuery: '',
+            orderBy: null,
             modal: {
 				opened: false,
 				title: '',
 				message: '',
                 buttonText: 'daddas'
-			}
+			},
+            selectItems: [
+                { title: 'Título', value: 'title' },
+                { title: 'Descrição', value: 'description' },
+                { title: 'Data de criação', value: 'creationdate' },
+                { title: 'Data de fim', value: 'enddate' },
+                { title: 'Número de votos', value: 'votes' }
+            ]
         }
     },
     methods: {
-        onSearch(searchString) {
-            //TODO: lógica de pesquisa
-            alert(searchString)
-        },
-        onSort(field) {
-            // TODO: lógica de ordenação
-            alert(field)
-        },
         openModal(title, message, buttonText = 'Ok') {
 			this.modal = {
 				opened: true,
@@ -101,6 +113,38 @@ export default {
             this.loadingVotings = false
             console.error(error)
         })
+    },
+    computed: {
+        filteredSortedList(){
+            let filteredList = this.votings.slice();
+            if (this.searchQuery && this.searchQuery !== '') {
+                const query = this.searchQuery.toLowerCase();
+                filteredList = filteredList.filter(voting => {
+                    return Object.values(voting).some(fieldValue => 
+                        fieldValue && fieldValue.toString().toLowerCase().includes(query)
+                    );
+                });
+            }
+            
+            if (this.orderBy) {
+                filteredList = filteredList.sort((a, b) => {
+                    if (a[this.orderBy] < b[this.orderBy]) {
+                        return -1;
+                    }
+                    if (a[this.orderBy] > b[this.orderBy]) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            }
+
+            return filteredList
+        }	
+    },
+    watch: {
+        orderBy(oldValue, newValue) {
+            console.log('orderBy: ', oldValue, newValue)
+        }
     }
 }
 </script>
