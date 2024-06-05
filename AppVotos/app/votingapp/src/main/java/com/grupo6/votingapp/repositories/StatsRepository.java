@@ -14,14 +14,12 @@ import com.grupo6.votingapp.dtos.stats.OptionStats;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 
 import jakarta.persistence.EntityManager;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Repository
 public class StatsRepository {
     private EntityManager entityManager;
-
-    public StatsRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
     public Long getCountVotesOfVoting(Long votingId) {
         String query = "select count(*) from votes where voting_id = ?1;";

@@ -27,37 +27,26 @@ import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.ImageService;
-import com.grupo6.votingapp.services.StatsService;
-import com.grupo6.votingapp.services.VoteService;
 import com.grupo6.votingapp.services.VotingService;
+
+import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
 
+@AllArgsConstructor
 @RestController
 @Transactional
 @RequestMapping("/votings")
 public class VotingController {
 
     private VotingService votingService;
-    private VoteService voteService;
-    private StatsService statsService;
     private CheckTokenMiddlewares authMiddlewares;
     private ImageService imageService;
     private final ObjectMapper objectMapper;
     
     private static final String MESSAGE_FIELD = "message";
     private static final String NOT_FOUND_VOTING_WITH_USER_MESSAGE = "User with id '%s' does not have access to a voting with id '%s'!";
-    
-    public VotingController(VotingService votingService, VoteService voteService, StatsService statsService, CheckTokenMiddlewares authMiddlewares, ImageService gcsService, ObjectMapper objectMapper) {
-        this.votingService = votingService;
-        this.voteService = voteService;
-        this.statsService = statsService;
-        this.authMiddlewares = authMiddlewares;
-        this.imageService = gcsService;
-        this.objectMapper = objectMapper;
-    }
-
 
     @GetMapping //* Parece funcionar
     public ResponseEntity<Object> getVotings(@CookieValue(value = "token", defaultValue = "") String token) {
@@ -65,10 +54,9 @@ public class VotingController {
             List<VotingWithNoRelationsDTO> response = 
                 votingService.getAccessibleVotingsToUser(user_id)
                 .stream()
-                //.map(VotingWithNoRelationsDTO::new) //* Equivalente a "voting -> new VotingWithNoRelationsDTO(voting)"
                 .map(voting -> {
                     VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingWithNoRelationsDTO(voting);
-                    boolean userAlreadyVoted = voteService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
+                    boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
                     votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
                     return votingWithNoRelationsDTO;
                 })
@@ -82,13 +70,13 @@ public class VotingController {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
             List<Voting> votings = votingService.getVotingsFromCreatorId(user_id);
             List<Long> votingIds = votings.stream().map(Voting::getId).toList();
-            Map<Long, Long> votesCounts = statsService.getVotesCount(votingIds);
+            Map<Long, Long> votesCounts = votingService.getVotesCount(votingIds);
             List<VotingWithNoRelationsDTO> response = votings
                 .stream()
                 .map(voting -> {
                     Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
                     VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
-                    boolean userAlreadyVoted = voteService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
+                    boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
                     votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
                     return votingWithNoRelationsDTO;
                 }).toList();
@@ -105,7 +93,7 @@ public class VotingController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
             VotingWithNoCreatorDTO response = new VotingWithNoCreatorDTO(voting);
-            boolean userAlreadyVoted = voteService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
+            boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
             response.setUseralreadyvoted(userAlreadyVoted);
             response.setCreator(new UsersWithNoRelationsDTO(voting.getCreator()));
             return ResponseEntity.ok(response);
@@ -163,7 +151,7 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, user_id, voting_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
-            return ResponseEntity.ok(statsService.getVotingStats(voting_id));
+            return ResponseEntity.ok(votingService.getVotingStats(voting_id));
         });
     }
     

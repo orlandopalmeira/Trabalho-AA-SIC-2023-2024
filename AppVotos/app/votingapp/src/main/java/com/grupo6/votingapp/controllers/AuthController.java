@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.grupo6.votingapp.auth.AuthService;
 import com.grupo6.votingapp.dtos.users.RegisterUserDTO;
 import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
-// import com.grupo6.votingapp.models.User;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @RestController
 @Transactional
 @RequestMapping("/auth")
@@ -28,10 +29,6 @@ public class AuthController {
     //* Nomes dos campos utilizados nas diversas respostas ao utilizador
     private static final String TOKEN_FIELD = "token";
     private static final String MESSAGE_FIELD = "message";
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
 
     /**
      * Procedimento de login

@@ -20,16 +20,14 @@ import com.grupo6.votingapp.exceptions.imageStorage.ImageNotFoundException;
 import com.grupo6.votingapp.exceptions.imageStorage.ImageServerException;
 import com.grupo6.votingapp.services.ImageService;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/images")
 public class ImageController {
 
     private ImageService storageService;
-    
-
-    public ImageController(ImageService storageService) {
-        this.storageService = storageService;
-    }
 
     @GetMapping(value = "/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable String imageName) {
