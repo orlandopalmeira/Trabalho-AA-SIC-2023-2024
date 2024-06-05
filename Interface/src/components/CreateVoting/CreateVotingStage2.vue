@@ -10,7 +10,7 @@
         <v-card-text>
             <v-form @submit.prevent="goNext">
                 <v-card class="dark-light mb-5"  style="background-color: #F2F2F2;" v-for="(question,indexQuestion) in useVotingInfoStore().questions" :key="indexQuestion">
-                    <v-card-title class="dark">
+                    <v-card-title class="dark-light">
                         <div style="display: flex; align-items: center;">
                             <v-icon large class="mb-3 ml-3 mr-2">mdi-comment-question</v-icon> 
                             <v-text-field 
@@ -25,8 +25,8 @@
                             </v-btn>
                         </div>
                     </v-card-title>
-                    <v-card-text class="dark">
-                        <v-card class="dark" style="background-color: #F2F2F2;">
+                    <v-card-text class="dark-light">
+                        <v-card class="dark-light" style="background-color: #F2F2F2;">
                             <v-card-title>
                                 Opções:
                             </v-card-title>
@@ -230,7 +230,7 @@ export default {
     color: white;
 }
 .dark-mode .dark-light {
-    background-color: #3f4f6e;
+    background-color: #3f4f6e !important;
     color: white;
 }
 </style>
