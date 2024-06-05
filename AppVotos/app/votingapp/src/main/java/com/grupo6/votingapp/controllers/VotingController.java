@@ -55,8 +55,9 @@ public class VotingController {
                 votingService.getAccessibleVotingsToUser(user_id)
                 .stream()
                 .map(voting -> {
-                    VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingWithNoRelationsDTO(voting);
                     boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
+                    Long votesCount = votingService.getVotesCount(voting.getId());
+                    VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
                     votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
                     return votingWithNoRelationsDTO;
                 })
