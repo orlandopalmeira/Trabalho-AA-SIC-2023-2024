@@ -1,4 +1,7 @@
 <template>
+    <PreviewVoting
+        :isVisible="modal.opened"
+        @close-modal="closePreview"/>
     <v-card class="dark" flat>
         <v-card-title style="padding: 15px;" >
             <v-icon large class="mr-4">mdi-plus-circle</v-icon>
@@ -8,17 +11,21 @@
             <v-form  @submit.prevent="goNext">
                 <v-card class="dark" style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,indexQuestion) in useVotingInfoStore().questions" :key="indexQuestion">
                     <v-card-title class="dark" style="padding: 10px;">
-                        <v-icon large class="mr-4">mdi-comment-question</v-icon>
-                        Pergunta {{ indexQuestion+1 }}:
+                        <div style="display: flex; align-items: center;">
+                            <v-icon large class="mr-4">mdi-comment-question</v-icon> 
+                            <v-text-field 
+                                :label="'Pergunta ' + (indexQuestion + 1)"
+                                type="text"
+                                v-model="useVotingInfoStore().questions[indexQuestion]['description']"
+                                :rules="getFieldRules('question')"
+                                style="padding: 10px;"
+                            ></v-text-field>
+                            <v-btn color="error" @click="removeQuestion(indexQuestion)" style="margin-top: 10px; margin-right: 10px;float: right;">
+                                <v-icon left>mdi-delete</v-icon>
+                            </v-btn>
+                        </div>
                     </v-card-title>
                     <v-card-text class="dark">
-                        <v-text-field
-                        prepend-icon="mdi-format-title"
-                        label="Pergunta"
-                        type="text"
-                        v-model="useVotingInfoStore().questions[indexQuestion]['description']"
-                        :rules="getFieldRules('question')"
-                        ></v-text-field>
                         <v-card class="dark" style="background-color: #F2F2F2;">
                             <v-card-title>
                                 Opções:
@@ -43,7 +50,7 @@
                                     </v-row>
                                 </div>
                                 <v-btn color="secondary" @click="addOption(indexQuestion)" style="margin-top: 10px;">                                        
-                                    <v-icon left>mdi-plus</v-icon> Adicionar Opção
+                                    <v-icon left>mdi-plus</v-icon>Opção
                                 </v-btn>
                                 <v-alert
                                     v-if="useVotingInfoStore().questions[indexQuestion].options.length < 2"
@@ -54,14 +61,11 @@
                                 </v-alert>
                             </v-card-text>
                         </v-card>
-                        <v-btn color="error" @click="removeQuestion(indexQuestion)" style="margin-top: 10px;">                                        
-                            <v-icon left>mdi-delete</v-icon> Remover Pergunta
-                        </v-btn>
                     </v-card-text>
                 </v-card>
 
                 <v-btn color="primary" @click="addQuestion()" style="margin-bottom: 10px;">                                        
-                    <v-icon left>mdi-plus</v-icon> Adicionar Pergunta
+                    <v-icon left>mdi-plus</v-icon>Pergunta
                 </v-btn>
                 <v-alert
                     v-if="useVotingInfoStore().questions.length < 1"
@@ -74,13 +78,14 @@
                 <v-row class="mt-4">
                     <v-col cols="6">
                         <v-btn
-                            color="secondary"
+                            color="red"
                             @click="leave"
                         >
                             Voltar
                         </v-btn>
                     </v-col>
                     <v-col cols="6" class="text-right">
+                        <v-btn density="comfortable" icon="mdi-eye" :disabled="!areAllRulesMet" @click="openPreview" style="margin-right: 5px;"/>
                         <v-btn color="primary" type="submit" :disabled="!areAllRulesMet" > 
                             <span>Submeter</span>
                         </v-btn>
@@ -94,9 +99,11 @@
 <script>
 import { useVotingInfoStore } from '@/stores/votingInfoStore';
 import UploadIconButton from '@/components/CreateVoting/UploadIconButton.vue';
+import PreviewVoting from '@/components/Modais/PreviewVoting.vue';
 export default {
     components: {
-        UploadIconButton
+        UploadIconButton,
+        PreviewVoting
     },
     emits: ['data', 'leave'],
     data() {
@@ -106,6 +113,9 @@ export default {
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value || '').length <= 100 || 'Máximo de 100 caracteres.'
+            },
+            modal: {
+                opened: false
             }
         }
     },
@@ -179,6 +189,12 @@ export default {
         },
         leave() {
             this.$emit('leave');
+        },
+        openPreview() {
+            this.modal.opened = true;
+        },
+        closePreview() {
+            this.modal.opened = false;
         }
     },
     computed: {
