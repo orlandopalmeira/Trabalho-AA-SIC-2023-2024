@@ -22,19 +22,6 @@ export default {
     }
 }
 </script>
-<!-- 
-Formato do JSON de uma votação
-{
-    "id": 1,
-    "title": "Voting_866828589",
-    "description": "voting_866828589",
-    "image": null,
-    "creationdate": "2024-05-27T21:55:48.265+00:00",
-    "enddate": "2024-07-13 00:34:43",
-    "privatevoting": true,
-    "questions": [...] // lista que questions -> cada question com várias options
-}
--->
 <style scoped>
 img {
     border-radius: 10px;

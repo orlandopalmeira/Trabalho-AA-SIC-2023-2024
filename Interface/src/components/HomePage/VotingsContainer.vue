@@ -1,12 +1,12 @@
 <template>
-    <v-row v-if="votings && votings.length > 0">
+    <v-row v-if="votings && votings.length > 0" class="dark" style="border-radius: 20px">
         <v-col style="padding: 0;"
             v-for="(voting,index) in paginatedVotings"
             :key="index"
             cols="12"
             sm="3">
 
-            <v-sheet style="max-width: 100%; height: 100%" class="ma-2 pa-2 center">
+            <v-sheet style="max-width: 100%; height: 100%;" class="ma-2 pa-2 center dark">
                 <VotingCard :voting="voting"/>
             </v-sheet>
         </v-col>
@@ -82,5 +82,9 @@ export default {
 .right {
     display: flex;
     justify-content: end;
+}
+.dark-mode .dark {
+    background-color: #15202b;
+    color: white;
 }
 </style>
