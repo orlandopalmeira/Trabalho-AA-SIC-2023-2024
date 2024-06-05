@@ -7,10 +7,13 @@
             <v-row>
                 <v-col cols="12">
                     <v-radio-group v-model="selectedOption" @change="handleChange" row hide-details>
-                        <div style="display: flex;" v-for="(option, index) in question.options">
-                            <v-radio :key="index" :label="option.description" :value="option.id"/>
-                            <img v-if="option.image != null" class="img-icon" alt="Option background" 
-                                :src="'http://localhost:8080/images/' + option.image"/>
+                        <div v-for="(option, index) in question.options">
+                            <div style="display: flex; align-items: center;">
+                                <v-radio :key="index" :label="option.description" :value="option.id"/>
+                                <img v-if="option.image != null" class="img-icon" alt="Option background" 
+                                    :src="'http://localhost:8080/images/' + option.image"/>
+                            </div>
+                            <v-divider v-if="index < question.options.length - 1" style="margin: 5px"></v-divider>
                         </div>
                     </v-radio-group>
                 </v-col>
