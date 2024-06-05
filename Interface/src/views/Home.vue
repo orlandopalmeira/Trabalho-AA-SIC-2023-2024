@@ -97,6 +97,8 @@ export default {
             this.votings = votings
             this.loadingVotings = false
         }).catch(error => {
+            this.votings = []
+            this.loadingVotings = false
             console.error(error)
         })
     }
