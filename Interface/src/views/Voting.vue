@@ -9,7 +9,7 @@
             <v-card flat v-else>
                 <v-tabs v-model="tab" align-tabs="center">
                     <v-tab value="votar">Votar</v-tab>
-                    <v-tab value="estatisticas">Estatísticas</v-tab>
+                    <v-tab v-if="allowedToViewStats" value="estatisticas">Estatísticas</v-tab>
                     <v-tab value="detalhes">Detalhes</v-tab>
                 </v-tabs>
                 <v-tabs-window v-model="tab">
@@ -60,7 +60,7 @@
                         </v-card-text>
                     </v-tabs-window-item>
                     <!--Tab para estatísticas-->
-                    <v-tabs-window-item value="estatisticas">
+                    <v-tabs-window-item v-if="allowedToViewStats" value="estatisticas">
                         <StatsTab :voting-id="voting.id" />
                     </v-tabs-window-item>
                     <!--Tab para detalhes-->
@@ -153,7 +153,6 @@ export default {
         },
         submitVote() {
             const vote = this.validateVote()
-            console.log(vote)
             if (vote) {
                 axios.post('/votes', vote)
                 .then(() => {
@@ -173,7 +172,7 @@ export default {
 
     created() {
         const getAccessType = (voting) => {
-            if(voting.creator.id === useUserInfoStore().getUserId){
+            if(Number(voting.creator.id) === Number(useUserInfoStore().getUserId)){
                 return "creator"
             } else if(voting.privatevoting){
                 return "privatevoter"
@@ -191,6 +190,21 @@ export default {
         }).catch(error => {
             console.error(error)
         })
+    },
+    computed: {
+        allowedToViewStats(){
+            if(this.voting.accesstype === "creator") return true
+
+            if(this.voting.showstats){
+                let now = new Date().toISOString().replace('T', ' ').slice(0,19)
+                let enddate = this.voting.enddate
+                let active = enddate === null || enddate > now 
+
+                if (active) return this.voting.showstatsrealtime
+                else return true
+            }
+            return false
+        }
     }
 }
 </script>
