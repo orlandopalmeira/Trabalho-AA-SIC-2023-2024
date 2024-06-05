@@ -2,7 +2,7 @@
     <v-card class="dark" flat>
         <v-card-title style="padding: 15px;">
             <v-icon large class="mr-4">mdi-plus-circle</v-icon>
-            Criar Votação - Informações Gerais (1/2)
+            <b>Criar Votação</b> - Informações Gerais
         </v-card-title>
         <v-card-text>
             <v-form @submit.prevent="goNext">

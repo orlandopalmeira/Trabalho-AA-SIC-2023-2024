@@ -5,14 +5,14 @@
     <v-card class="dark" flat>
         <v-card-title style="padding: 15px;" >
             <v-icon large class="mr-4">mdi-plus-circle</v-icon>
-            {{ useVotingInfoStore().title }} - Adicionar Perguntas (2/2)
+            <b>{{ useVotingInfoStore().title }}</b> - Adicionar Perguntas
         </v-card-title>
         <v-card-text>
-            <v-form  @submit.prevent="goNext">
-                <v-card class="dark" style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,indexQuestion) in useVotingInfoStore().questions" :key="indexQuestion">
-                    <v-card-title class="dark" style="padding: 10px;">
+            <v-form @submit.prevent="goNext">
+                <v-card class="dark-light mb-5"  style="background-color: #F2F2F2;" v-for="(question,indexQuestion) in useVotingInfoStore().questions" :key="indexQuestion">
+                    <v-card-title class="dark">
                         <div style="display: flex; align-items: center;">
-                            <v-icon large class="mr-4">mdi-comment-question</v-icon> 
+                            <v-icon large class="mb-3 ml-3 mr-2">mdi-comment-question</v-icon> 
                             <v-text-field 
                                 :label="'Pergunta ' + (indexQuestion + 1)"
                                 type="text"
@@ -20,7 +20,7 @@
                                 :rules="getFieldRules('question')"
                                 style="padding: 10px;"
                             ></v-text-field>
-                            <v-btn color="error" @click="removeQuestion(indexQuestion)" style="margin-top: 10px; margin-right: 10px;float: right;">
+                            <v-btn color="error" @click="removeQuestion(indexQuestion)" size="small" class="mb-15 ml-15" title="Eliminar Pergunta">
                                 <v-icon left>mdi-delete</v-icon>
                             </v-btn>
                         </div>
@@ -227,6 +227,10 @@ export default {
 <style scoped>
 .dark-mode .dark {
     background-color: #15202b !important;
+    color: white;
+}
+.dark-mode .dark-light {
+    background-color: #3f4f6e;
     color: white;
 }
 </style>
