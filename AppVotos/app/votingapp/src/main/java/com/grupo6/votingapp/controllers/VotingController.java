@@ -51,17 +51,17 @@ public class VotingController {
     @GetMapping //* Parece funcionar
     public ResponseEntity<Object> getVotings(@CookieValue(value = "token", defaultValue = "") String token) {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
-            List<VotingWithNoRelationsDTO> response = 
-                votingService.getAccessibleVotingsToUser(user_id)
-                .stream()
+            List<Voting> votings = votingService.getAccessibleVotingsToUser(user_id);
+            List<Long> votingIds = votings.stream().map(Voting::getId).toList(); //* ids das votações para descobrir a contagem de votos em cada uma delas
+            Map<Long, Long> votesCounts = votingService.getVotesCount(votingIds);//* N.º votos por cada votação -> formato {voting_id: votes_count}
+            List<VotingWithNoRelationsDTO> response = votings.stream()
                 .map(voting -> {
-                    boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
-                    Long votesCount = votingService.getVotesCount(voting.getId());
+                    Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
                     VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
+                    boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id)); //! Tentar ver se dá para fazer isto numa só query.
                     votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
                     return votingWithNoRelationsDTO;
-                })
-                .toList();
+                }).toList();
             return ResponseEntity.ok(response);
         });
     }
