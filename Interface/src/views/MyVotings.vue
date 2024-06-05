@@ -6,7 +6,7 @@
 			:message="modal.message"
 			@close-modal="modal.opened=false"/>
         <v-container>
-            <v-card flat style="padding: 10px;" >
+            <v-card flat style="padding: 10px;" class="dark" >
                 <v-row>
                     <v-col>
                         <div class="flex">
@@ -26,7 +26,7 @@
                 </v-row>
                 
                 <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
-                <v-data-table v-else
+                <v-data-table v-else class="dark"
                 :headers="headers"
                 :items="processedVotings"
                 :search="search"
@@ -212,5 +212,9 @@ export default {
     border: 2px solid rgb(156, 156, 156);
     border-radius: 12px;
     padding: 8px 8px;
+}
+.dark-mode .dark {
+    background-color: #15202b;
+    color: white;
 }
 </style>

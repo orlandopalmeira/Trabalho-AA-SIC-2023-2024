@@ -1,17 +1,17 @@
 <template>
-    <v-card flat>
+    <v-card class="dark" flat>
         <v-card-title style="padding: 15px;" >
             <v-icon large class="mr-4">mdi-plus-circle</v-icon>
             {{ useVotingInfoStore().title }} - Adicionar Perguntas (2/2)
         </v-card-title>
         <v-card-text>
-            <v-form @submit.prevent="goNext">
-                <v-card style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,indexQuestion) in useVotingInfoStore().questions" :key="indexQuestion">
-                    <v-card-title style="padding: 10px;">
+            <v-form  @submit.prevent="goNext">
+                <v-card class="dark" style="background-color: #F2F2F2; margin-bottom: 20px;" v-for="(question,indexQuestion) in useVotingInfoStore().questions" :key="indexQuestion">
+                    <v-card-title class="dark" style="padding: 10px;">
                         <v-icon large class="mr-4">mdi-comment-question</v-icon>
                         Pergunta {{ indexQuestion+1 }}:
                     </v-card-title>
-                    <v-card-text>
+                    <v-card-text class="dark">
                         <v-text-field
                         prepend-icon="mdi-format-title"
                         label="Pergunta"
@@ -19,7 +19,7 @@
                         v-model="useVotingInfoStore().questions[indexQuestion]['description']"
                         :rules="getFieldRules('question')"
                         ></v-text-field>
-                        <v-card style="background-color: #F2F2F2;">
+                        <v-card class="dark" style="background-color: #F2F2F2;">
                             <v-card-title>
                                 Opções:
                             </v-card-title>
@@ -208,3 +208,9 @@ export default {
     },
 }
 </script>
+<style scoped>
+.dark-mode .dark {
+    background-color: #15202b !important;
+    color: white;
+}
+</style>

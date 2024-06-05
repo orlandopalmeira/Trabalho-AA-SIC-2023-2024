@@ -1,5 +1,5 @@
 <template>
-    <v-row v-if="votings && votings.length > 0" class="dark" style="border-radius: 20px">
+    <v-row v-if="votings && votings.length > 0" class="dark pa-2" style="border-radius: 20px">
         <v-col style="padding: 0;"
             v-for="(voting,index) in paginatedVotings"
             :key="index"

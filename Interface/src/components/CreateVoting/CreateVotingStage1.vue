@@ -1,5 +1,5 @@
 <template>
-    <v-card flat>
+    <v-card class="dark" flat>
         <v-card-title style="padding: 15px;">
             <v-icon large class="mr-4">mdi-plus-circle</v-icon>
             Criar Votação - Informações Gerais (1/2)
@@ -117,3 +117,9 @@ export default {
     },
 };
 </script>
+<style scoped>
+.dark-mode .dark {
+    background-color: #15202b;
+    color: white;
+}
+</style>

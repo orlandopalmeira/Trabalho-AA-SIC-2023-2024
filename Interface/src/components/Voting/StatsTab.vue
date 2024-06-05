@@ -1,52 +1,54 @@
 <template>
-    <div v-if="loadingStats" class="ma-5 pa-2">
+    <div v-if="loadingStats" class="ma-5 pa-2 dark">
         <LoadingAlert message="A obter as estatísticas, por favor aguarde..." />
     </div>
-    <div v-else-if="stats.numvotes === 0" class="ma-5 pa-2">
-        <SimpleAlert message="Esta votação ainda não tem votos." />
+    <div v-else-if="stats.numvotes === 0" class="pa-2 dark">
+        <SimpleAlert message="Esta votação ainda não tem votos." class="dark"/>
     </div>
-    <div v-else class="background ma-5 pa-2">
-        <div style="width: 25%;margin: 10px 10px;" class="mb-5">
-            <v-select
-                v-model="selected"
-                :items="selectItems"
-                density="compact"
-                class="select-question"
-                variant="outlined"
-                hide-details
-            />
-        </div>
-        <div style="margin: 10px 10px;">
-            <v-row>
-                <v-col class="vcol1">
-                    <p class="text-h6" style="font-weight: bold;">Número de votos</p>
-                    <p style="font-size: 20pt;">{{ stats.numvotes }}</p>
-                </v-col>
-                <v-col class="vcol1" cols="3.5">
-                    <p class="text-h6" style="font-weight: bold;">Mais votado</p>
-                    <p style="font-size: 20pt; word-break: break-word;">{{ winner.description }}</p>
-                    <p>Com {{ winner.count }} votos</p>
-                </v-col>
-                <v-col class="vcol1">
-                    <p class="text-h6" style="font-weight: bold;">???</p>
-                    <p style="font-size: 20pt;">???</p>
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col class="vcol1 pl-5 votantes" cols="4">
-                    <p class="text-h6" style="font-weight: bold;">Votantes</p>
-                    <v-row v-for="(voter, index) in stats.voters" :key="index">
-                        <v-col class="center" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
-                        <v-col>
-                            <p>{{ voter.name }}</p>
-                            <p style="color: #454545">{{ voter.email }}</p>
-                        </v-col>
-                    </v-row>
-                </v-col>
-                <v-col class="vcol1" style="height: 400px" >
-                    <Bar id="my-chart-id" :data="chart.data" :options="chart.options" />
-                </v-col>
-            </v-row>
+    <div v-else class="pa-5 dark">
+        <div class="background pa-2">
+            <div style="width: 25%;margin: 10px 10px;" class="mb-5">
+                <v-select
+                    v-model="selected"
+                    :items="selectItems"
+                    density="compact"
+                    class="select-question dark"
+                    variant="outlined"
+                    hide-details
+                />
+            </div>
+            <div style="margin: 10px 10px;">
+                <v-row>
+                    <v-col class="vcol1 dark">
+                        <p class="text-h6" style="font-weight: bold;">Número de votos</p>
+                        <p style="font-size: 20pt;">{{ stats.numvotes }}</p>
+                    </v-col>
+                    <v-col class="vcol1 dark" cols="3.5">
+                        <p class="text-h6" style="font-weight: bold;">Mais votado</p>
+                        <p style="font-size: 20pt; word-break: break-word;">{{ winner.description }}</p>
+                        <p>Com {{ winner.count }} votos</p>
+                    </v-col>
+                    <v-col class="vcol1 dark">
+                        <p class="text-h6" style="font-weight: bold;">???</p>
+                        <p style="font-size: 20pt;">???</p>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col class="vcol1 pl-5 votantes dark" cols="4">
+                        <p class="text-h6" style="font-weight: bold;">Votantes</p>
+                        <v-row v-for="(voter, index) in stats.voters" :key="index">
+                            <v-col class="center" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
+                            <v-col>
+                                <p>{{ voter.name }}</p>
+                                <p style="color: #454545">{{ voter.email }}</p>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                    <v-col class="vcol1 dark" style="height: 400px" >
+                        <Bar id="my-chart-id" :data="chart.data" :options="chart.options" />
+                    </v-col>
+                </v-row>
+            </div>
         </div>
     </div>
 </template>
@@ -85,7 +87,7 @@ export default {
                     labels: question.options.map(option => option.description),
                     datasets: [{
                         label: 'Quantidade de votos',
-                        backgroundColor: '#000000', // cor das barras do gráfico
+                        backgroundColor: '#f87979', // cor das barras do gráfico
                         data: question.options.map(option => option.count)
                     }]
                 },
@@ -148,5 +150,12 @@ export default {
 }
 .fill-height {
     flex-grow: 1;
+}
+.dark-mode .dark {
+    background-color: #15202b;
+    color: white;
+}
+.dark-mode .background {
+    background-color: #15202b;
 }
 </style>

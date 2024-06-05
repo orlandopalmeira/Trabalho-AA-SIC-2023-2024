@@ -7,14 +7,14 @@
                 @close-modal="modal.opened=false"/>
             <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
             <v-card flat v-else>
-                <v-tabs v-model="tab" align-tabs="center">
+                <v-tabs v-model="tab" align-tabs="center" class="dark">
                     <v-tab value="votar">Votar</v-tab>
                     <v-tab v-if="allowedToViewStats" value="estatisticas">Estatísticas</v-tab>
                     <v-tab value="detalhes">Detalhes</v-tab>
                 </v-tabs>
                 <v-tabs-window v-model="tab">
                     <!--Tab para votar-->
-                    <v-tabs-window-item value="votar"> 
+                    <v-tabs-window-item value="votar" class="dark"> 
                         <!--Título da votação-->
                         <v-card-title style="padding: 15px; text-align: center;">
                             <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
@@ -217,3 +217,9 @@ export default {
     }
 }
 </script>
+<style>
+.dark-mode .dark {
+    background-color: #181818;
+    color: white;
+}
+</style>

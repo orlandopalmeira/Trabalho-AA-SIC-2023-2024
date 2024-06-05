@@ -2,12 +2,16 @@
     <div class="modal-overlay" v-if="isVisible">
         <div class="modal">
             <h3 style="padding: 10px; color: white; background-color: #0056b3; "><v-icon>{{ icon }}</v-icon> {{ title }}</h3>
-            <hr/>
-            <div class="margin20" style="color: black;">
-                {{ message }}
+            <hr class="dark"/>
+            <div class="padding20 dark">
+                <div class="dark" style="color: black;">
+                    {{ message }}
+                </div>
             </div>
-            <div class="margin20 modal-buttons" style="margin-top: 10px">
-                <button class="button" type="submit" @click="this.$emit('close-modal');">{{ buttonText }}</button>
+            <div class="padding20 dark">
+                <div class="modal-buttons dark" style="margin-top: 10px">
+                    <button class="button" type="submit" @click="this.$emit('close-modal');">{{ buttonText }}</button>
+                </div>
             </div>
         </div>
     </div>
@@ -48,6 +52,9 @@ export default {
 }
 .margin20 {
     margin: 20px;
+}
+.padding20 {
+    padding: 20px;
 }
 label{
     margin-right: 10px;
@@ -92,5 +99,13 @@ hr{
 }
 .button:hover {
     background: #0056b3;
+}
+.dark-mode .dark {
+    background-color: #15202b !important;
+    color: white !important;
+}
+hr {
+    border: none; /* Remove the default border */
+    border-top: 2px solid gray; /* Add a new top border with desired color and thickness */
 }
 </style>

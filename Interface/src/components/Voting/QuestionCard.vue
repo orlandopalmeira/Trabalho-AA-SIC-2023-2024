@@ -1,9 +1,9 @@
 <template lang="">
-    <v-card style="background-color: lightgray;">
+    <v-card class="card dark">
         <v-card-title style="padding: 15px; margin-bottom: 10px">
             <h4 style="font-weight: 600;">Pergunta {{ questionIndex + 1 }}: {{ question.description }}</h4>
         </v-card-title>
-        <v-card-text style="background-color: white; margin: 10px;">
+        <v-card-text class="card-text dark">
             <v-row>
                 <v-col cols="12">
                     <v-radio-group v-model="selectedOption" @change="handleChange" row hide-details>
@@ -37,9 +37,20 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .img-icon {
     max-height: 50px;
     width: auto;
+}
+.card {
+    background-color: lightgray;
+}
+.card-text{
+    background-color: white;
+    margin: 10px;
+}
+.dark-mode .dark {
+    background-color: #15202b;
+    color: white;
 }
 </style>

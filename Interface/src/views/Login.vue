@@ -6,7 +6,7 @@
 			:message="modal.message"
 			@close-modal="modal.opened=false"/>
 		<v-container class="mt-5" fill-height>
-			<v-card class="mx-auto" width="500">
+			<v-card class="mx-auto dark" width="500">
 				<v-toolbar class="mb-8" dark color="primary">
 					<v-toolbar-title class="pl-6">Login</v-toolbar-title>
 				</v-toolbar>
@@ -114,5 +114,9 @@ export default {
 .disabled-button {
   background-color: #000000;
   color: #ffffff;
+}
+.dark-mode .dark {
+    background-color: #15202b !important;
+    color: white;
 }
 </style>
