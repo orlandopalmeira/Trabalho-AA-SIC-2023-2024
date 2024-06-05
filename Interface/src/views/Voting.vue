@@ -19,12 +19,16 @@
                         <v-card-title style="padding: 15px; text-align: center;">
                             <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
                         </v-card-title>
+                        <!-- Se a votação já terminou -->
+                        <v-card-text v-if="!isVotingActive()">
+                            <SimpleAlert message="Esta votação já terminou"/>
+                        </v-card-text>
                         <!--Se o utilizador já votou-->
-                        <v-card-text v-if="voting.useralreadyvoted">
+                        <v-card-text v-else-if="voting.useralreadyvoted">
                             <SimpleAlert message="Já submeteu o seu voto para esta votação"/>
                         </v-card-text>
                         <!--Se o utilizador ainda não votou => apresenta as perguntas-->
-                        <v-card-text v-else>
+                        <v-card-text v-else-if="isVotingActive()">
                             <QuestionCard :key="currentQuestionIndex"
                                 :questionIndex="currentQuestionIndex"
                                 :question="voting.questions[currentQuestionIndex]"
@@ -168,6 +172,11 @@ export default {
                 })
             }
         },
+        isVotingActive() {
+            let now = new Date().toISOString().replace('T', ' ').slice(0,19)
+            let enddate = this.voting.enddate
+            return enddate === null || enddate > now 
+        }
     },
 
     created() {
