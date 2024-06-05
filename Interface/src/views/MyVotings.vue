@@ -30,12 +30,13 @@
                 :headers="headers"
                 :items="processedVotings"
                 :search="search"
+                @click:row="rowClicked"
                 hover>
-                <template v-slot:[`item.title`]="{ item }">
-                    <button @click="votingClicked(item.id)" class="clickable-button">
+                <!-- <template v-slot:[`item.title`]="{ item }">
+                    <button @click="votingClicked(item.id)" class="clickable-button" :title="item.description">
                         {{ item.title }}
                     </button>
-                </template>
+                </template> -->
                     <template v-slot:[`item.status`]="{ item }">
                         <p v-if="item.active" style="color: green">Activa</p>
                         <p v-else style="color: red">Terminada</p>
@@ -145,16 +146,20 @@ export default {
 </script>
 <style scoped>
 .clickable-button {
-  padding: 5px 16px;
-  border-radius: 4px;
-  transition: color 0.3s ease;
-  text-decoration: underline; /* Underline text */
+    padding: 5px 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    transition: color 0.3s ease;
+    text-align: left; /* Align text to the left */
+    background-color: rgb(231, 244, 255);
 }
 
 .clickable-button:hover {
     color: #1976d2; /* Change color on hover */
-    background-color: aliceblue;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+    text-decoration: underline;
+    background-color: rgb(196, 221, 241);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 .highlighted-row {
   border-bottom: 2px solid #868686; /* Grey line under the row */

@@ -13,7 +13,7 @@
                     label="Título"
                     type="text"
                     v-model="useVotingInfoStore().title"
-                    :rules="[rules.required]"
+                    :rules="[rules.required, rules.maxlength100]"
                 ></v-text-field>
                 <v-textarea
                     id="description"
@@ -22,7 +22,7 @@
                     label="Descrição"
                     type="text"
                     v-model="useVotingInfoStore().description"
-                    :rules="[rules.required]"
+                    :rules="[rules.required, rules.maxlength500]"
                 ></v-textarea>
                 <v-date-input
                     v-model="useVotingInfoStore().enddate"
@@ -70,6 +70,8 @@ export default {
         return {
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
+                maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
+                maxlength500: value => (value && value.length <= 500) || 'Máximo de 500 caracteres.',
             },
             useVotingInfoStore
         };
