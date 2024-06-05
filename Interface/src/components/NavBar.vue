@@ -2,7 +2,7 @@
     <nav>
         <!--Para ecrã de PC-->
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
-            <div class="button" @click="goTo('home')" :style="{ cursor: 'pointer', marginLeft: '20px' }">
+            <div class="button" @click="goTo('/home')" :style="{ cursor: 'pointer', marginLeft: '20px' }">
                 <h2 class="ml-5"> <img :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
             </div>
             <ul class="flex">
