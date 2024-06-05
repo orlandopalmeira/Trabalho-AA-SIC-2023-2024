@@ -13,7 +13,7 @@
                     label="Título"
                     type="text"
                     v-model="useVotingInfoStore().title"
-                    :rules="[rules.required, rules.maxlength100]"
+                    :rules="getFieldRules('title')"
                 ></v-text-field>
                 <v-textarea
                     id="description"
@@ -22,13 +22,13 @@
                     label="Descrição"
                     type="text"
                     v-model="useVotingInfoStore().description"
-                    :rules="[rules.required, rules.maxlength500]"
+                    :rules="getFieldRules('description')"
                 ></v-textarea>
                 <v-date-input
                     v-model="useVotingInfoStore().enddate"
                     label="Data do fim da votação"
                     :min="new Date().toISOString().slice(0, 10)"
-                    :rules="[rules.required]"
+                    :rules="getFieldRules('enddate')"
                     required
                 ></v-date-input>
                 <v-file-input
@@ -50,7 +50,7 @@
                         <v-btn color="secondary" @click="leave" > Voltar </v-btn>
                     </v-col>
                     <v-col cols="6" class="text-right">
-                        <v-btn color="primary" type="submit" > Seguinte </v-btn>
+                        <v-btn color="primary" type="submit" :disabled="!areAllRulesMet"> Seguinte </v-btn>
                     </v-col>
                 </v-row>
             </v-form>
@@ -76,8 +76,38 @@ export default {
             useVotingInfoStore
         };
     },
+    computed: {
+        areAllRulesMet() {
+            let fields = ['title', 'description', 'enddate'];
+            for (const field of fields) {
+                if (!this.getFieldRules(field).every(rule => rule(this.useVotingInfoStore()[field])===true )) { // tem de se meter o "true" porque as regras em caso de dar false, retornam um string.
+                    return false;
+                }
+            }
+            return true;
+        },
+    },
     methods: {
-
+        getFieldRules(field) {
+            // Criei esta função para o botão de submit ficar disabled caso as regras não sejam cumpridas. 
+            // Com esta função, podemos definir aqui as regras para cada campo sem ter de alterar outros lados do código para alterar as condições do botão estar disabled.
+            let rules = [];
+            // caso venham a surgir mais fields, basta adicionar aqui as regras para esse field. E também adicionar o seu nome, nos fields da função areAllRulesMet.
+            switch (field) {
+                case 'title':
+                rules = [this.rules.required, this.rules.maxlength100];
+                break;
+                case 'description':
+                rules = [this.rules.required, this.rules.maxlength500];
+                break;
+                case 'enddate':
+                rules = [this.rules.required];
+                break;
+                default:
+                break;
+            }
+            return rules;
+        },
         goNext() {
             this.$emit('data');
         },

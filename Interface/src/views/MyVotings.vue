@@ -32,11 +32,11 @@
                 :search="search"
                 @click:row="rowClicked"
                 hover>
-                <!-- <template v-slot:[`item.title`]="{ item }">
-                    <button @click="votingClicked(item.id)" class="clickable-button" :title="item.description">
+                <template v-slot:[`item.title`]="{ item }">
+                    <p :title="'Descrição: '+item.description" style="max-width: 200px; font-weight: 500; ">
                         {{ item.title }}
-                    </button>
-                </template> -->
+                    </p>
+                </template>
                     <template v-slot:[`item.status`]="{ item }">
                         <p v-if="item.active" style="color: green">Activa</p>
                         <p v-else style="color: red">Terminada</p>
@@ -59,7 +59,7 @@ import router from '@/router'
 
 const table_headers = [
     { align: 'start', key: 'title',         title: 'Votação' },
-    {                 key: 'description',   title: 'Descrição' },
+    // {                 key: 'description',   title: 'Descrição' },
     {                 key: 'creationdate',  title: 'Data' },
     {                 key: 'status',        title: 'Estado'},
     {                 key: 'votes',         title: 'Votos' },
@@ -110,13 +110,26 @@ export default {
         },
         rowClicked(event, item) { // Para usar se quisermos clicar na linha inteira da tabela e levar para a votação específica
             // Access the item here using item.item retorna o objeto inputed
-            console.log(item.item.id);
+            // console.log(item.item.id);
             // Aceder à pagina do item clicado.
             this.$router.push(`/voting/${item.item.id}`)
         },
         votingClicked(id){
-            console.log(id)
+            // console.log(id)
             this.$router.push(`/voting/${id}`)
+        },
+        formatDateTime(dateTimeString) {
+            // 2024-06-04 16:18:07
+            let parts = dateTimeString.split(" ");
+
+            let datePart = parts[0];
+            let timePart = parts[1].split(":");
+
+            let formattedTime = timePart[0] + "h" + timePart[1] + "m";
+
+            let formattedDateTime = datePart + " " + formattedTime;
+
+            return formattedDateTime;
         }
     },
     computed: {
@@ -124,10 +137,12 @@ export default {
             let now = new Date().toISOString().replace('T', ' ').slice(0,19)
             let processedVotings = this.votings.map(voting => {
                 let active = voting.enddate > now || voting.enddate === null
+                // console.log(voting.creationdate)
                 return {
                     ...voting,
-                    privatevoting: voting.privatevoting ? 'mdi-lock' : 'mdi-lock-open-variant', // Ícone de cadeado fechado ou aberto
-                    active: active
+                    creationdate: this.formatDateTime(voting.creationdate),
+                    privatevoting: voting.privatevoting ? 'mdi-lock' : 'mdi-lock-open-variant',
+                    active: active,
                 }
             })
             return processedVotings

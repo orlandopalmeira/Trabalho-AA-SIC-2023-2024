@@ -17,7 +17,7 @@
                         label="Pergunta"
                         type="text"
                         v-model="useVotingInfoStore().questions[indexQuestion]['description']"
-                        :rules="[rules.required]"
+                        :rules="getFieldRules('question')"
                         ></v-text-field>
                         <v-card style="background-color: #F2F2F2;">
                             <v-card-title>
@@ -30,7 +30,7 @@
                                             :label="'Opção ' + (indexOption + 1)"
                                             v-model="useVotingInfoStore().questions[indexQuestion].options[indexOption]['description']"
                                             prepend-icon="mdi-form-textbox"
-                                            :rules="[rules.required]"
+                                            :rules="getFieldRules('option')"
                                         ></v-text-field>
                                         <UploadIconButton 
                                             class="ml-2" 
@@ -81,11 +81,8 @@
                         </v-btn>
                     </v-col>
                     <v-col cols="6" class="text-right">
-                        <v-btn
-                            color="primary"
-                            type="submit"
-                        >
-                        <span>Submeter</span>
+                        <v-btn color="primary" type="submit" :disabled="!areAllRulesMet" > 
+                            <span>Submeter</span>
                         </v-btn>
                     </v-col>
                 </v-row>
@@ -108,6 +105,7 @@ export default {
             // useVotingInfoStore().questions: useVotingInfoStore().questions,
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
+                maxlength100: value => (value || '').length <= 100 || 'Máximo de 100 caracteres.'
             }
         }
     },
@@ -159,12 +157,53 @@ export default {
                 reader.readAsDataURL(file);
             });
         },
+        getFieldRules(field) {
+            // Criei esta função para o botão de submit ficar disabled caso as regras não sejam cumpridas. 
+            // Com esta função, podemos definir aqui as regras para cada campo sem ter de alterar outros lados do código para alterar as condições do botão estar disabled.
+            let rules = [];
+            // caso venham a surgir mais fields, basta adicionar aqui as regras para esse field. E também adicionar o seu nome, nos fields da função areAllRulesMet.
+            switch (field) {
+                case 'question':
+                rules = [this.rules.required];
+                break;
+                case 'option':
+                rules = [this.rules.required, this.rules.maxlength100];
+                break;
+                default:
+                break;
+            }
+            return rules;
+        },
         goNext() {
             this.$emit('data');
         },
         leave() {
             this.$emit('leave');
         }
-    }
+    },
+    computed: {
+        async areAllRulesMet() {
+            let questions = this.useVotingInfoStore().questions;
+            console.log(questions)
+
+            for (let i = 0; i < questions.length; i++) {
+                for (let j = 0; j < questions[i].options.length; j++) {
+
+                    if (!this.getFieldRules("option").every(rule => rule(questions[i].options[j].description)===true )) {
+                        return false;
+                    }
+                    
+                    if (questions[i].options[j].image){
+                        let imgValid = await this.validateAspectRatio(questions[i].options[j].image, 0.8, 1.2); 
+                        if (!imgValid) {
+                            // this.openModal('Erro', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem deve ter uma proporção entre 0.8 e 1.2 (largura / altura).');
+                            return False;
+                        }
+                    }
+                }
+            }
+            return true;
+        },
+    },
 }
 </script>

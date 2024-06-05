@@ -27,7 +27,7 @@
         <div class="nav flex" v-else>
             <div class="flex2">
                 <!-- <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2> -->
-                <div :class="button" @click="goTo('home')" :style="{ cursor: 'pointer', marginLeft: '20px' }">
+                <div class="button" @click="goTo('home')" :style="{ cursor: 'pointer', marginLeft: '20px' }">
                     <h2 class="ml-5"> <img :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
                 </div>
                 <button style="width: auto;" class="btn-style" @click="togglePhoneMenu">
