@@ -145,7 +145,7 @@ export default {
 </script>
 <style scoped>
 .clickable-button {
-  padding: 8px 16px;
+  padding: 5px 16px;
   border-radius: 4px;
   transition: color 0.3s ease;
   text-decoration: underline; /* Underline text */
@@ -153,6 +153,7 @@ export default {
 
 .clickable-button:hover {
     color: #1976d2; /* Change color on hover */
+    background-color: aliceblue;
     /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
 }
 .highlighted-row {
