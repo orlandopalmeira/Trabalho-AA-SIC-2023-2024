@@ -95,7 +95,6 @@ export default {
                     active: active
                 }
             })
-            console.log(processedVotings)
             return processedVotings
         }
     }, 
