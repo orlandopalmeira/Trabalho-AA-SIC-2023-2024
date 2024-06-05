@@ -37,7 +37,7 @@ public class AuthController {
      * @param password - password do utilizador
      * @return Map com o token, id do utilizador e mensagem de sucesso para retornar na resposta
      */
-    private Map<String, String> login_procedure(HttpServletResponse response, String email, String password){
+    private Map<String, String> loginProcedure(HttpServletResponse response, String email, String password){
         String token = authService.login(email, password);
 
         response.addCookie(authService.generateCookie(email, password));
@@ -54,7 +54,7 @@ public class AuthController {
             String email = credentials.get("email");
             String password = credentials.get("password");
 
-            Map<String, String> result = login_procedure(response, email, password);
+            Map<String, String> result = loginProcedure(response, email, password);
             // String token = authService.login(email, password);
             // response.addCookie(authService.generateCookie(email, password));
             // String user_id = authService.extractUserId(token);
@@ -78,7 +78,7 @@ public class AuthController {
             String email = user.getEmail();
             String password = user.getPassword();
 
-            Map<String, String> result = login_procedure(response, email, password);
+            Map<String, String> result = loginProcedure(response, email, password);
 
             return ResponseEntity.ok(result);
 

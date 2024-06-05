@@ -55,7 +55,9 @@ public class ImageController {
     // }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> handleImageUpload(@RequestParam("image") MultipartFile file) {
-        if (file.isEmpty() || file.getContentType().startsWith("image") == false) {
+        String contentType = file.getContentType();
+        if (contentType == null) contentType = "";
+        if (file.isEmpty() || !contentType.startsWith("image")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a valid image to upload.");
         }
         try {
