@@ -152,6 +152,21 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, user_id, voting_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
+            //* Verificar se o user tem permissão para ver as estatísticas da votação.
+            boolean allowedToSeeStats = false;
+            if(voting.getCreator().getId().equals(Long.parseLong(user_id))){//* O user é o criador da votação?
+                allowedToSeeStats = true;
+            } else if (voting.isShowstats()) {
+                Date now = new Date();
+                Date enddate = voting.getEnddate();
+                boolean active = enddate == null || now.before(enddate);
+                if(active) allowedToSeeStats = voting.isShowstatsrealtime();
+                else allowedToSeeStats = true;
+            }
+            if(!allowedToSeeStats){
+                Map<String, String> error = Map.of(MESSAGE_FIELD, "User does not have permission to see the stats of this voting!");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            }
             return ResponseEntity.ok(votingService.getVotingStats(voting_id));
         });
     }
