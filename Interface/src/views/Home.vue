@@ -20,9 +20,6 @@
                         v-model="orderBy"
                         clearable
                         hide-details />
-                    <!-- <OrderBy style="width: 30%"
-                    :fields="['Nenhum','Teste1', 'Teste2', 'Teste3']" 
-                    :onSortFromParent="onSort"/> -->
                 </v-col>
             </v-row>
             <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
