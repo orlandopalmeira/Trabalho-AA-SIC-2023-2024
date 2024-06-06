@@ -5,13 +5,17 @@
 			:title="modal.title"
 			:message="modal.message"
 			@close-modal="modal.opened=false"/>
+        <ModalFiltering 
+            :isVisible="modalFiltering.opened"
+            @cancel="modalFiltering.opened = false"
+            @filter="onFilter"/>      
         <v-container>
             <v-card flat style="padding: 10px;" class="dark" >
                 <v-row>
                     <v-col>
                         <div class="flex">
                             <v-text-field class="mr-5" v-model="search" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
-                            <button class="filterbutton">
+                            <button @click="modalFiltering.opened = true" class="filterbutton">
                                 <v-icon>mdi-filter-outline</v-icon> Filtrar
                             </button>
                         </div>
@@ -56,6 +60,7 @@ import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import axios from '@/axios'
 import router from '@/router'
+import ModalFiltering from '@/components/Modais/ModalFiltering.vue'
 
 const table_headers = [
     { align: 'start', key: 'title',         title: 'Votação' },
@@ -70,7 +75,8 @@ export default {
     components: {
         AuthenticatedLayout,
         ModalOk,
-        LoadingAlert
+        LoadingAlert,
+        ModalFiltering
     },
     data() {
         return {
@@ -82,7 +88,11 @@ export default {
 				opened: false,
 				title: '',
 				message: ''
-			}
+			},
+            modalFiltering: {
+                opened: false
+            },
+            filters: null
         }
     },
     methods: {
@@ -130,6 +140,14 @@ export default {
             let formattedDateTime = datePart + " " + formattedTime;
 
             return formattedDateTime;
+        },
+        onFilter(filters) {
+            if(Object.values(filters).every(v => v === null)) {
+                this.filters = null
+            } else {
+                this.filters = filters
+            }
+            this.modalFiltering.opened = false
         }
     },
     computed: {
@@ -145,6 +163,24 @@ export default {
                     active: active,
                 }
             })
+            const isPrivateVoting = v => (v.privatevoting === 'mdi-lock')
+            if(this.filters) {
+                if(this.filters.creationdate) {
+                    processedVotings = processedVotings.filter(v => {
+                        return v.creationdate >= this.filters.creationdate[0] && v.creationdate <= this.filters.creationdate[1]
+                    })
+                }
+                if(this.filters.enddate) {
+                    processedVotings = processedVotings.filter(v => {
+                        return v.enddate >= this.filters.enddate[0] && v.enddate <= this.filters.enddate[1]
+                    })
+                }
+                if(this.filters.privatevoting !== null) {
+                    processedVotings = processedVotings.filter(v => {
+                        return isPrivateVoting(v) === this.filters.privatevoting
+                    })
+                }
+            }
             return processedVotings
         }
     }, 
@@ -212,6 +248,9 @@ export default {
     border: 2px solid rgb(156, 156, 156);
     border-radius: 12px;
     padding: 8px 8px;
+}
+.filterbutton:hover {
+    background-color: rgb(156, 156, 156);
 }
 .dark-mode .dark {
     background-color: #15202b;
