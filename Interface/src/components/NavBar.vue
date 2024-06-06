@@ -120,7 +120,7 @@ export default {
             this.phoneMenu = false;
         },
     },
-    beforeDestroy() {
+    beforeUnmount() {
         window.removeEventListener('resize', this.handleResize);
     },
 };
