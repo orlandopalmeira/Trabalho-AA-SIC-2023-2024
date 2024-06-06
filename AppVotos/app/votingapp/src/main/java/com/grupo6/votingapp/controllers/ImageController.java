@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.grupo6.votingapp.exceptions.imageStorage.ImageNotFoundException;
 import com.grupo6.votingapp.exceptions.imageStorage.ImageServerException;
 import com.grupo6.votingapp.services.ImageService;
+import com.grupo6.votingapp.services.VotingService;
 
 import lombok.AllArgsConstructor;
 
@@ -28,24 +30,35 @@ import lombok.AllArgsConstructor;
 public class ImageController {
 
     private ImageService storageService;
+    private VotingService votingService;
+    private CheckTokenMiddlewares authMiddlewares;
 
     @GetMapping(value = "/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> getImage(@PathVariable String imageName) {
-        try {
-            byte[] imageBytes = storageService.downloadImage(imageName);
+    public ResponseEntity<Object> getImage(@PathVariable String imageName, @CookieValue(value = "token", defaultValue = "") String token) {
+        return authMiddlewares.checkTokenSimple(token, userId -> {
+            try {
+                Long votingId = votingService.votingIdWithImage(userId, imageName); //! NÃO TESTADO verifica se a imagem pertence a uma votação acessível ao utilizador
+                if (votingId == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                }
+                byte[] imageBytes = storageService.downloadImage(imageName);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
-            headers.setContentLength(imageBytes.length);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.IMAGE_PNG);
+                headers.setContentLength(imageBytes.length);
 
-            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-        } catch (ImageServerException e) {
-            System.out.println(e.getMessage() + " Image name: " + imageName);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        } catch (ImageNotFoundException e) {
-            System.out.println(e.getMessage() + " Image name: " + imageName);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+                return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+            } catch (ImageServerException e) {
+                System.out.println(e.getMessage() + " Image name: " + imageName);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            } catch (ImageNotFoundException e) {
+                System.out.println(e.getMessage() + " Image name: " + imageName);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            }
+        });
     }
 
     // Posting an image to the bucket

@@ -2,6 +2,7 @@ package com.grupo6.votingapp.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.IdentitySet;
@@ -115,5 +116,9 @@ public class VotingService {
 
     public Map<Long,Long> getVotesCount(List<Long> votingIds) {
         return statsRepository.getCountVotesOfVotings(votingIds);
+    }
+
+    public Long votingIdWithImage(String userId, String imageName) {
+        return votingRepository.votingWithImage(userId, imageName).orElse(null);
     }
 }

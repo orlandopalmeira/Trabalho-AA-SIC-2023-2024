@@ -17,4 +17,7 @@ public interface VotingRepository extends JpaRepository<Voting, Long>{
 
     @Query("SELECT v FROM Voting v WHERE v.id = :votingId AND (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u))")
     Optional<Voting> findAccessibleVotingToUser(String userId, Long votingId);
+
+    @Query("SELECT DISTINCT v.id FROM Voting v LEFT JOIN Question q ON v.id = q.voting.id LEFT JOIN Option o ON q.id = o.question.id WHERE (v.image = :imageName OR o.image = :imageName) AND (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u))")
+    Optional<Long> votingWithImage(String userId, String imageName);
 }
