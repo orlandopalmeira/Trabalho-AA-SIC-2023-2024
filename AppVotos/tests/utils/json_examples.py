@@ -46,9 +46,15 @@ def now_str():
 def get_sample_user():
     """Returns a random user"""
     number = gen_number()
+    names = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Hank', 'Ivy', 'Jack', 'Kate', 'Liam', 'Mia', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rose', 'Sam', 'Tina', 'Uma', 'Vince', 'Wendy', 'Xander', 'Yara', 'Zack']
+    surnames = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker']
+    name = random.choice(names)
+    surname = random.choice(surnames)
+    final_name = name + ' ' + surname
+    email = f'{name.lower()}.{surname.lower()}_{number}@example.com'
     return {
-        "name": f"User_{number}",
-        "email": f"user_{number}@example.com",
+        "name": final_name,
+        "email": email,
         "password": f"user_{number}",
         "birthdate": gen_random_past_date()
     }

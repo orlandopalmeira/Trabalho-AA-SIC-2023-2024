@@ -108,7 +108,7 @@ def arg_getuserbyemail(arguments: list):
 def arg_createuser(arguments: list):
     """Test for server register user"""
     try:
-        url = f'{SERVER}/users'
+        url = f'{SERVER}/auth/register'
         user = je.get_sample_user()
         response = requests.post(url, json=user)
         print("Created user:")
