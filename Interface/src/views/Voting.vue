@@ -15,7 +15,7 @@
                 <v-tabs-window v-model="tab">
                     <!--Tab para votar-->
                     <v-tabs-window-item value="votar" class="dark"> 
-                        <v-card class="mx-auto dark" width="500" padding="5px">
+                        <v-card class="mx-auto mb-2 dark" width="500">
                             <!--Título da votação-->
                             <v-card-title style="padding: 15px; text-align: center;" >
                                 <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
