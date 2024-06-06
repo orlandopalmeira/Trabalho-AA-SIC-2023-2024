@@ -6,8 +6,6 @@
                 <h2 class="ml-5"> <img :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
             </div>
             <ul class="flex">
-                <!-- <v-icon v-if="isDarkMode">mdi-weather-night</v-icon>
-                <v-icon v-else>mdi-weather-sunny</v-icon> -->
                 <li>
                     <v-switch class="center"
                         v-model="isDarkMode"
@@ -46,20 +44,25 @@
 
 <script>
 import axios from '../axios';
-import Cookies from 'js-cookie'; // If using cookies
+// import Cookies from 'js-cookie'; // If using cookies
 import { useUserInfoStore } from '@/stores/userInfoStore';
 export default {
     name: 'NavBar',
+    created() {
+        // Storing darkmode preferences in LocalStorage
+        this.isDarkMode = JSON.parse(localStorage.getItem('dark-mode') || 'false');
+        /* this.isDarkMode = document.documentElement.classList.contains('dark-mode'); */
+        
+        // Resize event to determine size of the page
+        window.addEventListener('resize', this.handleResize);
+    },
     data() {
         return {
             phonePage: false,
             phoneMenu: false,
-            useUserInfoStore,
-            isDarkMode: document.documentElement.classList.contains('dark-mode'),
+            useUserInfoStore, //! Talvez se possa eliminar isto
+            isDarkMode: false
         }
-    },
-    created() {
-        this.isDarkMode = document.documentElement.classList.contains('dark-mode');
     },
     props: {
         title: {type: String, required: false, default: 'VotaçãoApp'},
@@ -87,6 +90,9 @@ export default {
         goTo(route){
             this.$router.push(route)
         },
+        handleResize() {
+            this.phonePage = window.innerWidth < 768;
+        },
         togglePhoneMenu(){
             this.phoneMenu = !this.phoneMenu
         },
@@ -98,18 +104,25 @@ export default {
         },
         toggleDarkMode() {
             this.isDarkMode = !this.isDarkMode;
-            if (this.isDarkMode) {
-                document.documentElement.classList.add('dark-mode');
-            } else {
-                document.documentElement.classList.remove('dark-mode');
-            }
+            localStorage.setItem('dark-mode', this.isDarkMode);
+            // a Watch trata de adicionar ou remover a classe dark-mode
         }
     },
-    created(){
-        window.addEventListener('resize', () => {
-            this.phonePage = window.innerWidth < 768
-        })
-    }
+    watch: {
+        isDarkMode(newVal) {
+            if (this.isDarkMode) {
+                document.documentElement.classList.add('dark-mode');
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                }
+        },
+        $route() {
+            this.phoneMenu = false;
+        },
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.handleResize);
+    },
 };
 </script>
 

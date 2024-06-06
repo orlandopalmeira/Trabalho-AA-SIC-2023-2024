@@ -40,9 +40,9 @@
                     accept="image/*"
                     />
                 <v-expansion-panels>
-                    <v-expansion-panel title="Opções adicionais" class="dark">
+                    <v-expansion-panel title="Definições de Privacidade" class="dark">
                         <v-expansion-panel-text>
-                            <div style="display: flex; align-items: center; margin-bottom: -30px;">
+                            <div style="display: flex; margin-bottom: -25px;">
                                 <v-checkbox
                                     id="privatevoting"
                                     name="privatevoting"
@@ -61,6 +61,8 @@
                                     chips
                                     closable-chips
                                     multiple
+                                    no-data-text="Introduza termo válido"
+                                    style="transition: ease-in-out;"
                                 >
                                     <template v-slot:chip="{ props, item }">
                                         <v-chip

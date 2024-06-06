@@ -33,14 +33,6 @@ export default {
         return {
             stage: 1,
             modal: { opened: false, title: '', message: '' },
-            // voting: {
-            //     title: '',
-            //     description: '',
-            //     enddate: null,
-            //     image: null,
-            //     privatevoting: false,
-            //     questions: []
-            // },
             useVotingInfoStore
         }
     },

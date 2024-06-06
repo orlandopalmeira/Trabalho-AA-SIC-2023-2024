@@ -113,14 +113,23 @@ export default {
             // useVotingInfoStore().questions: useVotingInfoStore().questions,
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
-                maxlength100: value => (value || '').length <= 100 || 'Máximo de 100 caracteres.'
+                maxlength100: value => (value || '').length <= 100 || 'Máximo de 100 caracteres.',
+                maxlength500: value => (value || '').length <= 500 || 'Máximo de 500 caracteres.'
             },
             modal: {
                 opened: false
             }
         }
     },
+    created() {
+        this.initQuestion();
+    },
     methods: {
+        initQuestion(){
+            if (!this.useVotingInfoStore().questions.length){
+                this.addQuestion();
+            }
+        },
         addQuestion() {
             this.useVotingInfoStore().questions.push({
                 description: '',
@@ -175,7 +184,7 @@ export default {
             // caso venham a surgir mais fields, basta adicionar aqui as regras para esse field. E também adicionar o seu nome, nos fields da função areAllRulesMet.
             switch (field) {
                 case 'question':
-                rules = [this.rules.required];
+                rules = [this.rules.required, this.rules.maxlength500];
                 break;
                 case 'option':
                 rules = [this.rules.required, this.rules.maxlength100];
@@ -201,16 +210,45 @@ export default {
     computed: {
         areAllRulesMet() {
             let questions = this.useVotingInfoStore().questions;
+            console.log(JSON.stringify(questions, null, 4));
+            /* questions =
+            [
+                {
+                    "description": "Pergunta",
+                    "options": [
+                        {
+                            "description": "Opção 1",
+                            "image": null
+                        },
+                        {
+                            "description": "Opção 2",
+                            "image": null
+                        }
+                    ]
+                }
+            ]
+            */
+
+            if (!questions.length) {
+                return false;
+            }
 
             for (let i = 0; i < questions.length; i++) {
-                for (let j = 0; j < questions[i].options.length; j++) {
+                let question = questions[i];
 
-                    if (!this.getFieldRules("option").every(rule => rule(questions[i].options[j].description)===true )) {
+                // verifica se a pergunta tem pelo menos 2 opções e se os campos da pergunta cumprem as regras
+                if (question.options.length < 2 || !this.getFieldRules("question").every(rule => rule(question.description)===true )) {
+                    return false;
+                }
+
+                for (let j = 0; j < question.options.length; j++) {
+
+                    if (!this.getFieldRules("option").every(rule => rule(question.options[j].description)===true )) {
                         return false;
                     }
                     
-                    if (questions[i].options[j].image){
-                        this.validateAspectRatio(questions[i].options[j].image, 0.8, 1.2).then((res) => {
+                    if (question.options[j].image){
+                        this.validateAspectRatio(question.options[j].image, 0.8, 1.2).then((res) => {
                             if (!res) {
                                 // this.openModal('Erro', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem deve ter uma proporção entre 0.8 e 1.2 (largura / altura).');
                                 return False;
