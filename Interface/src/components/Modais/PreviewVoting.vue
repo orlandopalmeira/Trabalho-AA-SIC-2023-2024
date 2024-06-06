@@ -1,7 +1,7 @@
 <template>
     <div class="modal-overlay" v-if="isVisible" @click="this.$emit('close-modal');">
-        <div class="modal dark" @click.stop>
-            <v-card class="mx-auto mt-2 dark" width="500">
+        <div class="modal dark-parent" @click.stop>
+            <v-card class="mx-auto mt-2 dark-parent" width="500">
                 <v-card-title style="padding: 15px;">
                     <h3 style="font-weight: 600; text-align: center;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ useVotingInfoStore().title }}</h3>
                 </v-card-title>
@@ -101,7 +101,7 @@ hr{
     background: #0056b3;
 }
 
-.dark-mode .dark {
+.dark-mode .dark-parent {
     background-color: #181818;
     color: white;
 }

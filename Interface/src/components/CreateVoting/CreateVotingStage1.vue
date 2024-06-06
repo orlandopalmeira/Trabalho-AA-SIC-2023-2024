@@ -47,17 +47,36 @@
                         v-model="useVotingInfoStore().privatevoting"
                         class="mr-4"
                     ></v-checkbox>
-                    <v-select
+                    <v-autocomplete
                         v-if="useVotingInfoStore().privatevoting"
                         id="selectPermitedUsers"
                         name="selectPermitedUsers"
                         label="Selecione os utilizadores que deseja permitir votar"
                         v-model="useVotingInfoStore().permitedUsers"
-                        :item-props="userProps"
                         :items="users"
+                        item-title="name"
+                        item-value="id"
+                        chips
+                        closable-chips
                         multiple
                     >
-                </v-select>
+                    <template v-slot:chip="{ props, item }">
+                        <v-chip
+                        v-bind="props"
+                        :prepend-avatar="item.raw.avatar"
+                        :text="item.raw.name"
+                        ></v-chip>
+                    </template>
+
+                    <template v-slot:item="{ props, item }">
+                        <v-list-item
+                        v-bind="props"
+                        :prepend-avatar="item.raw.avatar"
+                        :subtitle="item.raw.email"
+                        :title="item.raw.name"
+                        ></v-list-item>
+                    </template>
+                    </v-autocomplete>
                 </div>
                 <v-row class="mt-4">
                     <v-col cols="6">
@@ -81,6 +100,13 @@ export default {
     // },
     emits: ['data', 'leave'],
     data() {
+        const srcs = {
+                1: './kitten.png',
+                2: './kitten.png',
+                3: './kitten.png',
+                4: './kitten.png',
+                5: './kitten.png',
+        }
         return {
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
@@ -89,10 +115,11 @@ export default {
             },
             useVotingInfoStore,
             users: [
-                { id: 1, name: 'Maria', email: 'maria@gmail.com' },
-                { id: 2, name: 'António', email: 'antonio@gmail.com' },
-                { id: 3, name: 'João', email: 'joao@gmail.com' }
-            ]
+                { id: 1, name: 'Maria', email: 'maria@gmail.com', avatar: srcs[1] },
+                { id: 2, name: 'António', email: 'antonio@gmail.com', avatar: srcs[2] },
+                { id: 3, name: 'João', email: 'joao@gmail.com', avatar: srcs[3] }
+            ],
+            
         };
     },
     computed: {
