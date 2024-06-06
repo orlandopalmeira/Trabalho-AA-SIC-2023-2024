@@ -155,8 +155,8 @@ export default {
                     image: this.useVotingInfoStore().image,
                     privatevoting: this.useVotingInfoStore().privatevoting,
                     privateSelectedUsers: this.useVotingInfoStore().privateSelectedUsers,
-                    isFinalResultPublic: this.useVotingInfoStore().isFinalResultPublic,
-                    isIntermediateResultPublic: this.useVotingInfoStore().isIntermediateResultPublic,
+                    showstats: this.useVotingInfoStore().isFinalResultPublic,
+                    showstatsrealtime: this.useVotingInfoStore().isIntermediateResultPublic,
                     questions: this.useVotingInfoStore().questions
                 }
                 // console.log(dataObj.enddate);
