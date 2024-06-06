@@ -156,6 +156,7 @@ export default {
                     enddate: this.useVotingInfoStore().enddate.toISOString().replace('T', ' ').slice(0,19),
                     image: this.useVotingInfoStore().image,
                     privatevoting: this.useVotingInfoStore().privatevoting,
+                    privateSelectedUsers: this.useVotingInfoStore().privateSelectedUsers,
                     questions: this.useVotingInfoStore().questions
                 }
                 // Dados da votação

@@ -38,7 +38,8 @@
                     label="Imagem (opcional)"
                     v-model="useVotingInfoStore().image"
                     accept="image/*"
-                ></v-file-input>
+                    />
+                {{ useVotingInfoStore().privateSelectedUsers }}
                 <div style="display: flex; align-items: center;">
                     <v-checkbox
                         id="privatevoting"
@@ -49,33 +50,31 @@
                     ></v-checkbox>
                     <v-autocomplete
                         v-if="useVotingInfoStore().privatevoting"
-                        id="selectPermitedUsers"
-                        name="selectPermitedUsers"
                         label="Selecione os utilizadores que deseja permitir votar"
-                        v-model="useVotingInfoStore().permitedUsers"
-                        :items="users"
+                        v-model="useVotingInfoStore().privateSelectedUsers"
+                        :items="useVotingInfoStore().usersMatched"
+                        @update:search="onSearch"
                         item-title="name"
                         item-value="id"
                         chips
                         closable-chips
                         multiple
                     >
-                    <template v-slot:chip="{ props, item }">
-                        <v-chip
-                        v-bind="props"
-                        :prepend-avatar="item.raw.avatar"
-                        :text="item.raw.name"
-                        ></v-chip>
-                    </template>
-
-                    <template v-slot:item="{ props, item }">
-                        <v-list-item
-                        v-bind="props"
-                        :prepend-avatar="item.raw.avatar"
-                        :subtitle="item.raw.email"
-                        :title="item.raw.name"
-                        ></v-list-item>
-                    </template>
+                        <template v-slot:chip="{ props, item }">
+                            <v-chip
+                            v-bind="props"
+                            :prepend-avatar="item.raw.avatar"
+                            :text="item.raw.name"
+                            />
+                        </template>
+                        <template v-slot:item="{ props, item }">
+                            <v-list-item
+                            v-bind="props"
+                            :prepend-avatar="item.raw.avatar"
+                            :subtitle="item.raw.email"
+                            :title="item.raw.name"
+                            />
+                        </template>
                     </v-autocomplete>
                 </div>
                 <v-row class="mt-4">
@@ -92,6 +91,7 @@
 </template>
 
 <script>
+import axios from '@/axios';
 import { useVotingInfoStore } from '@/stores/votingInfoStore';
 
 export default {
@@ -100,13 +100,6 @@ export default {
     // },
     emits: ['data', 'leave'],
     data() {
-        const srcs = {
-                1: './kitten.png',
-                2: './kitten.png',
-                3: './kitten.png',
-                4: './kitten.png',
-                5: './kitten.png',
-        }
         return {
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
@@ -114,12 +107,12 @@ export default {
                 maxlength500: value => (value && value.length <= 500) || 'Máximo de 500 caracteres.',
             },
             useVotingInfoStore,
-            users: [
-                { id: 1, name: 'Maria', email: 'maria@gmail.com', avatar: srcs[1] },
-                { id: 2, name: 'António', email: 'antonio@gmail.com', avatar: srcs[2] },
-                { id: 3, name: 'João', email: 'joao@gmail.com', avatar: srcs[3] }
-            ],
-            
+            std_image: './kitten.png',
+            // usersMatched_temp: [
+            //     { id: 1, name: 'Maria', email: 'maria@gmail.com', avatar: this.std_image },
+            //     { id: 2, name: 'António', email: 'antonio@gmail.com', avatar: this.std_image },
+            //     { id: 3, name: 'João', email: 'joao@gmail.com', avatar: this.std_image }
+            // ],
         };
     },
     computed: {
@@ -160,11 +153,20 @@ export default {
         leave() {
             this.$emit('leave');
         },
-        userProps (item) {
-            return {
-                title: item.name,
-                subtitle: item.email,
-            }
+        onSearch(val) {
+            axios.get('/users?term=' + val).then(res => {
+                // Adiciona um avatar a cada utilizador, caso não o tenha.
+                let users_matched = res.data;
+                users_matched.forEach(user => {
+                    if (!user.avatar) {
+                        user.avatar = this.std_image;
+                    }
+                });
+                useVotingInfoStore().usersMatched = users_matched;
+            }).catch(err => {
+                useVotingInfoStore().usersMatched = [];
+                console.log(err);
+            });
         }
     },
 };

@@ -8,6 +8,8 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         enddate: null,
         image: null,
         privatevoting: false,
+        privateSelectedUsers: [],
+        usersMatched: [],
         questions: []
     }),
     // getters, equivalentes aos computed properties
@@ -26,6 +28,12 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         },
         getPrivateVoting() {
             return this.privatevoting;
+        },
+        getPrivateSelectedUsers() {
+            return this.privateSelectedUsers;
+        },
+        getUsersMatched() {
+            return this.usersMatched;
         },
         getQuestions() {
             return this.questions;
@@ -47,6 +55,12 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         },
         setPrivateVoting(privatevoting) {
             this.privatevoting = privatevoting;
+        },
+        setUsersMatcheds(permitedUsers) {
+            this.usersMatched = permitedUsers;
+        },
+        addUsersMatched(user) {
+            this.usersMatched.push(user);
         },
         setQuestions(questions) {
             this.questions = questions;
