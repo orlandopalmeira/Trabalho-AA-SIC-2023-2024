@@ -61,13 +61,27 @@ export default {
             }
             return true;
         },
-        validateAspectRatio(file, min, max) {
+        validateAspectRatio(file, min, max, stage2info = null) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const img = new Image();
                     img.onload = () => {
                         const aspectRatio = img.width / img.height;
+                        if (aspectRatio < min) {
+                            let title = 'Erro'
+                            if (stage2info) {
+                                title += ' na Pergunta ' + (stage2info.question + 1) + ', Opção ' + (stage2info.option + 1);
+                            }
+                            this.openModal(title, 'Imagem demasiado comprida. Por favor submeta uma imagem mais larga.');
+                        }
+                        else if (aspectRatio > max) {
+                            let title = 'Erro'
+                            if (stage2info) {
+                                title += ' na Pergunta ' + (stage2info.question + 1) + ', Opção ' + (stage2info.option + 1);
+                            }
+                            this.openModal(title, 'Imagem demasiado larga. Por favor submeta uma imagem mais comprida.');
+                        }
                         resolve(aspectRatio >= min && aspectRatio <= max);
                     };
                     img.onerror = () => {
@@ -93,8 +107,6 @@ export default {
 
                         if (!isValid) {
 
-                            this.openModal('Erro', 'A imagem deve ter uma proporção entre 1 e 2 (largura / altura).');
-
                             return;
                         }
                     }
@@ -112,10 +124,10 @@ export default {
 
                         if (!questions[i].options[j].image) continue;
 
-                        let imgValid = await this.validateAspectRatio(questions[i].options[j].image, 0.8, 1.2); 
+                        let imgValid = await this.validateAspectRatio(questions[i].options[j].image, 0.8, 1.2, { question: i, option: j }); 
 
                         if (!imgValid) {
-                            this.openModal('Erro', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem deve ter uma proporção entre 0.8 e 1.2 (largura / altura).');
+                            
                             return;
                         }
                     }
