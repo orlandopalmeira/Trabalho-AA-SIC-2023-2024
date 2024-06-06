@@ -39,6 +39,7 @@
                     v-model="useVotingInfoStore().image"
                     accept="image/*"
                     />
+                
                 <div style="display: flex; align-items: center;">
                     <v-checkbox
                         id="privatevoting"
@@ -51,7 +52,7 @@
                         v-if="useVotingInfoStore().privatevoting"
                         label="Selecione os utilizadores que deseja permitir votar"
                         v-model="useVotingInfoStore().privateSelectedUsers"
-                        :items="useVotingInfoStore().usersMatched"
+                        :items="usersMatched"
                         @update:search="onSearch"
                         item-title="name"
                         item-value="id"
@@ -76,6 +77,30 @@
                         </template>
                     </v-autocomplete>
                 </div>
+                <v-checkbox
+                    id="finalresultpublic"
+                    name="finalresultpublic"
+                    v-model="useVotingInfoStore().isFinalResultPublic"
+                >
+                    <template v-slot:label>
+                        <div style="display: flex;">
+                            Publicar resultados finais
+                            <v-icon :title="help.finalResultPublic" class="ml-2">mdi-information</v-icon>
+                        </div>
+                    </template>
+                </v-checkbox>
+                <v-checkbox
+                    id="intermediateresultpublic"
+                    name="intermediateresultpublic"
+                    v-model="useVotingInfoStore().isIntermediateResultPublic"
+                >
+                    <template v-slot:label>
+                        <div style="display: flex;">
+                            Publicar resultados intermédios
+                            <v-icon :title="help.intermediateResultPublic" class="ml-2">mdi-information</v-icon>
+                        </div>
+                    </template>
+                </v-checkbox>
                 <v-row class="mt-4">
                     <v-col cols="6">
                         <v-btn color="secondary" @click="leave" > Voltar </v-btn>
@@ -97,13 +122,18 @@ export default {
     emits: ['data', 'leave'],
     data() {
         return {
+            useVotingInfoStore,
+            usersMatched: [],
+            std_image: './kitten.png',
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
                 maxlength500: value => (value && value.length <= 500) || 'Máximo de 500 caracteres.',
+                },
+            help: {
+                finalResultPublic: 'Se ativado, os resultados finais serão públicos.',
+                intermediateResultPublic: 'Se ativado, os resultados intermédios serão públicos.'
             },
-            useVotingInfoStore,
-            std_image: './kitten.png',
         };
     },
     computed: {
@@ -144,7 +174,14 @@ export default {
         leave() {
             this.$emit('leave');
         },
+        clearMatchedUsers() {
+            this.usersMatched = [];
+        },
         onSearch(val) {
+            if (!val) {
+                this.clearMatchedUsers();
+                return;
+            }
             axios.get('/users?term=' + val).then(res => {
                 // Adiciona um avatar a cada utilizador, caso não o tenha.
                 let users_matched = res.data;
@@ -153,9 +190,9 @@ export default {
                         user.avatar = this.std_image;
                     }
                 });
-                useVotingInfoStore().usersMatched = users_matched;
+                this.usersMatched = users_matched;
             }).catch(err => {
-                useVotingInfoStore().usersMatched = [];
+                this.usersMatched = [];
                 console.log(err);
             });
         }

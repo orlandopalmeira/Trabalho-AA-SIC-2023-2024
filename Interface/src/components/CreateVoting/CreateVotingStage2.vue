@@ -201,7 +201,6 @@ export default {
     computed: {
         areAllRulesMet() {
             let questions = this.useVotingInfoStore().questions;
-            console.log(questions)
 
             for (let i = 0; i < questions.length; i++) {
                 for (let j = 0; j < questions[i].options.length; j++) {

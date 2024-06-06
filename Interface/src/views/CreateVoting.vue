@@ -115,8 +115,6 @@ export default {
                 }
                 // else - Não faz nada, e a interface indica os campos em falta.
             } else {
-                // console.log(this.votingInfoStore.questions)
-
                 let questions = this.useVotingInfoStore().questions;
 
                 for (let i = 0; i < questions.length; i++) {
@@ -157,8 +155,11 @@ export default {
                     image: this.useVotingInfoStore().image,
                     privatevoting: this.useVotingInfoStore().privatevoting,
                     privateSelectedUsers: this.useVotingInfoStore().privateSelectedUsers,
+                    isFinalResultPublic: this.useVotingInfoStore().isFinalResultPublic,
+                    isIntermediateResultPublic: this.useVotingInfoStore().isIntermediateResultPublic,
                     questions: this.useVotingInfoStore().questions
                 }
+                // console.log(dataObj.enddate);
                 // Dados da votação
                 formData.append('voting', JSON.stringify(dataObj));
                 // Imagens

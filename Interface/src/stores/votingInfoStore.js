@@ -9,7 +9,8 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         image: null,
         privatevoting: false,
         privateSelectedUsers: [],
-        usersMatched: [],
+        isFinalResultPublic: true,
+        isIntermediateResultPublic: false,
         questions: []
     }),
     // getters, equivalentes aos computed properties
@@ -29,14 +30,17 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         getPrivateVoting() {
             return this.privatevoting;
         },
-        getPrivateSelectedUsers() {
-            return this.privateSelectedUsers;
-        },
         getUsersMatched() {
             return this.usersMatched;
         },
         getQuestions() {
             return this.questions;
+        },
+        getIsFinalResultPublic() {
+            return this.isFinalResultPublic;
+        },
+        getIsIntermediateResultPublic() {
+            return this.isIntermediateResultPublic;
         }
     },
     // acções, equivalentes aos métodos
@@ -56,11 +60,14 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         setPrivateVoting(privatevoting) {
             this.privatevoting = privatevoting;
         },
-        setUsersMatcheds(permitedUsers) {
-            this.usersMatched = permitedUsers;
+        setPrivateSelectedUsers(privateSelectedUsers) {
+            this.privateSelectedUsers = privateSelectedUsers;
         },
-        addUsersMatched(user) {
-            this.usersMatched.push(user);
+        setIsFinalResultPublic(isFinalResultPublic) {
+            this.isFinalResultPublic = isFinalResultPublic;
+        },
+        setIsIntermediateResultPublic(isIntermediateResultPublic) {
+            this.isIntermediateResultPublic = isIntermediateResultPublic;
         },
         setQuestions(questions) {
             this.questions = questions;
