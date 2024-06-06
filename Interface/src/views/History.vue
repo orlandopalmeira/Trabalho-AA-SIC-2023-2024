@@ -107,8 +107,8 @@ export default {
             // filtrar por aqueles que ja acabaram e que user votou
 
             let now = new Date().toISOString().replace('T', ' ').slice(0,19);
-
-            this.historyVotings = response.data.filter(voting => (voting.enddate < now || voting.enddate === null) && voting.useralreadyvoted);
+            let finished = voting => voting.enddate < now || voting.enddate === null
+            this.historyVotings = response.data.filter(voting => finished(voting) && voting.useralreadyvoted);
 
             this.loadingHistory = false
         })
