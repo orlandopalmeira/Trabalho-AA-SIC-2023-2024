@@ -68,7 +68,7 @@ public class UserController {
         //* Retorna os dados do user em caso de sucesso ou uma mensagem de erro
         return authMiddlewares.checkTokenSimple(token, userId -> {
             List<User> users = term.isBlank() ? userService.getUsers() : userService.getUsersByTerm(term);
-            List<UserNameEmailDTO> dtos = users.stream().map(UserNameEmailDTO::new).collect(Collectors.toList());
+            List<UserNameEmailDTO> dtos = users.stream().map(UserNameEmailDTO::new).toList();
             return ResponseEntity.ok(dtos);
         });
     }
