@@ -1,6 +1,6 @@
 <template lang="">
     <v-card class="card dark">
-        <v-card-title style="padding: 15px; margin-bottom: 10px">
+        <v-card-title class="mb-5">
             <h4 style="font-weight: 600;">Pergunta {{ questionIndex + 1 }}: {{ question.description }}</h4>
         </v-card-title>
         <v-card-text class="card-text dark">

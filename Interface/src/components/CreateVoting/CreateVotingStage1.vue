@@ -39,12 +39,26 @@
                     v-model="useVotingInfoStore().image"
                     accept="image/*"
                 ></v-file-input>
-                <v-checkbox
-                id="privatevoting"
-                name="privatevoting"
-                label="Votação Privada"
-                v-model="useVotingInfoStore().privatevoting"
-                ></v-checkbox>
+                <div style="display: flex; align-items: center;">
+                    <v-checkbox
+                        id="privatevoting"
+                        name="privatevoting"
+                        label="Votação Privada"
+                        v-model="useVotingInfoStore().privatevoting"
+                        class="mr-4"
+                    ></v-checkbox>
+                    <v-select
+                        v-if="useVotingInfoStore().privatevoting"
+                        id="selectPermitedUsers"
+                        name="selectPermitedUsers"
+                        label="Selecione os utilizadores que deseja permitir votar"
+                        v-model="useVotingInfoStore().permitedUsers"
+                        :item-props="userProps"
+                        :items="users"
+                        multiple
+                    >
+                </v-select>
+                </div>
                 <v-row class="mt-4">
                     <v-col cols="6">
                         <v-btn color="secondary" @click="leave" > Voltar </v-btn>
@@ -73,7 +87,12 @@ export default {
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
                 maxlength500: value => (value && value.length <= 500) || 'Máximo de 500 caracteres.',
             },
-            useVotingInfoStore
+            useVotingInfoStore,
+            users: [
+                { id: 1, name: 'Maria', email: 'maria@gmail.com' },
+                { id: 2, name: 'António', email: 'antonio@gmail.com' },
+                { id: 3, name: 'João', email: 'joao@gmail.com' }
+            ]
         };
     },
     computed: {
@@ -114,6 +133,12 @@ export default {
         leave() {
             this.$emit('leave');
         },
+        userProps (item) {
+            return {
+                title: item.name,
+                subtitle: item.email,
+            }
+        }
     },
 };
 </script>

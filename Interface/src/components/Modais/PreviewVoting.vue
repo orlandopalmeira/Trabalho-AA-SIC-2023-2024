@@ -1,17 +1,21 @@
 <template>
-    <div class="modal-overlay" v-if="isVisible">
-        <div class="modal">
-            <v-card-title style="padding: 15px; text-align: center;">
-                <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: {{ useVotingInfoStore().title }}</span></h3>
-            </v-card-title>
-            <v-card-text>
-                <ul v-for="(question, index) in useVotingInfoStore().questions">
-                    <QuestionCard :key="index"
-                        :questionIndex="index"
-                        :question="question"
-                        :disableVote="true"/>
-                </ul>
-            </v-card-text>
+    <div class="modal-overlay" v-if="isVisible" @click="this.$emit('close-modal');">
+        <div class="modal dark" @click.stop>
+            <v-card class="mx-auto mt-2 dark" width="500">
+                <v-card-title style="padding: 15px;">
+                    <h3 style="font-weight: 600; text-align: center;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ useVotingInfoStore().title }}</h3>
+                </v-card-title>
+                <v-card-text>
+                    <div v-for="(question, index) in useVotingInfoStore().questions">
+                        <ul class="mb-5">
+                            <QuestionCard :key="index"
+                                :questionIndex="index"
+                                :question="question"
+                                :disableVote="true"/>
+                        </ul>
+                    </div>
+                </v-card-text>
+            </v-card>
             <div class="margin20 modal-buttons" style="margin-top: 10px">
                 <v-btn class="button" type="submit" @click="this.$emit('close-modal');">Fechar</v-btn>
             </div>
@@ -74,9 +78,9 @@ hr{
 .modal {
     background:white;
     border-radius: 5px;
-    max-height: 700px;
+    max-height: 600px;
     height: 100%;
-    max-width: 1000px;
+    max-width: 600px;
     width: 100%;
     z-index: 1000;
     overflow-y: auto;
@@ -95,5 +99,10 @@ hr{
 }
 .button:hover {
     background: #0056b3;
+}
+
+.dark-mode .dark {
+    background-color: #181818;
+    color: white;
 }
 </style>
