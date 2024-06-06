@@ -82,7 +82,7 @@ export default {
         return {
             search: '',
             loadingVotings: true,
-            votings: [],//temp_votings,
+            votings: [],
             headers: table_headers,
             modal: {
 				opened: false,
