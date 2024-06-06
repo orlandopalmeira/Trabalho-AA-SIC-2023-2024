@@ -29,6 +29,7 @@
                         :max="new Date().toISOString().substr(0, 10)"
                         :rules="[rules.required]"
                         required
+                        readonly
                         ></v-date-input>
                     
                         <v-text-field
