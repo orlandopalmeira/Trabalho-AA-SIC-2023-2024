@@ -39,68 +39,74 @@
                     v-model="useVotingInfoStore().image"
                     accept="image/*"
                     />
-                
-                <div style="display: flex; align-items: center;">
-                    <v-checkbox
-                        id="privatevoting"
-                        name="privatevoting"
-                        label="Votação Privada"
-                        v-model="useVotingInfoStore().privatevoting"
-                        class="mr-4"
-                    ></v-checkbox>
-                    <v-autocomplete
-                        v-if="useVotingInfoStore().privatevoting"
-                        label="Selecione os utilizadores que deseja permitir votar"
-                        v-model="useVotingInfoStore().privateSelectedUsers"
-                        :items="usersMatched"
-                        @update:search="onSearch"
-                        item-title="name"
-                        item-value="id"
-                        chips
-                        closable-chips
-                        multiple
-                    >
-                        <template v-slot:chip="{ props, item }">
-                            <v-chip
-                            v-bind="props"
-                            :prepend-avatar="item.raw.avatar"
-                            :text="item.raw.name"
-                            />
-                        </template>
-                        <template v-slot:item="{ props, item }">
-                            <v-list-item
-                            v-bind="props"
-                            :prepend-avatar="item.raw.avatar"
-                            :subtitle="item.raw.email"
-                            :title="item.raw.name"
-                            />
-                        </template>
-                    </v-autocomplete>
-                </div>
-                <v-checkbox
-                    id="finalresultpublic"
-                    name="finalresultpublic"
-                    v-model="useVotingInfoStore().isFinalResultPublic"
-                >
-                    <template v-slot:label>
-                        <div style="display: flex;">
-                            Publicar resultados finais
-                            <v-icon :title="help.finalResultPublic" class="ml-2">mdi-information</v-icon>
-                        </div>
-                    </template>
-                </v-checkbox>
-                <v-checkbox
-                    id="intermediateresultpublic"
-                    name="intermediateresultpublic"
-                    v-model="useVotingInfoStore().isIntermediateResultPublic"
-                >
-                    <template v-slot:label>
-                        <div style="display: flex;">
-                            Publicar resultados intermédios
-                            <v-icon :title="help.intermediateResultPublic" class="ml-2">mdi-information</v-icon>
-                        </div>
-                    </template>
-                </v-checkbox>
+                <v-expansion-panels>
+                    <v-expansion-panel title="Opções adicionais" class="dark">
+                        <v-expansion-panel-text>
+                            <div style="display: flex; align-items: center; margin-bottom: -30px;">
+                                <v-checkbox
+                                    id="privatevoting"
+                                    name="privatevoting"
+                                    label="Votação Privada"
+                                    v-model="useVotingInfoStore().privatevoting"
+                                    class="mr-4"
+                                ></v-checkbox>
+                                <v-autocomplete
+                                    v-if="useVotingInfoStore().privatevoting"
+                                    label="Selecione os utilizadores que deseja permitir votar"
+                                    v-model="useVotingInfoStore().privateSelectedUsers"
+                                    :items="usersMatched"
+                                    @update:search="onSearch"
+                                    item-title="name"
+                                    item-value="id"
+                                    chips
+                                    closable-chips
+                                    multiple
+                                >
+                                    <template v-slot:chip="{ props, item }">
+                                        <v-chip
+                                        v-bind="props"
+                                        :prepend-avatar="item.raw.avatar"
+                                        :text="item.raw.name"
+                                        />
+                                    </template>
+                                    <template v-slot:item="{ props, item }">
+                                        <v-list-item
+                                        v-bind="props"
+                                        :prepend-avatar="item.raw.avatar"
+                                        :subtitle="item.raw.email"
+                                        :title="item.raw.name"
+                                        />
+                                    </template>
+                                </v-autocomplete>
+                            </div>
+                            <v-checkbox
+                                id="finalresultpublic"
+                                name="finalresultpublic"
+                                v-model="useVotingInfoStore().isFinalResultPublic"
+                                style="margin-bottom: -30px;"
+                            >
+                                <template v-slot:label>
+                                    <div style="display: flex;">
+                                        Publicar resultados finais
+                                        <v-icon :title="help.finalResultPublic" class="ml-2">mdi-information</v-icon>
+                                    </div>
+                                </template>
+                            </v-checkbox>
+                            <v-checkbox
+                                id="intermediateresultpublic"
+                                name="intermediateresultpublic"
+                                v-model="useVotingInfoStore().isIntermediateResultPublic"
+                            >
+                                <template v-slot:label>
+                                    <div style="display: flex;">
+                                        Publicar resultados intermédios
+                                        <v-icon :title="help.intermediateResultPublic" class="ml-2">mdi-information</v-icon>
+                                    </div>
+                                </template>
+                            </v-checkbox>
+                        </v-expansion-panel-text>
+                    </v-expansion-panel>
+                </v-expansion-panels>
                 <v-row class="mt-4">
                     <v-col cols="6">
                         <v-btn color="secondary" @click="leave" > Voltar </v-btn>
