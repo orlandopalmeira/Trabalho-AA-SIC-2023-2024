@@ -31,7 +31,6 @@
 <script>
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import SearchBar from '@/components/SearchBar.vue'
-import OrderBy from '@/components/OrderBy.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import VotingsContainer from '@/components/HomePage/VotingsContainer.vue'
@@ -43,7 +42,6 @@ export default {
     components: {
         AuthenticatedLayout,
         SearchBar,
-        OrderBy,
         VotingsContainer,
         ModalOk,
         LoadingAlert
