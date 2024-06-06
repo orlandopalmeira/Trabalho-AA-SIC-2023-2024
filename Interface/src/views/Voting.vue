@@ -71,7 +71,7 @@
                     </v-tabs-window-item>
                     <!--Tab para detalhes-->
                     <v-tabs-window-item value="detalhes">
-                        detalhes
+                        <VotingDetails :voting="voting"/>
                     </v-tabs-window-item>
                   </v-tabs-window>
             </v-card>
@@ -83,6 +83,7 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import QuestionCard from '@/components/Voting/QuestionCard.vue'
+import VotingDetails from '@/components/Voting/VotingDetails.vue'
 import StatsTab from '@/components/Voting/StatsTab.vue'
 import SimpleAlert from '@/components/SimpleAlert.vue'
 
@@ -99,6 +100,7 @@ export default {
         LoadingAlert,
         QuestionCard,
         StatsTab,
+        VotingDetails,
         SimpleAlert
     },
 
@@ -219,7 +221,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .dark-mode .dark {
     background-color: #181818;
     color: white;

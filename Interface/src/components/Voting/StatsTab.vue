@@ -122,7 +122,7 @@ export default {
 
 }
 </script>
-<style>
+<style scoped>
 .background {
     background-color: #D9D9D9;
     border-radius: 10px;
