@@ -74,8 +74,8 @@ public class Voting implements Comparable<Voting>{
     
     public void setPrivatevoters(Collection<User> privatevoters) { 
         this.privatevoters = privatevoters == null ? new HashSet<>() : new HashSet<>(privatevoters);
-        if(privatevoters != null)
-            privatevoters.forEach(user -> user.addPrivateVoting(this));
+        // if(privatevoters != null)
+        //     privatevoters.forEach(user -> user.addPrivateVoting(this));
     }
 
     @Override

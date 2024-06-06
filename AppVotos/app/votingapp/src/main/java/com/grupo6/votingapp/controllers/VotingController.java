@@ -19,12 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grupo6.votingapp.auth.UserService;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
+import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.ImageService;
 import com.grupo6.votingapp.services.VotingService;
@@ -41,6 +43,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class VotingController {
 
     private VotingService votingService;
+    private UserService userService;
     private CheckTokenMiddlewares authMiddlewares;
     private ImageService imageService;
     private final ObjectMapper objectMapper;
@@ -128,6 +131,13 @@ public class VotingController {
                             option.setImage(uploadedImages.getOrDefault(option.getImage(), null));
                         }
                     }
+                }
+
+                List<String> privateVotersIds = newVoting.getPrivateSelectedUsers();
+                if(newVoting.isPrivatevoting() && privateVotersIds != null && !privateVotersIds.isEmpty()) {
+                    List<Long> privateVotersIdsLong = privateVotersIds.stream().map(Long::parseLong).toList();
+                    List<User> privateVoters = userService.getUsersByIds(privateVotersIdsLong);
+                    voting.setPrivatevoters(privateVoters);
                 }
 
                 Voting registeredVoting = votingService.saveVoting(voting, user_id);

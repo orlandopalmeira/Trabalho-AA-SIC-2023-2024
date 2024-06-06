@@ -24,6 +24,7 @@ public class RegisterVotingDTO {
     private boolean showstats;
     private boolean showstatsrealtime;
     private List<RegisterQuestionsDTO> questions;
+    private List<String> privateSelectedUsers;
 
     public RegisterVotingDTO() {
     }
