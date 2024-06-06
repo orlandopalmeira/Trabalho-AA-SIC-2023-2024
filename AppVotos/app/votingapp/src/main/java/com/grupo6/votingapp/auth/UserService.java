@@ -24,6 +24,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> getUsersByTerm(String term){ //! WIP
+        return userRepository.findByTerm(term).orElse(null);
+    }
+
     public User getUser(String id){ //* Parece funcionar
         return userRepository.findById(Long.parseLong(id)).orElse(null);
     }

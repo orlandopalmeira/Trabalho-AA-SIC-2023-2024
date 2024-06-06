@@ -1,5 +1,6 @@
 package com.grupo6.votingapp.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
     @Query(value="SELECT EXISTS(SELECT 1 FROM users WHERE email = ?1)", nativeQuery = true)
     Long emailExists(String email);
+
+    //! WIP
+    @Query("SELECT u FROM User u WHERE u.name LIKE %:term% OR u.email LIKE %:term%")
+    Optional<List<User>> findByTerm(String term);
 }

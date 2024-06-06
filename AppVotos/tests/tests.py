@@ -118,6 +118,10 @@ def arg_createuser(arguments: list):
     except Exception as e: #* Qualquer outro erro
         print(e)
 
+def arg_createusers(arguments: list):
+    for _ in range(500):
+        arg_createuser(arguments)
+
 def arg_getuseraccessiblevotings(arguments: list):
     """Test for server get user accessible votings"""
     try:
