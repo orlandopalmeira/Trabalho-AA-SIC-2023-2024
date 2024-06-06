@@ -39,7 +39,6 @@
                     v-model="useVotingInfoStore().image"
                     accept="image/*"
                     />
-                {{ useVotingInfoStore().privateSelectedUsers }}
                 <div style="display: flex; align-items: center;">
                     <v-checkbox
                         id="privatevoting"
@@ -95,9 +94,6 @@ import axios from '@/axios';
 import { useVotingInfoStore } from '@/stores/votingInfoStore';
 
 export default {
-    // props: {
-    //     voting: {type: Object},
-    // },
     emits: ['data', 'leave'],
     data() {
         return {
@@ -108,11 +104,6 @@ export default {
             },
             useVotingInfoStore,
             std_image: './kitten.png',
-            // usersMatched_temp: [
-            //     { id: 1, name: 'Maria', email: 'maria@gmail.com', avatar: this.std_image },
-            //     { id: 2, name: 'António', email: 'antonio@gmail.com', avatar: this.std_image },
-            //     { id: 3, name: 'João', email: 'joao@gmail.com', avatar: this.std_image }
-            // ],
         };
     },
     computed: {
@@ -170,6 +161,7 @@ export default {
         }
     },
 };
+
 </script>
 <style scoped>
 .dark-mode .dark {
