@@ -34,14 +34,23 @@
                     </v-col>
                 </v-row>
                 <v-row>
-                    <v-col class="vcol1 pl-5 votantes dark" cols="4">
-                        <p class="text-h6" style="font-weight: bold;">Votantes</p>
+                    <v-col class="vcol1 pl-5 pr-5 votantes dark" cols="4">
+                        <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
                         <v-row v-for="(voter, index) in stats.voters" :key="index">
-                            <v-col class="center" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
-                            <v-col>
+                            <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
+                            <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
                                 <p style="color: #454545">{{ voter.email }}</p>
                             </v-col>
+                            <v-col 
+                                class="pa-0 center-vertically justify-end options-style ml-2 mr-2" 
+                                style="max-width: 38%;"
+                                :title="getOptionsStringOfVoter(voter)">
+                                <div class="options-style" >
+                                    <p>{{ getOptionsStringOfVoter(voter) }}</p>   
+                                </div>
+                            </v-col>
+                            <v-divider class="mt-1 mb-1" v-if="index < stats.voters.length - 1"/>
                         </v-row>
                     </v-col>
                     <v-col class="vcol1 dark" style="height: 400px" >
@@ -103,6 +112,27 @@ export default {
             return winner;
         }
     },
+    methods: {
+        getOptionFromId(optionId) {
+            let options = this.stats.questionsstats[this.selected].options;
+            return options.find(option => option.id === optionId);
+        },
+        getOptionsFromIds(optionIds) {
+            return optionIds.map(optionId => this.getOptionFromId(optionId));
+        },
+        getOptionsFromIdsString(optionIds) {
+            return this.getOptionsFromIds(optionIds).map(option => option.description).join(', ');
+        },
+        getOptionsStringOfVoter(voter) {
+            let question_id = this.stats.questionsstats[this.selected].id;
+            let voter_data = this.stats.userselectedoptions.find(userQuestionOptions => {
+                let userId = userQuestionOptions.userid;
+                return userId === voter.id && userQuestionOptions.questionid === question_id;
+            })
+            if(!voter_data) return '';
+            return this.getOptionsFromIdsString(voter_data.optionsids);
+        }
+    },
     created() {
         axios.get(`/votings/${this.votingId}/stats`)
             .then(response => {
@@ -123,6 +153,18 @@ export default {
 }
 </script>
 <style scoped>
+.options-style{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.center-vertically {
+    display: flex;
+    align-items: center;
+}
+.justify-end {
+    justify-content: end;
+}
 .background {
     background-color: #D9D9D9;
     border-radius: 10px;
