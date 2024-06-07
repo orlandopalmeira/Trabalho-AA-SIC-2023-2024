@@ -2,7 +2,6 @@ package com.grupo6.votingapp.services;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.IdentitySet;
