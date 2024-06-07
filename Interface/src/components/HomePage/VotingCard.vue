@@ -26,7 +26,7 @@ export default {
 img {
     border-radius: 10px;
     width: 100%;
-    height: 100%;
+    height: 200px;
     object-fit: cover;
 }
 .card {
@@ -34,6 +34,7 @@ img {
     flex-direction: column;
     justify-content: space-between;
     height: 100%; /* Ensure this div has a height to position the inner div at the bottom */
+    width: 100%;
     overflow: hidden;
 }
 .title {
