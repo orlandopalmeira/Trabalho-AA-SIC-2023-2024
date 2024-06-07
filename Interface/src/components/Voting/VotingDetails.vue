@@ -158,6 +158,7 @@ export default {
                     this.openModal('Sucesso', 'Alterações guardadas com sucesso.');
                 })
                 .catch(error => {
+                    this.openModal('Erro', 'Ocorreu um erro ao guardar as alterações.');
                     console.log(error);
                 });
         }
