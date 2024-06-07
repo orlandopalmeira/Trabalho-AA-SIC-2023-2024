@@ -15,7 +15,7 @@
             <v-card-title class="mb-5">
                 <div class="flex space-between">
                     <h4 style="font-weight: 600;">Detalhes da votação</h4>
-                    <v-btn color="error" @click="deleteVoting" :disabled="updatedVoting.accesstype !== 'creator'">Eliminar esta votação</v-btn>
+                    <v-btn color="error" @click="deleteVoting" v-if="updatedVoting.accesstype === 'creator'">Eliminar esta votação</v-btn>
                 </div>
             </v-card-title>
             <v-card-text>
