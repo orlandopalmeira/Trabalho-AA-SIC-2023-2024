@@ -150,9 +150,16 @@ export default {
         },
         addImg(indexQuestion, indexOption, image) {
             this.useVotingInfoStore().questions[indexQuestion].options[indexOption].image = image;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.useVotingInfoStore().questions[indexQuestion].options[indexOption].imageUrl = e.target.result;
+            };
+            reader.readAsDataURL(image);
         },
         removeOptionImg(indexQuestion, indexOption) {
             this.useVotingInfoStore().questions[indexQuestion].options[indexOption].image = null;
+            this.useVotingInfoStore().questions[indexQuestion].options[indexOption].imageUrl = null;
         },
         getOptionImage(indexQuestion, indexOption){
             return this.useVotingInfoStore().questions[indexQuestion].options[indexOption].image;
