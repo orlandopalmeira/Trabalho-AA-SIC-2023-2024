@@ -31,16 +31,27 @@
                     :rules="getFieldRules('enddate')"
                     required
                 ></v-date-input>
-                <v-file-input
-                    id="image"
-                    prepend-icon="mdi-image"
-                    name="image"
-                    label="Imagem (opcional)"
-                    v-model="useVotingInfoStore().image"
-                    accept="image/*"
+                <div class="mb-4">
+                    <v-file-input
+                        id="image"
+                        prepend-icon="mdi-image"
+                        name="image"
+                        label="Imagem (opcional)"
+                        v-model="useVotingInfoStore().image"
+                        accept="image/*"
+                        @change="onImageChange"
                     />
+                    <v-img
+                        v-if="useVotingInfoStore().imageUrl"
+                        :src="useVotingInfoStore().imageUrl"
+                        width="200"
+                        height="200"
+                        class="ml-10 mb-5 rounded-lg card card dark-light justify-center align-center"
+                        style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);"
+                    ></v-img>
+                </div>
                 <v-expansion-panels>
-                    <v-expansion-panel title="Definições de Privacidade" class="dark">
+                    <v-expansion-panel title="Definições de Privacidade" class="dark-light">
                         <v-expansion-panel-text>
                             <div style="display: flex; margin-bottom: -25px;">
                                 <v-checkbox
@@ -147,6 +158,7 @@ export default {
             useVotingInfoStore,
             usersMatched: [],
             std_image: './kitten.png',
+            imageUrl: null,
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
@@ -171,11 +183,24 @@ export default {
         },
     },
     methods: {
-        onUpdateModelValue(selectedItems) {
-            this.$nextTick(() => {
-                this.$refs.autocomplete.search = '';
-            });
+        //* Image Methods
+        onImageChange(event) {
+            if (this.useVotingInfoStore().image) {
+                const file = this.useVotingInfoStore().image;
+                this.createImageUrl(file);
+            } else {
+                this.useVotingInfoStore().imageUrl = null;
+            }
         },
+        createImageUrl(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.useVotingInfoStore().imageUrl = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+        //
+        // getFieldRules: função que retorna as regras para cada campo
         getFieldRules(field) {
             // Criei esta função para o botão de submit ficar disabled caso as regras não sejam cumpridas. 
             // Com esta função, podemos definir aqui as regras para cada campo sem ter de alterar outros lados do código para alterar as condições do botão estar disabled.
@@ -196,15 +221,14 @@ export default {
             }
             return rules;
         },
+        // goNext: função que é chamada quando se clica no botão "Seguinte"
         goNext() {
             this.$emit('data');
         },
         leave() {
             this.$emit('leave');
         },
-        clearMatchedUsers() {
-            this.usersMatched = [];
-        },
+        // onSearch: função que é chamada quando se pesquisa por utilizadores
         onSearch(val) {
             if (!val) {
                 this.clearMatchedUsers();
@@ -223,14 +247,41 @@ export default {
                 this.usersMatched = [];
                 console.log(err);
             });
-        }
+        },
+        // onUpdateModelValue: função que é chamada quando se seleciona um utilizador privado que pode votar
+        onUpdateModelValue(selectedItems) {
+            this.$nextTick(() => {
+                this.$refs.autocomplete.search = '';
+            });
+        },
+        clearMatchedUsers() {
+            this.usersMatched = [];
+        },
     },
 };
-
 </script>
+
 <style scoped>
+img {
+    border-radius: 10px;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ensure this div has a height to position the inner div at the bottom */
+    width: 100%;
+    overflow: hidden;
+}
 .dark-mode .dark {
     background-color: #15202b;
+    color: white;
+}
+.dark-mode .dark-light {
+    background-color: #26334e !important;
     color: white;
 }
 </style>
