@@ -23,6 +23,9 @@
                 </v-col>
             </v-row>
             <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
+            <SimpleAlert
+                v-else-if="!loadingVotings && this.votings && this.votings.length > 0 && filteredSortedList.length === 0"
+                message="A sua pesquisa não retornou resultados."/>
             <VotingsContainer v-else :votings="filteredSortedList" />
         </v-container>
     </AuthenticatedLayout>
@@ -34,6 +37,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import VotingsContainer from '@/components/HomePage/VotingsContainer.vue'
+import SimpleAlert from '@/components/SimpleAlert.vue'
 
 import axios from '@/axios'
 
@@ -44,7 +48,8 @@ export default {
         SearchBar,
         VotingsContainer,
         ModalOk,
-        LoadingAlert
+        LoadingAlert,
+        SimpleAlert
     },
     data() {
         return {
