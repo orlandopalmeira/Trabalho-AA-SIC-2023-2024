@@ -56,10 +56,14 @@ public class Voting implements Comparable<Voting>{
     private User creator;
 
     @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Vote> votes;
+
+    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference //* para evitar recursividade infinita
     private List<Question> questions;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "private_voters",
         joinColumns = @JoinColumn(name = "voting_id"),
@@ -67,15 +71,10 @@ public class Voting implements Comparable<Voting>{
     )
     private Set<User> privatevoters;
 
-    @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<Vote> votes;
     //endregion
     
     public void setPrivatevoters(Collection<User> privatevoters) { 
         this.privatevoters = privatevoters == null ? new HashSet<>() : new HashSet<>(privatevoters);
-        // if(privatevoters != null)
-        //     privatevoters.forEach(user -> user.addPrivateVoting(this));
     }
 
     @Override

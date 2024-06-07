@@ -64,6 +64,15 @@ public class VotingService {
     public List<Voting> getVotingsFromCreatorId(String userId){ //* Parece funcionar
         return votingRepository.findByUserId(userId);
     }
+
+    public void deleteVoting(Voting voting) throws NullPointerException{
+        if(voting != null) {
+            voting.getVotes().forEach(voteRepository::delete);
+            votingRepository.delete(voting);
+        } else {
+            throw new NullPointerException("Don't delete a null voting.");
+        }
+    }
     
     //* Entidade Vote
     public Vote saveVote(CreateVoteDTO voteDto, String userId) {

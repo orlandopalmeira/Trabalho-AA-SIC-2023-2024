@@ -3,11 +3,14 @@
         :isVisible="modal.opened" 
         :title="modal.title" 
         :message="modal.message"
-        @close-modal="modal.opened=false"/>
+        @close-modal="modal.onclose"/>
     <div class="dark" style="padding-left: 10%; padding-right: 10%">
         <v-card class="dark">
             <v-card-title class="mb-5">
-                <h4 style="font-weight: 600;">Detalhes da votação</h4>
+                <div class="flex space-between">
+                    <h4 style="font-weight: 600;">Detalhes da votação</h4>
+                    <v-btn color="error" @click="deleteVoting" :disabled="updatedVoting.accesstype !== 'creator'">Eliminar</v-btn>
+                </div>
             </v-card-title>
             <v-card-text>
                 <form @submit.prevent="submitChanges">
@@ -118,7 +121,8 @@ export default {
             modal: {
                 opened: false,
                 title: '',
-                message: ''
+                message: '',
+                onclose: null,
             }
         }
     },
@@ -139,10 +143,11 @@ export default {
             }
             return rules;
         },
-        openModal(title,message) {
+        openModal(title,message, closemodal = () => this.modal.opened = false) {
             this.modal.title = title;
             this.modal.message = message;
             this.modal.opened = true;
+            this.modal.onclose = closemodal;
         },
         submitChanges() {
             let dataObj = {
@@ -161,6 +166,19 @@ export default {
                     this.openModal('Erro', 'Ocorreu um erro ao guardar as alterações.');
                     console.log(error);
                 });
+        },
+        deleteVoting() {
+            axios.delete(`/votings/${this.updatedVoting.id}`)
+                .then(() => {
+                    this.openModal('Sucesso', 'Votação eliminada com sucesso.', () => {
+                        this.modal.opened = false;
+                        this.$router.push('/home');
+                    });
+                })
+                .catch(error => {
+                    this.openModal('Erro', 'Ocorreu um erro ao eliminar a votação.');
+                    console.log(error);
+                });
         }
     },
     created() {
@@ -174,6 +192,9 @@ export default {
 }
 .right {
     justify-content: end;
+}
+.space-between {
+    justify-content: space-between;
 }
 .dark-mode .dark {
     background-color: #1e1e1e;

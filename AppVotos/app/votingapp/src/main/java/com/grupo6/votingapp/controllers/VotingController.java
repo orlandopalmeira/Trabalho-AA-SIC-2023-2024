@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -168,6 +168,22 @@ public class VotingController {
             updatedVoting.updateVotingFromDTO(voting);
             Voting updatedVotingEntity = votingService.saveVoting(voting, userId);
             return ResponseEntity.ok(new VotingWithNoRelationsDTO(updatedVotingEntity));
+        });
+    }
+
+    @DeleteMapping("/{voting_id}")
+    public ResponseEntity<Object> deleteVoting(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
+        return authMiddlewares.checkTokenSimple(token, userId -> {
+            Voting voting = votingService.getVotingByCreatorId(voting_id, userId);
+            if(voting == null){
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            }
+            voting.setPrivatevoters(List.of());
+            voting = votingService.saveVoting(voting);
+            
+            votingService.deleteVoting(voting);
+            return ResponseEntity.ok().build();
         });
     }
 
