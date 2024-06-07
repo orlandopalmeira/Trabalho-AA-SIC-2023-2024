@@ -195,7 +195,7 @@ export default {
                 .then(() => {
                     this.openModal('Sucesso', 'Votação eliminada com sucesso.', () => {
                         this.modal.opened = false;
-                        this.$router.push('/home');
+                        this.$router.back();
                     });
                 })
                 .catch(error => {

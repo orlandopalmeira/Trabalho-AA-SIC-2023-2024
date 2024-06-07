@@ -41,9 +41,17 @@ export default {
             type: String,
             required: false,
             default: 'Ok'
+        },
+        buttonTextAlt:{
+            type: String,
+            required: false,
+            default: ''
         }
     },
-    emits: ['close-modal']
+    emits: [
+        'close-modal',
+        'close-modal-alt'
+    ]
 };
 </script>
 <style scoped>
