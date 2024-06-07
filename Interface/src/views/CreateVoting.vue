@@ -163,13 +163,20 @@ export default {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
-                }).then(() => {
+                }).then((res) => {
+                    console.log(res.data);
                     this.openModal('Sucesso', 'Votação criada com sucesso.');
-                    useVotingInfoStore().reset(); // Para que os dados saiam e não fiquem na próxima votação
-                    this.$router.push('/myvotings');
+                    setTimeout(() => {
+                        useVotingInfoStore().reset(); // Para que os dados saiam e não fiquem na próxima votação
+                        let voting_id = res.data.id;
+                        console.log("Voting ID: " + voting_id);
+
+                        this.$router.push('/voting/' + voting_id);
+                    }, 2000); // Delay in milliseconds (2 seconds in this example)
                     //TODO: Implementar lógica de redireccionamento para a página de MyVotings ou outra que seja adequada
                 })
                 .catch((error) => {
+                    console.log("AQUI ESTÁ O RES");
                     console.error(error);
                     this.openModal('Erro', 'Ocorreu um erro ao criar a votação.');
                 });
