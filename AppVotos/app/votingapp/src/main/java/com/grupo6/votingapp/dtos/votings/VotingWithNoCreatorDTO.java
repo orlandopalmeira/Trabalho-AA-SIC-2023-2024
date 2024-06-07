@@ -28,6 +28,7 @@ public class VotingWithNoCreatorDTO {
     private boolean privatevoting;
     private boolean showstats;
     private boolean showstatsrealtime;
+    private boolean secretvotes;
     private List<Question> questions;
     private Set<UsersWithNoRelationsDTO> privatevoters;
     //* Variáveis auxiliares à UI
@@ -44,6 +45,7 @@ public class VotingWithNoCreatorDTO {
         this.privatevoting = voting.isPrivatevoting();
         this.showstats = voting.isShowstats();
         this.showstatsrealtime = voting.isShowstatsrealtime();
+        this.secretvotes = voting.isSecretvotes();
         this.questions = voting.getQuestions();
         this.privatevoters = voting.getPrivatevoters().stream().map(UsersWithNoRelationsDTO::new).collect(Collectors.toSet());
         this.creator = new UsersWithNoRelationsDTO(voting.getCreator());
@@ -60,6 +62,7 @@ public class VotingWithNoCreatorDTO {
         voting.setPrivatevoting(privatevoting);
         voting.setShowstats(showstats);
         voting.setShowstatsrealtime(showstatsrealtime);
+        voting.setSecretvotes(secretvotes);
         voting.setQuestions(questions);
         voting.setPrivatevoters(privatevoters.stream().map(UsersWithNoRelationsDTO::toEntity).collect(Collectors.toSet()));
         return voting;

@@ -7,7 +7,7 @@
             </div>
             <ul class="flex">
                 <li>
-                    <v-switch class="center"
+                    <v-switch class="center pr-5"
                         v-model="isDarkMode"
                         :title="`Dark Mode: ${isDarkMode ? 'On' : 'Off'}`"
                         @click="toggleDarkMode"

@@ -99,11 +99,24 @@
                                 id="intermediateresultpublic"
                                 name="intermediateresultpublic"
                                 v-model="useVotingInfoStore().isIntermediateResultPublic"
+                                style="margin-bottom: -30px;"
                             >
                                 <template v-slot:label>
                                     <div style="display: flex;">
                                         Publicar resultados intermédios
                                         <v-icon :title="help.intermediateResultPublic" class="ml-2">mdi-information</v-icon>
+                                    </div>
+                                </template>
+                            </v-checkbox>
+                            <v-checkbox
+                                id="secretvotes"
+                                name="secretvotes"
+                                v-model="useVotingInfoStore().secretvotes"
+                            >
+                                <template v-slot:label>
+                                    <div style="display: flex;">
+                                        Votos secretos
+                                        <v-icon :title="help.secretvotes" class="ml-2">mdi-information</v-icon>
                                     </div>
                                 </template>
                             </v-checkbox>
@@ -141,7 +154,8 @@ export default {
                 },
             help: {
                 finalResultPublic: 'Se ativado, os resultados finais serão públicos.',
-                intermediateResultPublic: 'Se ativado, os resultados intermédios serão públicos.'
+                intermediateResultPublic: 'Se ativado, os resultados intermédios serão públicos.',
+                secretvotes: 'Se ativado, os votos serão secretos. Isto é, não será possível ver quem votou em quem/no quê.'
             },
         };
     },
