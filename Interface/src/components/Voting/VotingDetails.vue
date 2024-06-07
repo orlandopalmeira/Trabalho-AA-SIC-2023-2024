@@ -4,12 +4,18 @@
         :title="modal.title" 
         :message="modal.message"
         @close-modal="modal.onclose"/>
+    <ModalYesNo
+        :isVisible="modalConfirm.opened"
+        :title="modalConfirm.title"
+        :message="modalConfirm.message"
+        @yes="modalConfirm.onyes"
+        @no="modalConfirm.onno"/>
     <div class="dark" style="padding-left: 10%; padding-right: 10%">
         <v-card class="dark">
             <v-card-title class="mb-5">
                 <div class="flex space-between">
                     <h4 style="font-weight: 600;">Detalhes da votação</h4>
-                    <v-btn color="error" @click="deleteVoting" :disabled="updatedVoting.accesstype !== 'creator'">Eliminar</v-btn>
+                    <v-btn color="error" @click="deleteVoting" :disabled="updatedVoting.accesstype !== 'creator'">Eliminar esta votação</v-btn>
                 </div>
             </v-card-title>
             <v-card-text>
@@ -94,6 +100,7 @@
 <script>
 import axios from 'axios';
 import ModalOk from '../Modais/ModalOk.vue';
+import ModalYesNo from '../Modais/ModalYesNo.vue';
 
 export default {
     props: {
@@ -103,7 +110,8 @@ export default {
         }
     },
     components: {
-        ModalOk
+        ModalOk,
+        ModalYesNo,
     },
     data() {
         return {
@@ -123,6 +131,13 @@ export default {
                 title: '',
                 message: '',
                 onclose: null,
+            },
+            modalConfirm: {
+                opened: false,
+                title: 'Eliminar votação',
+                message: 'Tem a certeza que deseja eliminar a votação?',
+                onyes: null,
+                onno: null
             }
         }
     },
@@ -149,6 +164,12 @@ export default {
             this.modal.opened = true;
             this.modal.onclose = closemodal;
         },
+        openModalConfirm(yes = () => this.modalConfirm.opened = false, 
+                         no = () => this.modalConfirm.opened = false) {
+            this.modalConfirm.onyes = yes;
+            this.modalConfirm.onno = no;
+            this.modalConfirm.opened = true;
+        },
         submitChanges() {
             let dataObj = {
                 title: this.updatedVoting.title,
@@ -168,7 +189,9 @@ export default {
                 });
         },
         deleteVoting() {
-            axios.delete(`/votings/${this.updatedVoting.id}`)
+            this.openModalConfirm(() => {// se o utilizador confirmar a eliminação
+                this.modalConfirm.opened = false; // fecha o modal de confirmação
+                axios.delete(`/votings/${this.updatedVoting.id}`) // eliminação da votação
                 .then(() => {
                     this.openModal('Sucesso', 'Votação eliminada com sucesso.', () => {
                         this.modal.opened = false;
@@ -179,6 +202,7 @@ export default {
                     this.openModal('Erro', 'Ocorreu um erro ao eliminar a votação.');
                     console.log(error);
                 });
+            });
         }
     },
     created() {
