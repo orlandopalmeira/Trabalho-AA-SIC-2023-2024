@@ -23,13 +23,14 @@ public class RegisterVotingDTO {
     private boolean privatevoting;
     private boolean showstats;
     private boolean showstatsrealtime;
+    private boolean secretvotes;
     private List<RegisterQuestionsDTO> questions;
     private List<String> privateSelectedUsers;
 
     public RegisterVotingDTO() {
     }
 
-    public RegisterVotingDTO(String title, String description, String image, Date creationdate, Date enddate, boolean privatevoting, List<RegisterQuestionsDTO> questions, boolean showstats, boolean showstatesrealtime) {
+    public RegisterVotingDTO(String title, String description, String image, Date creationdate, Date enddate, boolean privatevoting, List<RegisterQuestionsDTO> questions, boolean showstats, boolean showstatesrealtime, boolean secretvotes) {
         this.title = title;
         this.description = description;
         this.image = image;
@@ -39,6 +40,7 @@ public class RegisterVotingDTO {
         this.questions = questions;
         this.showstats = showstats;
         this.showstatsrealtime = showstatesrealtime;
+        this.secretvotes = secretvotes;
     }
 
     //region methods
@@ -53,6 +55,7 @@ public class RegisterVotingDTO {
         voting.setQuestions(questions.stream().map(q -> q.toEntity(voting)).toList());
         voting.setShowstats(showstats);
         voting.setShowstatsrealtime(showstatsrealtime);
+        voting.setSecretvotes(secretvotes);
         return voting;
     }
 

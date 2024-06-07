@@ -11,6 +11,7 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         privateSelectedUsers: [],
         isFinalResultPublic: true,
         isIntermediateResultPublic: false,
+        secretvotes: false,
         questions: []
     }),
     // getters, equivalentes aos computed properties
@@ -41,6 +42,9 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         },
         getIsIntermediateResultPublic() {
             return this.isIntermediateResultPublic;
+        },
+        getSecretVotes() {
+            return this.secretvotes;
         }
     },
     // acções, equivalentes aos métodos
@@ -68,6 +72,9 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         },
         setIsIntermediateResultPublic(isIntermediateResultPublic) {
             this.isIntermediateResultPublic = isIntermediateResultPublic;
+        },
+        setSecretVotes(secretvotes) {
+            this.secretvotes = secretvotes;
         },
         setQuestions(questions) {
             this.questions = questions;

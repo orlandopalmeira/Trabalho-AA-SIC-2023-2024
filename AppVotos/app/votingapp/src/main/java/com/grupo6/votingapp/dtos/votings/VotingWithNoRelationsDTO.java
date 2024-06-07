@@ -22,6 +22,7 @@ public class VotingWithNoRelationsDTO {
     private boolean privatevoting;
     private boolean showstats;
     private boolean showstatsrealtime;
+    private boolean secretvotes;
     //* Variáveis auxiliares à UI
     private boolean useralreadyvoted;
 
@@ -35,6 +36,7 @@ public class VotingWithNoRelationsDTO {
         this.privatevoting = voting.isPrivatevoting();
         this.showstats = voting.isShowstats();
         this.showstatsrealtime = voting.isShowstatsrealtime();
+        this.secretvotes = voting.isSecretvotes();
     }
 
     public Voting toEntity() {
@@ -48,6 +50,7 @@ public class VotingWithNoRelationsDTO {
         voting.setPrivatevoting(privatevoting);
         voting.setShowstats(showstats);
         voting.setShowstatsrealtime(showstatsrealtime);
+        voting.setSecretvotes(secretvotes);
         return voting;
     }
 }

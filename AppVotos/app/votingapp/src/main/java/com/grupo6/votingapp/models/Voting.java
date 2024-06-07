@@ -47,6 +47,7 @@ public class Voting implements Comparable<Voting>{
     private boolean privatevoting;
     private boolean showstats;
     private boolean showstatsrealtime;
+    private boolean secretvotes;
 
     //* Relações
     //region Relações

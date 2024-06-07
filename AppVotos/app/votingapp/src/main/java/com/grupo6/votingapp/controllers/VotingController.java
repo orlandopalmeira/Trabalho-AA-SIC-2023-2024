@@ -148,7 +148,7 @@ public class VotingController {
                 // return ResponseEntity.ok(response);
                 Map<String, Object> responseMap = Map.of(
                     "id", registeredVoting.getId(),
-                    "message", "Votação criada com sucesso."
+                    MESSAGE_FIELD, "Votação criada com sucesso."
                 );
                 return ResponseEntity.ok(responseMap);
             } catch (Exception e) {
