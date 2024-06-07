@@ -210,7 +210,7 @@ export default {
     computed: {
         areAllRulesMet() {
             let questions = this.useVotingInfoStore().questions;
-            console.log(JSON.stringify(questions, null, 4));
+            // console.log(JSON.stringify(questions, null, 4));
             /* questions =
             [
                 {

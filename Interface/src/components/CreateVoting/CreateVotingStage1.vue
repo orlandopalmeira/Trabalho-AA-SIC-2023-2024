@@ -52,6 +52,7 @@
                                 ></v-checkbox>
                                 <v-autocomplete
                                     v-if="useVotingInfoStore().privatevoting"
+                                    ref="autocomplete"
                                     label="Selecione os utilizadores que deseja permitir votar"
                                     v-model="useVotingInfoStore().privateSelectedUsers"
                                     :items="usersMatched"
@@ -62,7 +63,7 @@
                                     closable-chips
                                     multiple
                                     no-data-text="Introduza termo válido"
-                                    style="transition: ease-in-out;"
+                                    @update:modelValue="onUpdateModelValue"
                                 >
                                     <template v-slot:chip="{ props, item }">
                                         <v-chip
@@ -156,6 +157,11 @@ export default {
         },
     },
     methods: {
+        onUpdateModelValue(selectedItems) {
+            this.$nextTick(() => {
+                this.$refs.autocomplete.search = '';
+            });
+        },
         getFieldRules(field) {
             // Criei esta função para o botão de submit ficar disabled caso as regras não sejam cumpridas. 
             // Com esta função, podemos definir aqui as regras para cada campo sem ter de alterar outros lados do código para alterar as condições do botão estar disabled.

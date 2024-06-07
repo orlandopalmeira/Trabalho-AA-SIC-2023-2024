@@ -144,8 +144,13 @@ public class VotingController {
                 }
 
                 Voting registeredVoting = votingService.saveVoting(voting, user_id);
-                VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
-                return ResponseEntity.ok(response);
+                // VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
+                // return ResponseEntity.ok(response);
+                Map<String, Object> responseMap = Map.of(
+                    "id", registeredVoting.getId(),
+                    "message", "Votação criada com sucesso."
+                );
+                return ResponseEntity.ok(responseMap);
             } catch (Exception e) {
                 e.printStackTrace();
                 for(String uploadedImageName : uploadedImages.values()) {
