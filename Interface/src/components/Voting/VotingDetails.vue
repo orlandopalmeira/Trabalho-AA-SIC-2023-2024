@@ -1,4 +1,9 @@
 <template>
+    <ModalOk 
+        :isVisible="modal.opened" 
+        :title="modal.title" 
+        :message="modal.message"
+        @close-modal="modal.opened=false"/>
     <div class="dark" style="padding-left: 10%; padding-right: 10%">
         <v-card class="dark">
             <v-card-title class="mb-5">
@@ -36,7 +41,7 @@
                         label="Data do fim da votação"
                         :min="new Date().toISOString().slice(0, 10)"
                         :rules="getFieldRules('enddate')"
-                        required/>
+                        required readonly/> <!--readonly evita que o input seja feito pelo teclado-->
                     <v-text-field v-else
                         v-model="formattedEndDate"
                         prepend-icon="mdi-calendar"
@@ -84,12 +89,18 @@
     </div>
 </template>
 <script>
+import axios from 'axios';
+import ModalOk from '../Modais/ModalOk.vue';
+
 export default {
     props: {
         voting: {
             type: Object,
             required: true
         }
+    },
+    components: {
+        ModalOk
     },
     data() {
         return {
@@ -103,7 +114,12 @@ export default {
                 finalResultPublic: 'Se ativado, os resultados finais serão públicos.',
                 intermediateResultPublic: 'Se ativado, os resultados intermédios serão públicos.'
             },
-            formattedEndDate: new Date(this.voting.enddate).toISOString().slice(0, 10)
+            formattedEndDate: new Date(this.voting.enddate).toISOString().slice(0, 10),
+            modal: {
+                opened: false,
+                title: '',
+                message: ''
+            }
         }
     },
     methods: {
@@ -123,15 +139,27 @@ export default {
             }
             return rules;
         },
+        openModal(title,message) {
+            this.modal.title = title;
+            this.modal.message = message;
+            this.modal.opened = true;
+        },
         submitChanges() {
             let dataObj = {
                 title: this.updatedVoting.title,
                 description: this.updatedVoting.description,
-                enddate: this.updatedVoting.enddate,
+                enddate: this.updatedVoting.enddate.toISOString().slice(0, 19).replace('T', ' '), // formato da data no backend
                 showstats: this.updatedVoting.showstats,
                 showstatsrealtime: this.updatedVoting.showstatsrealtime
             };
-            window.location.reload(); // refresh à página
+            
+            axios.put(`/votings/${this.updatedVoting.id}`, dataObj)
+                .then(() => {
+                    this.openModal('Sucesso', 'Alterações guardadas com sucesso.');
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         }
     },
     created() {

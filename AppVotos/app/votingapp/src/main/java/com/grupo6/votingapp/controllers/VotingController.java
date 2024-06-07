@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grupo6.votingapp.auth.UserService;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
+import com.grupo6.votingapp.dtos.votings.UpdateVotingDTO;
 import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Option;
@@ -34,6 +35,8 @@ import com.grupo6.votingapp.services.VotingService;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @AllArgsConstructor
@@ -151,6 +154,20 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
             }
+        });
+    }
+
+    @PutMapping("/{voting_id}")
+    public ResponseEntity<Object> updateVoting(@PathVariable String voting_id, @RequestBody UpdateVotingDTO updatedVoting, @CookieValue(value = "token", defaultValue = "") String token) {
+        return authMiddlewares.checkTokenSimple(token, userId -> {
+            Voting voting = votingService.getVotingByCreatorId(voting_id, userId);
+            if(voting == null){
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            }
+            updatedVoting.updateVotingFromDTO(voting);
+            Voting updatedVotingEntity = votingService.saveVoting(voting, userId);
+            return ResponseEntity.ok(new VotingWithNoRelationsDTO(updatedVotingEntity));
         });
     }
 

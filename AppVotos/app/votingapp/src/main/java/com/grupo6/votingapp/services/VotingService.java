@@ -47,6 +47,10 @@ public class VotingService {
         return votingRepository.findAccessibleVotingsToUser(userId);
     }
 
+    public Voting getVotingByCreatorId(String votingId, String userId){ //* Parece funcionar
+        return votingRepository.findVotingByCreatorId(Long.parseLong(votingId), userId).orElse(null);
+    }
+
     public Voting saveVoting(Voting voting){//* Parece funcionar
         return votingRepository.save(voting); //* Guarda a votação na base de dados
     }
