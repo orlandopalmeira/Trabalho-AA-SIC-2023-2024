@@ -95,7 +95,7 @@ export default {
 
                     if (image != null) {
 
-                        const isValid = await this.validateAspectRatio(image, 1, 2);
+                        const isValid = await this.validateAspectRatio(image, 1, 1.75);
 
                         if (!isValid) {
 
