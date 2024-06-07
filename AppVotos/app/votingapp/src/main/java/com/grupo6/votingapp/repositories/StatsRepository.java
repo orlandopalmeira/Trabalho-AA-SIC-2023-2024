@@ -2,15 +2,18 @@ package com.grupo6.votingapp.repositories;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
 import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.OptionStats;
+import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 
 import jakarta.persistence.EntityManager;
@@ -75,14 +78,14 @@ public class StatsRepository {
         return getQuestionStats(Long.parseLong(votingId));
     }
 
-    public Optional<List<UsersWithNoRelationsDTO>> getUsersOfVoting(Long votingId) {
+    public List<UsersWithNoRelationsDTO> getUsersOfVoting(Long votingId) {
         String query = "select u.* from users u join votes v on u.id = v.voter_id where v.voting_id = ?1";
         var result = entityManager.createNativeQuery(query)
                                   .setParameter(1, votingId)
                                   .getResultList();
         
+        List<UsersWithNoRelationsDTO> users = new ArrayList<>();
         if (!result.isEmpty()) {
-            List<UsersWithNoRelationsDTO> users = new ArrayList<>();
             for (Object row : result) {
                 Object[] r = (Object[]) row;
                 UsersWithNoRelationsDTO user = new UsersWithNoRelationsDTO();
@@ -94,13 +97,50 @@ public class StatsRepository {
                 user.setPassword((String) r[4]);
                 users.add(user);
             }
-            return Optional.of(users);
         }
 
-        return Optional.of(List.of());
+        return users;
     }
 
-    public Optional<List<UsersWithNoRelationsDTO>> getUsersOfVoting(String votingId) {
+    public List<UsersWithNoRelationsDTO> getUsersOfVoting(String votingId) {
         return getUsersOfVoting(Long.parseLong(votingId));
+    }
+
+    public List<UserSelectedOptions> getUsersSelectedOptions(Long votingId) {
+        String query = "SELECT u.id, u.name, u.email, vqo.question_id, GROUP_CONCAT(vqo.option_id) FROM users u JOIN votes v ON u.id = v.voter_id JOIN votes_questions_options vqo ON vqo.vote_id = v.id WHERE v.voting_id = ?1 GROUP BY u.id, vqo.question_id";
+
+        var result = entityManager.createNativeQuery(query)
+                                  .setParameter(1, votingId)
+                                  .getResultList();
+
+        List<UserSelectedOptions> usersSelectedOptions = new ArrayList<>();
+        
+        if (!result.isEmpty()) {
+            for (Object row : result) {
+                Object[] r = (Object[]) row;
+                Long userId = (Long) r[0];
+                String userName = (String) r[1];
+                String userEmail = (String) r[2];
+                Long questionId = (Long) r[3];
+                String optionsIds = (String) r[4];
+
+                usersSelectedOptions.add(new UserSelectedOptions(userId, userName, userEmail, questionId, parseOptionsIds(optionsIds)));
+            }
+        }
+
+        return usersSelectedOptions;
+    }
+
+    public List<UserSelectedOptions> getUsersSelectedOptions(String votingId) {
+        return getUsersSelectedOptions(Long.parseLong(votingId));
+    }
+    
+    private List<Long> parseOptionsIds(String optionIds) {
+        if (optionIds == null || optionIds.isEmpty()) {
+            return List.of();
+        }
+        return Arrays.stream(optionIds.split(","))
+                     .map(Long::parseLong)
+                     .collect(Collectors.toList());
     }
 }

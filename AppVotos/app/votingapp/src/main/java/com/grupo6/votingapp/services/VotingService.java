@@ -8,6 +8,7 @@ import org.hibernate.internal.util.collections.IdentitySet;
 import org.springframework.stereotype.Service;
 
 import com.grupo6.votingapp.dtos.questions.QuestionStats;
+import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votes.CreateVoteDTO;
@@ -110,20 +111,17 @@ public class VotingService {
         return voteRepository.findVoteByVoterIdAndVotingId(userId, votingId).isPresent();
     }
 
-    //* Entidade Stats
+    //* Entidade VotingStatsDTO
     public VotingStatsDTO getVotingStats(Long votingId) {
         Long countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId);
         List<QuestionStats> questionsStats = statsRepository.getQuestionStats(votingId);
-        List<UsersWithNoRelationsDTO> users = statsRepository.getUsersOfVoting(votingId).orElse(null);
-        return new VotingStatsDTO(countVotesOfVoting, questionsStats, users);
+        List<UsersWithNoRelationsDTO> users = statsRepository.getUsersOfVoting(votingId);
+        List<UserSelectedOptions> userSelectedOptions = statsRepository.getUsersSelectedOptions(votingId);
+        return new VotingStatsDTO(countVotesOfVoting, questionsStats, users, userSelectedOptions);
     }
 
     public VotingStatsDTO getVotingStats(String votingId) {
         return getVotingStats(Long.parseLong(votingId));
-    }
-
-    public Long getVotesCount(Long votingId) {
-        return statsRepository.getCountVotesOfVoting(votingId);
     }
 
     public Map<Long,Long> getVotesCount(List<Long> votingIds) {

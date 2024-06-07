@@ -16,4 +16,5 @@ public class VotingStatsDTO {
     private Long numvotes;
     private List<QuestionStats> questionsstats;
     private List<UsersWithNoRelationsDTO> voters;
+    private List<UserSelectedOptions> userselectedoptions;
 }
