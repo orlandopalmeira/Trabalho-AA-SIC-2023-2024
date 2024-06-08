@@ -107,19 +107,23 @@ public class StatsRepository {
 
     public List<UserSelectedOptions> getUsersSelectedOptions(Long votingId) {
         String query = "SELECT u.id, u.name, u.email, vqo.question_id, GROUP_CONCAT(vqo.option_id) FROM users u JOIN votes v ON u.id = v.voter_id JOIN votes_questions_options vqo ON vqo.vote_id = v.id WHERE v.voting_id = ?1 GROUP BY u.id, vqo.question_id";
-
+        String checkIfSecretQuery = "select exists (select * from votings where id=?1 and secretvotes=1)";
         var result = entityManager.createNativeQuery(query)
                                   .setParameter(1, votingId)
                                   .getResultList();
+        
+        boolean votingIsSecret = ((Long) entityManager.createNativeQuery(checkIfSecretQuery)
+                                                        .setParameter(1, votingId)
+                                                        .getSingleResult()) == 1;
 
         List<UserSelectedOptions> usersSelectedOptions = new ArrayList<>();
         
         if (!result.isEmpty()) {
             for (Object row : result) {
                 Object[] r = (Object[]) row;
-                Long userId = (Long) r[0];
-                String userName = (String) r[1];
-                String userEmail = (String) r[2];
+                Long userId = votingIsSecret ? null : (Long) r[0];
+                String userName = votingIsSecret ? null : (String) r[1];
+                String userEmail = votingIsSecret ? null : (String) r[2];
                 Long questionId = (Long) r[3];
                 String optionsIds = (String) r[4];
 

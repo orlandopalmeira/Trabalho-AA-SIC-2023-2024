@@ -144,8 +144,6 @@ public class VotingController {
                 }
 
                 Voting registeredVoting = votingService.saveVoting(voting, user_id);
-                // VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
-                // return ResponseEntity.ok(response);
                 Map<String, Object> responseMap = Map.of(
                     "id", registeredVoting.getId(),
                     MESSAGE_FIELD, "Votação criada com sucesso."
