@@ -1,7 +1,10 @@
 <template>
     <div class="modal-overlay" v-if="isVisible">
         <div class="modal">
-            <h3 style="padding: 10px; color: white; background-color: #0056b3; "><v-icon>{{ icon }}</v-icon> {{ title }}</h3>
+            <h3 
+                :style="{ padding: '10px', color: 'white', backgroundColor: isErrorMessage ? '#F44336' : '#0056b3' }">
+                <v-icon>{{ icon }}</v-icon> {{ title }}
+            </h3>
             <hr class="dark"/>
             <div class="padding20 dark">
                 <div class="dark" style="color: black;">
@@ -46,6 +49,12 @@ export default {
             type: String,
             required: false,
             default: ''
+        }
+    },
+    computed: {
+        isErrorMessage() {
+            const erroRegex = /erro|falha/i;
+            return erroRegex.test(this.title);
         }
     },
     emits: [
