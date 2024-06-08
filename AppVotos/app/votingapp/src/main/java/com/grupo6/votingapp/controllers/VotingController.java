@@ -182,8 +182,6 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
             }
-            voting.setPrivatevoters(List.of());
-            voting = votingService.saveVoting(voting);
             
             votingService.deleteVoting(voting);
             return ResponseEntity.ok().build();

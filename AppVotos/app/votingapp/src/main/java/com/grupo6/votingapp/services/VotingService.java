@@ -68,6 +68,8 @@ public class VotingService {
 
     public void deleteVoting(Voting voting) throws NullPointerException{
         if(voting != null) {
+            voting.setPrivatevoters(List.of());
+            voting = votingRepository.save(voting);
             voting.getVotes().forEach(voteRepository::delete);
             votingRepository.delete(voting);
         } else {
