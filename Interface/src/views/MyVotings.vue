@@ -10,8 +10,8 @@
             @cancel="modalFiltering.opened = false"
             @filter="onFilter"/>      
         <v-container>
-            <v-card flat style="padding: 10px;" class="dark" >
-                <v-row>
+            <v-card flat class="dark pa-2 rounded-xl">
+                <v-row class="pa-2">
                     <v-col>
                         <div class="flex">
                             <v-text-field class="mr-5" v-model="search" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
@@ -23,7 +23,7 @@
                     <v-col>
                         <div class="flex justify-end" style="width: 100%">
                             <button class="buttoncreatevoting" @click="onClickCreateVoting">
-                                <v-icon class="plus-icon">mdi-plus</v-icon> Criar votação
+                                <v-icon class="pr-1">mdi-plus</v-icon> Criar votação
                             </button>
                         </div>
                     </v-col>
@@ -217,35 +217,6 @@ export default {
 }
 .highlighted-row {
   border-bottom: 2px solid #868686; /* Grey line under the row */
-}
-.flex {
-    display: flex;
-    
-}
-.plus-icon {
-    color: rgb(0, 162, 255);
-    background-color: white;
-    border-radius: 50%;
-    margin-right: 5px;
-}
-.justify-end {
-    justify-content:end;
-}
-.buttoncreatevoting {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 10px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-}
-.buttoncreatevoting:hover {
-    background-color: #45a049;
 }
 .filterbutton {
     border: 2px solid rgb(156, 156, 156);

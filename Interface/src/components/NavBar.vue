@@ -2,7 +2,7 @@
     <nav>
         <!--Para ecrã de PC-->
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
-            <div class="button" @click="goTo('/home')" :style="{ cursor: 'pointer', marginLeft: '20px' }">
+            <div class="button" @click="redirectToHome" :style="{ cursor: 'pointer', marginLeft: '20px' }">
                 <h2 class="ml-5"> <img :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
             </div>
             <ul class="flex">
@@ -25,7 +25,7 @@
         <div class="nav flex" v-else>
             <div class="flex2">
                 <!-- <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2> -->
-                <div class="button" @click="goTo('home')" :style="{ cursor: 'pointer', marginLeft: '20px' }">
+                <div class="button" @click="redirectToHome" :style="{ cursor: 'pointer', marginLeft: '20px' }">
                     <h2 class="ml-5"> <img :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
                 </div>
                 <button style="width: auto;" class="btn-style" @click="togglePhoneMenu">
@@ -90,6 +90,9 @@ export default {
         },
         goTo(route){
             this.$router.push(route)
+        },
+        redirectToHome(){
+            this.$router.push({name: 'home'})
         },
         handleResize() {
             this.phonePage = window.innerWidth < 768;

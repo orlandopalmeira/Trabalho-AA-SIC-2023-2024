@@ -2,7 +2,8 @@
     <div class="app-container">
         <RouterView />
         <footer class="footer">
-            <p>Projeto de Arquiteturas Aplicacionais & Sistemas Interativos Confiáveis
+            <p style="font-size: smaller;">
+                &#169; Projeto de Arquiteturas Aplicacionais & Sistemas Interativos Confiáveis
                 &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;
                 Engenharia de Aplicações 23/24
                 &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;
@@ -21,7 +22,7 @@
 
 footer.footer {
     background-color: rgb(108, 117, 125);
-    padding: 10px;
+    padding: 5px;
     color: white;
     text-align: center;
     margin-top: auto; /* Empurra o footer para o final do container */

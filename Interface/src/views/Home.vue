@@ -7,12 +7,12 @@
             :buttonText="modal.buttonText"
 			@close-modal="redirectToLogin"/>
         <v-container>
-            <v-row class="mt-5">
+            <v-row class="mt-3">
                 <v-col>
-                    <v-text-field class="mr-5" style="width: 60%" v-model="searchQuery" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
+                    <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
                 </v-col>
                 <v-col>
-                    <v-select style="width: 30%"
+                    <v-select style="width: 45%"
                         label="Ordenar por"
                         :items="selectItems"
                         variant="outlined"
@@ -20,6 +20,11 @@
                         v-model="orderBy"
                         clearable
                         hide-details />
+                </v-col>
+                <v-col class="flex justify-end pr-5 mb-1">
+                    <button class="buttoncreatevoting" @click="onClickCreateVoting">
+                        <v-icon class="pr-1">mdi-plus</v-icon> Criar votação
+                    </button>
                 </v-col>
             </v-row>
             <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
@@ -84,6 +89,9 @@ export default {
 		},
         redirectToLogin() {
             this.$router.push({name: 'login'})
+        },
+        onClickCreateVoting(){
+            this.$router.push({name: 'createvoting'});
         },
         async getVotings() {
             try {
