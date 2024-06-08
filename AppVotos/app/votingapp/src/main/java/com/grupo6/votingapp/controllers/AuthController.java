@@ -55,12 +55,8 @@ public class AuthController {
             String password = credentials.get("password");
 
             Map<String, String> result = loginProcedure(response, email, password);
-            // String token = authService.login(email, password);
-            // response.addCookie(authService.generateCookie(email, password));
-            // String user_id = authService.extractUserId(token);
 
             return ResponseEntity.ok(result);
-
         } catch (UnauthorizedException e) { //* user não existe ou password errada
             Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);

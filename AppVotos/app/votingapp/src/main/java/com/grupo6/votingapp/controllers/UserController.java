@@ -25,24 +25,11 @@ public class UserController {
 
     private UserService userService;
     private CheckTokenMiddlewares authMiddlewares;
-    // private AuthService authService;
-
-    //* Nomes dos campos utilizados nas diversas respostas ao utilizador
-    // private static final String TOKEN_FIELD = "token";
-    // private static final String MESSAGE_FIELD = "message";
 
     public UserController(UserService userService, CheckTokenMiddlewares authMiddlewares) {
         this.userService = userService;
         this.authMiddlewares = authMiddlewares;
-        // this.authService = authService;
     }
-
-    // @GetMapping //* Funciona
-    // public ResponseEntity<Iterable<User>> getUsers() {
-    //     //* Retorna todos os users
-    //     //! Rota de debug -> sem autenticação -> remover na entrega do trabalho
-    //     return ResponseEntity.ok(userService.getUsers());
-    // }
     
     @GetMapping("/{id}") //* Parece funcionar
     public ResponseEntity<Object> getUserById(@PathVariable String id, @CookieValue(value = "token", defaultValue = "") String token) {
