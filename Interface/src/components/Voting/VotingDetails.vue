@@ -47,7 +47,7 @@
                         v-model="updatedVoting.creationdate"
                         prepend-icon="mdi-calendar"
                         label="Data de início da votação"
-                        readonly/>
+                        :disabled="updatedVoting.accesstype === 'creator'"/>
                     <v-date-input v-if="updatedVoting.accesstype === 'creator'"
                         v-model="updatedVoting.enddate"
                         label="Data do fim da votação"
@@ -65,7 +65,7 @@
                         label="Votação Privada"
                         v-model="updatedVoting.privatevoting"
                         style="margin-bottom: -30px;"
-                        readonly/>
+                        :disabled="updatedVoting.accesstype === 'creator'"/>
                     <v-checkbox
                         id="finalresultpublic"
                         name="finalresultpublic"
