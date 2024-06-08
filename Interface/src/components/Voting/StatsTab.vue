@@ -7,15 +7,22 @@
     </div>
     <div v-else class="pa-5 dark">
         <div class="background pa-2">
-            <div style="width: 25%;margin: 10px 10px;" class="mb-5">
-                <v-select
-                    v-model="selected"
-                    :items="selectItems"
-                    density="compact"
-                    class="select-question dark"
-                    variant="outlined"
-                    hide-details
-                />
+            <div style="margin: 10px 10px;" class="mb-5">
+                <div class="flex space-between">
+                    <div style="width: 25%">
+                        <v-select
+                            v-model="selected"
+                            :items="selectItems"
+                            density="compact"
+                            class="select-question dark"
+                            variant="outlined"
+                            hide-details
+                        />
+                    </div>
+                    <v-btn @click="downloadCSV" color="secondary" title="Descarregar votos em CSV">
+                        <v-icon>mdi-file-excel</v-icon>
+                    </v-btn>
+                </div>
             </div>
             <div style="margin: 10px 10px;">
                 <v-row>
@@ -113,6 +120,9 @@ export default {
         }
     },
     methods: {
+        getQuestionFromId(questionId){
+            return this.stats.questionsstats.find(question => question.id === questionId);
+        },
         getOptionFromId(optionId) {
             let options = this.stats.questionsstats[this.selected].options;
             return options.find(option => option.id === optionId);
@@ -131,6 +141,34 @@ export default {
             })
             if(!voter_data) return '';
             return this.getOptionsFromIdsString(voter_data.optionsids);
+        },
+        convertStatsToCSV() {
+            let csv = 'Id utilizador,Nome,Email,Questão,Opção\n';
+            this.stats.userselectedoptions.forEach(userQuestionOptions => {
+                let userId = userQuestionOptions.userid;
+                let name = userQuestionOptions.username;
+                let email = userQuestionOptions.email;
+                let question = this.getQuestionFromId(userQuestionOptions.questionid);
+                let options = question.options.filter(option => userQuestionOptions.optionsids.includes(option.id));
+                options.forEach(option => {
+                    csv += `${userId},${name},${email},${question.description},${option.description}\n`;
+                });
+            });
+            return csv;
+        },
+        downloadCSV() {
+            let csv = this.convertStatsToCSV();
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a'); // cria um <a> invisível
+            if (link.download !== undefined) { // feature detection
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'voting_stats.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     },
     created() {
@@ -153,6 +191,12 @@ export default {
 }
 </script>
 <style scoped>
+.flex {
+    display: flex;
+}
+.space-between {
+    justify-content: space-between;
+}
 .options-style{
     white-space: nowrap;
     overflow: hidden;
