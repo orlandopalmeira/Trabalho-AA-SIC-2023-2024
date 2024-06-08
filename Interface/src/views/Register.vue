@@ -74,6 +74,7 @@
 import { useUserInfoStore } from '@/stores/userInfoStore';
 import axios from '../axios';
 import DefaultLayout from '../layouts/DefaultLayout.vue'
+import { API_PATHS } from '@/apiPaths';
 export default {
     name: 'Register',
     components: {
@@ -113,13 +114,13 @@ export default {
                     birthdate: this.birthdate,
                     password: this.password
                 };
-                axios.post('/auth/register', user)
+                axios.post(API_PATHS.register, user)
                     .then((response) => {
                         //TODO: Meter lógica de ir para a página inicial, por exemplo.
                         // alert('Registo efectuado com sucesso!\nEfectue o login para aceder à sua conta na página seguinte.');
-                        // this.$router.push('/login');
+                        // this.$router.push({name: 'login'});
                         useUserInfoStore().setUserId(response.data.id);
-				        this.$router.push('/home');
+				        this.$router.push({name: 'home'});
                     })
                     .catch((error) => {
                         let response = error.response;

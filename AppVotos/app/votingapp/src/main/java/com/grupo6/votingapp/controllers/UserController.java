@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-// import com.grupo6.votingapp.auth.AuthService;
-import com.grupo6.votingapp.auth.UserService;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.models.User;
-
+import com.grupo6.votingapp.services.UserService;
 import com.grupo6.votingapp.dtos.users.UserNameEmailDTO;
 
 

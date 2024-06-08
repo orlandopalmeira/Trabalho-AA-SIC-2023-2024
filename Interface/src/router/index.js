@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'About',
+      name: 'about',
       component: () => import('../views/About.vue')
     },
     {
@@ -35,12 +35,12 @@ const router = createRouter({
     },
     {
       path: '/voting/:id',
-      name: 'Voting',
+      name: 'voting',
       component: () => import('../views/Voting.vue')
     },
     {
       path: '/history',
-      name: 'History',
+      name: 'history',
       component: () => import('../views/History.vue')
     }
   ]

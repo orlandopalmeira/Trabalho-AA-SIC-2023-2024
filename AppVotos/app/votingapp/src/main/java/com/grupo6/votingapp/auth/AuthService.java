@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
 import com.grupo6.votingapp.models.User;
+import com.grupo6.votingapp.services.UserService;
 
 import jakarta.servlet.http.Cookie;
 

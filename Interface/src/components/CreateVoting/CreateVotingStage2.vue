@@ -122,7 +122,7 @@ export default {
         }
     },
     created() {
-        this.initQuestion();
+        this.initQuestion(); // Caso não haja nenhuma questão, é criada uma questão por defeito
     },
     methods: {
         initQuestion(){
@@ -217,23 +217,13 @@ export default {
     computed: {
         areAllRulesMet() {
             let questions = this.useVotingInfoStore().questions;
-            // console.log(JSON.stringify(questions, null, 4));
-            /* questions =
-            [
-                {
+            /*[{
                     "description": "Pergunta",
                     "options": [
-                        {
-                            "description": "Opção 1",
-                            "image": null
-                        },
-                        {
-                            "description": "Opção 2",
-                            "image": null
-                        }
+                        { "description": "Opção 1", "image": null },
+                        { "description": "Opção 2", "image": null }
                     ]
-                }
-            ]
+                }]
             */
 
             if (!questions.length) {
@@ -258,7 +248,7 @@ export default {
                         this.validateAspectRatio(question.options[j].image, 0.8, 1.2).then((res) => {
                             if (!res) {
                                 // this.openModal('Erro', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem deve ter uma proporção entre 0.8 e 1.2 (largura / altura).');
-                                return False;
+                                return false;
                             }
                         })
                     }

@@ -4,6 +4,7 @@
 export const API_PATHS = {
     logout: "/auth/logout",
     login: "/auth/login",
+    register: "/auth/register",
     usersByTerm: (term) => `/users?term=${term}`,
     votingId: (votingId) => `/votings/${votingId}`,
     votingStats: (votingId) => `/votings/${votingId}/stats`,

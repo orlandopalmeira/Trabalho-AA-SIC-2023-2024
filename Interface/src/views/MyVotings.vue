@@ -61,6 +61,7 @@ import LoadingAlert from '@/components/LoadingAlert.vue'
 import axios from '@/axios'
 import router from '@/router'
 import ModalFiltering from '@/components/Modais/ModalFiltering.vue'
+import { API_PATHS } from '@/apiPaths'
 
 const table_headers = [
     { align: 'start', key: 'title',         title: 'Votação' },
@@ -97,7 +98,7 @@ export default {
     },
     methods: {
         onClickCreateVoting(){
-            router.push('/createvoting');
+            router.push({name: 'createvoting'});
         },
         openModal(title,message) {
 			this.modal = {
@@ -109,7 +110,7 @@ export default {
         async getVotings(){
             this.loadingVotings = false;
             try {
-                const response = await axios.get(`/votings/user`)
+                const response = await axios.get(API_PATHS.userVotings)
                 return response.data
             } catch (error) {
                 let response = error.response
@@ -122,11 +123,13 @@ export default {
             // Access the item here using item.item retorna o objeto inputed
             // console.log(item.item.id);
             // Aceder à pagina do item clicado.
-            this.$router.push(`/voting/${item.item.id}`)
+            // this.$router.push(`/voting/${item.item.id}`)
+            this.$router.push({name: 'voting', params: {id: item.item.id}})
         },
         votingClicked(id){
             // console.log(id)
-            this.$router.push(`/voting/${id}`)
+            // this.$router.push(`/voting/${id}`)
+            this.$router.push({name: 'voting', params: {id: id}})
         },
         formatDateTime(dateTimeString) {
             // 2024-06-04 16:18:07

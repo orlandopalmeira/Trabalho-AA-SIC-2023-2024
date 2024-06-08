@@ -48,7 +48,7 @@ export default {
     setup() {
 
         if (useUserInfoStore()) {
-            router.push('/home');
+            router.push({name: 'home'});
         }
 
         return {}

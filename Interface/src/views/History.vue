@@ -45,6 +45,7 @@ import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import axios from '@/axios'
 import ModalFiltering from '@/components/Modais/ModalFiltering.vue'
+import { API_PATHS } from '@/apiPaths'
 
 const table_headers = [
     { align: 'start', key: 'title',         title: 'Votação' },
@@ -133,7 +134,7 @@ export default {
         }
     }, 
     created() {
-        axios.get('/votings')
+        axios.get(API_PATHS.votings)
         .then(response => {
             
             // filtrar por aqueles que ja acabaram e que user votou

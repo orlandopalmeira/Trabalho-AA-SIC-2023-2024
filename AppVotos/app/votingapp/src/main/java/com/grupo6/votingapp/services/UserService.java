@@ -1,9 +1,10 @@
-package com.grupo6.votingapp.auth;
+package com.grupo6.votingapp.services;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.grupo6.votingapp.auth.PasswordUtil;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.repositories.UserRepository;
 

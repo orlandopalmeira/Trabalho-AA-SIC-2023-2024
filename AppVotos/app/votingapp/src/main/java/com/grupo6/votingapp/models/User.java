@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -60,23 +59,6 @@ public class User implements Comparable<User>{
         claims.put("name", this.name);
         claims.put("email", this.email);
         return claims;
-    }
-
-    //* Gestão da relação M:N com Votings
-    public void addPrivateVoting(Voting voting) {
-        this.privatevotings.add(voting);
-        voting.getPrivatevoters().add(this);
-    }
-
-    public void removePrivateVoting(Voting voting) {
-        this.privatevotings.remove(voting);
-        voting.getPrivatevoters().remove(this);
-    }
-
-    public void removeAllPrivateVotings(){
-        for(Voting voting : new HashSet<>(privatevotings)){
-            removePrivateVoting(voting);
-        }
     }
 
     @Override

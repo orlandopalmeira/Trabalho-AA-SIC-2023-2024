@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grupo6.votingapp.auth.UserService;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.dtos.votings.UpdateVotingDTO;
@@ -30,6 +29,7 @@ import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.ImageService;
+import com.grupo6.votingapp.services.UserService;
 import com.grupo6.votingapp.services.VotingService;
 
 import lombok.AllArgsConstructor;
@@ -144,8 +144,6 @@ public class VotingController {
                 }
 
                 Voting registeredVoting = votingService.saveVoting(voting, user_id);
-                // VotingWithNoRelationsDTO response = new VotingWithNoRelationsDTO(registeredVoting);
-                // return ResponseEntity.ok(response);
                 Map<String, Object> responseMap = Map.of(
                     "id", registeredVoting.getId(),
                     MESSAGE_FIELD, "Votação criada com sucesso."
@@ -184,8 +182,6 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
             }
-            voting.setPrivatevoters(List.of());
-            voting = votingService.saveVoting(voting);
             
             votingService.deleteVoting(voting);
             return ResponseEntity.ok().build();
