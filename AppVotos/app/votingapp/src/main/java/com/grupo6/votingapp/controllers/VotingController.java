@@ -123,7 +123,7 @@ public class VotingController {
                 RegisterVotingDTO newVoting = convertJsonToRegisterVotingDTO(jsonString);
                 newVoting.setCreationdate(new Date());
                 Voting voting = newVoting.toEntity();
-                
+                //! Talvez abstrair isto no votingService?
                 if(images != null && !images.isEmpty()){
                     uploadedImages = imageService.uploadImages(images);
                     
@@ -135,7 +135,7 @@ public class VotingController {
                         }
                     }
                 }
-
+                //! Talvez abstrair isto no votingService?
                 List<String> privateVotersIds = newVoting.getPrivateSelectedUsers();
                 if(newVoting.isPrivatevoting() && privateVotersIds != null && !privateVotersIds.isEmpty()) {
                     List<Long> privateVotersIdsLong = privateVotersIds.stream().map(Long::parseLong).toList();

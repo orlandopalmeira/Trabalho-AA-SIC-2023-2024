@@ -59,11 +59,10 @@ public class AuthService {
      * @throws UnauthorizedException
      */
     public User register(User user) throws UnauthorizedException{
-        // Verific
+        // Verifica se o email já existe
         String email = user.getEmail();
         if (userService.emailExists(email)) {
-            throw new UnauthorizedException("User with email '\" + user.getEmail() + \"' already exists!");
-            // return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(MESSAGE_FIELD, "User with email '" + user.getEmail() + "' already exists!"));
+            throw new UnauthorizedException("User with email '" + user.getEmail() + "' already exists!");
         }
         return userService.saveUser(user);
 
