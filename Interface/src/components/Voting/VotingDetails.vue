@@ -15,7 +15,10 @@
             <v-card-title class="mb-5">
                 <div class="flex space-between">
                     <h4 style="font-weight: 600;">Detalhes da votação</h4>
-                    <v-btn color="error" @click="deleteVoting" v-if="updatedVoting.accesstype === 'creator'">Eliminar esta votação</v-btn>
+                    <div class="flex">
+                        <v-btn @click="shareVoting" title="Partilhar esta votação" color="secondary" style="z-index: 11"><v-icon>mdi-share-variant</v-icon></v-btn>
+                        <v-btn class="ml-2" color="error" @click="deleteVoting" v-if="updatedVoting.accesstype === 'creator'">Eliminar esta votação</v-btn>
+                    </div>
                 </div>
             </v-card-title>
             <v-card-text>
@@ -93,6 +96,7 @@
                         <v-btn color="primary" type="submit">Guardar alterações</v-btn>
                     </div>
                 </form>
+                <div v-if="updatedVoting.accesstype !== 'creator'" class="unclickable"></div>
             </v-card-text>
         </v-card>
     </div>
@@ -102,6 +106,7 @@ import axios from 'axios';
 import { API_PATHS } from '@/apiPaths';
 import ModalOk from '../Modais/ModalOk.vue';
 import ModalYesNo from '../Modais/ModalYesNo.vue';
+import ToastManager from '../Toast/ToastManager';
 
 export default {
     props: {
@@ -203,6 +208,16 @@ export default {
                     console.log(error);
                 });
             });
+        },
+        shareVoting(){
+            let url = window.location.href;
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    ToastManager.show('Link copiado para a área de transferência.', 'info');
+                })
+                .catch(() => {
+                    ToastManager.show('Erro ao copiar o link para a área de transferência.', 'error');
+                });
         }
     },
     created() {
@@ -211,6 +226,14 @@ export default {
 }
 </script>
 <style scoped>
+.unclickable {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
 .flex {
     display: flex;
 }
