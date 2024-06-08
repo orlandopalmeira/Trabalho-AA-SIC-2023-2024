@@ -56,7 +56,7 @@ def main(directory):
         print("Unused public methods found:")
         for file_path, method_name, position in unused_methods:
             file_path = file_path.split("votingapp")[2]
-            print(f"[91mClass file: {file_path}, Method: {method_name}, Line: {position[0]}")
+            print(f"Class file: {file_path}, Method: {method_name}, Line: {position[0]}")
     else:
         print("No unused public methods found.")
 
