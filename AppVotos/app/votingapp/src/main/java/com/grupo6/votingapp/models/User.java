@@ -62,23 +62,6 @@ public class User implements Comparable<User>{
         return claims;
     }
 
-    //* Gestão da relação M:N com Votings
-    public void addPrivateVoting(Voting voting) {
-        this.privatevotings.add(voting);
-        voting.getPrivatevoters().add(this);
-    }
-
-    public void removePrivateVoting(Voting voting) {
-        this.privatevotings.remove(voting);
-        voting.getPrivatevoters().remove(this);
-    }
-
-    public void removeAllPrivateVotings(){
-        for(Voting voting : new HashSet<>(privatevotings)){
-            removePrivateVoting(voting);
-        }
-    }
-
     @Override
     public String toString() {
         return "User [email=" + email + ", id=" + id + ", name=" + name + ", password=" + password + "]";
