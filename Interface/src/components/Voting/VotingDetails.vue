@@ -82,8 +82,8 @@
                     <v-checkbox
                         id="intermediateresultpublic"
                         name="intermediateresultpublic"
+                        style="margin-bottom: -30px;"
                         v-model="updatedVoting.showstatsrealtime" 
-                        hide-details
                         :readonly="updatedVoting.accesstype !== 'creator'">
                         <template v-slot:label>
                             <div style="display: flex;">
@@ -92,6 +92,12 @@
                             </div>
                         </template>
                     </v-checkbox>
+                    <v-checkbox
+                        id="secretvotes"
+                        name="secretvotes"
+                        label="Votos secretos"
+                        v-model="updatedVoting.secretvotes"
+                        :disabled="updatedVoting.accesstype === 'creator'"/>
                     <div v-if="updatedVoting.accesstype === 'creator'" class="flex right">
                         <v-btn color="primary" type="submit">Guardar alterações</v-btn>
                     </div>
