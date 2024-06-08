@@ -32,7 +32,8 @@
                     :min="new Date().toISOString().slice(0,16)"
                     :rules="getFieldRules('enddate')"
                     required
-                ></v-text-field>
+                >
+                </v-text-field>
                 <div class="mb-4">
                     <v-file-input
                         id="image"
@@ -55,20 +56,27 @@
                 <v-expansion-panels>
                     <v-expansion-panel title="Definições de Privacidade" class="dark-light">
                         <v-expansion-panel-text>
-                            <div style="display: flex; margin-bottom: -25px;">
+                            <div style="display: flex;">
                                 <v-checkbox
                                     id="privatevoting"
                                     name="privatevoting"
-                                    label="Votação Privada"
                                     v-model="useVotingInfoStore().privatevoting"
                                     class="mr-4"
-                                ></v-checkbox>
+                                >
+                                    <template v-slot:label>
+                                        <div style="display: flex;">
+                                            Votação Privada
+                                            <v-icon :title="help.privatevoting" class="ml-2">mdi-information</v-icon>
+                                        </div>
+                                    </template>
+                                </v-checkbox>
                                 <v-autocomplete
                                     v-if="useVotingInfoStore().privatevoting"
                                     ref="autocomplete"
                                     label="Selecione os utilizadores que deseja permitir votar"
                                     v-model="useVotingInfoStore().privateSelectedUsers"
                                     :items="usersMatched"
+                                    :rules="getFieldRules('privatevoting')"
                                     @update:search="onSearch"
                                     item-title="name"
                                     item-value="id"
@@ -76,6 +84,8 @@
                                     closable-chips
                                     multiple
                                     no-data-text="Introduza termo válido"
+                                    autofocus
+                                    density="compact"
                                     @update:modelValue="onUpdateModelValue"
                                 >
                                     <template v-slot:chip="{ props, item }">
@@ -99,7 +109,7 @@
                                 id="finalresultpublic"
                                 name="finalresultpublic"
                                 v-model="useVotingInfoStore().isFinalResultPublic"
-                                style="margin-bottom: -30px;"
+                                hide-details
                             >
                                 <template v-slot:label>
                                     <div style="display: flex;">
@@ -112,7 +122,7 @@
                                 id="intermediateresultpublic"
                                 name="intermediateresultpublic"
                                 v-model="useVotingInfoStore().isIntermediateResultPublic"
-                                style="margin-bottom: -30px;"
+                                hide-details
                             >
                                 <template v-slot:label>
                                     <div style="display: flex;">
@@ -138,7 +148,7 @@
                 </v-expansion-panels>
                 <v-row class="mt-4">
                     <v-col cols="6">
-                        <v-btn color="secondary" @click="leave" > Voltar </v-btn>
+                        <v-btn color="error" @click="leave"> Voltar </v-btn>
                     </v-col>
                     <v-col cols="6" class="text-right">
                         <v-btn color="primary" type="submit" :disabled="!areAllRulesMet"> Seguinte </v-btn>
@@ -166,8 +176,17 @@ export default {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
                 maxlength500: value => (value && value.length <= 500) || 'Máximo de 500 caracteres.',
+                atLeastOnePrivateVoter: value => {
+                    const errorString = 'Tem de selecionar pelo menos um utilizador para aceder à votação privada.';
+                    console.log(value)
+                    if (value && useVotingInfoStore().privateSelectedUsers.length === 0){
+                        return errorString;
+                    }
+                    return true;
                 },
+            },
             help: {
+                privatevoting: 'Se ativado, apenas os utilizadores selecionados poderão votar.',
                 finalResultPublic: 'Se ativado, os resultados finais serão públicos.',
                 intermediateResultPublic: 'Se ativado, os resultados intermédios serão públicos.',
                 secretvotes: 'Se ativado, os votos serão secretos. Isto é, não será possível ver quem votou em quem/no quê.'
@@ -176,7 +195,8 @@ export default {
     },
     computed: {
         areAllRulesMet() {
-            let fields = ['title', 'description', 'enddate'];
+            //* Caso seja necessário adicionar mais campos, basta adicionar o nome do campo aqui, para que seja tido em conta na verificação do disable do botao.
+            let fields = ['title', 'description', 'enddate', 'privatevoting'];
             for (const field of fields) {
                 if (!this.getFieldRules(field).every(rule => rule(this.useVotingInfoStore()[field])===true )) { // tem de se meter o "true" porque as regras em caso de dar false, retornam um string.
                     return false;
@@ -212,7 +232,10 @@ export default {
                 rules = [this.rules.required, this.rules.maxlength500];
                 break;
                 case 'enddate':
-                rules = [this.rules.required];
+                rules = [];
+                break;
+                case 'privatevoting':
+                rules = [this.rules.atLeastOnePrivateVoter];
                 break;
                 default:
                 break;
