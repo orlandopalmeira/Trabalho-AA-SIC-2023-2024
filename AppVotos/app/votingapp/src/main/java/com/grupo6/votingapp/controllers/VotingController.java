@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grupo6.votingapp.auth.UserService;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.dtos.votings.UpdateVotingDTO;
@@ -30,6 +29,7 @@ import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.ImageService;
+import com.grupo6.votingapp.services.UserService;
 import com.grupo6.votingapp.services.VotingService;
 
 import lombok.AllArgsConstructor;

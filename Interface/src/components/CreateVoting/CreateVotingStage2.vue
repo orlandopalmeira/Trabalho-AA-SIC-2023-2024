@@ -248,7 +248,7 @@ export default {
                         this.validateAspectRatio(question.options[j].image, 0.8, 1.2).then((res) => {
                             if (!res) {
                                 // this.openModal('Erro', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem deve ter uma proporção entre 0.8 e 1.2 (largura / altura).');
-                                return False;
+                                return false;
                             }
                         })
                     }

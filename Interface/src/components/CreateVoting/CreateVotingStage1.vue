@@ -151,6 +151,7 @@
 import axios from '@/axios';
 import { API_PATHS } from '@/apiPaths';
 import { useVotingInfoStore } from '@/stores/votingInfoStore';
+import { useUserInfoStore } from '@/stores/userInfoStore';
 
 export default {
     emits: ['data', 'leave'],
@@ -247,7 +248,9 @@ export default {
             }
             axios.get(API_PATHS.usersByTerm(val)).then(res => {
                 // Adiciona um avatar a cada utilizador, caso não o tenha.
+                let own_id = parseInt(useUserInfoStore().getUserId);
                 let users_matched = res.data;
+                users_matched = users_matched.filter(user => user.id !== own_id);
                 users_matched.forEach(user => {
                     if (!user.avatar) {
                         user.avatar = this.std_image;
