@@ -24,13 +24,15 @@
                     v-model="useVotingInfoStore().description"
                     :rules="getFieldRules('description')"
                 ></v-textarea>
-                <v-date-input
+                <v-text-field
+                    type="datetime-local"
+                    prepend-icon="mdi-calendar"
                     v-model="useVotingInfoStore().enddate"
                     label="Data do fim da votação"
-                    :min="new Date().toISOString().slice(0, 10)"
+                    :min="new Date().toISOString().slice(0,16)"
                     :rules="getFieldRules('enddate')"
                     required
-                ></v-date-input>
+                ></v-text-field>
                 <div class="mb-4">
                     <v-file-input
                         id="image"
