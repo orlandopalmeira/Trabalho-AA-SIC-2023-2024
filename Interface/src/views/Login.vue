@@ -47,6 +47,7 @@ import { useUserInfoStore } from '@/stores/userInfoStore';
 import axios from '../axios';
 import DefaultLayout  from '../layouts/DefaultLayout.vue'
 import ModalOk from '../components/Modais/ModalOk.vue';
+import { API_PATHS } from '@/apiPaths';
 export default {
 	components: {
 		DefaultLayout,
@@ -68,19 +69,19 @@ export default {
 	methods: {
 		async login() {
 			try {
-				const response = await axios.post(`/auth/login`, {
+				const response = await axios.post(API_PATHS.login, {
 					email: this.email,
 					password: this.password
 				});
-				// Se a response for diferente de 200, dá throw de um erro que tem de ser tratado no catch
-				console.log("Token: " + response.data.token);
+				//* Se a response for diferente de 200, dá throw de um erro que tem de ser tratado no catch
+				// console.log("Token: " + response.data.token);
 				useUserInfoStore().setUserId(response.data.id);
-				this.$router.push('/home');
+				this.$router.push({name: 'home'});
 			} catch (error) {
 				let response = error.response;
-				if (response.status == 401) {// Unauthorized
+				if (response.status == 401) { // Unauthorized
 					this.openModal('Falha no login', 'As credenciais inseridas são inválidas, por favor tente novamente.')
-				} else if(response.status != 200) {// Unexpected error
+				} else if(response.status != 200) { // Unexpected error
 					this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
 				}
 				console.error('Login failed:', error);

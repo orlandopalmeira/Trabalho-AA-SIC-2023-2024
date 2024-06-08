@@ -72,6 +72,7 @@
 import LoadingAlert from '../LoadingAlert.vue';
 import SimpleAlert from '../SimpleAlert.vue';
 import axios from '@/axios';
+import { API_PATHS } from '@/apiPaths';
 
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
@@ -172,7 +173,7 @@ export default {
         }
     },
     created() {
-        axios.get(`/votings/${this.votingId}/stats`)
+        axios.get(API_PATHS.votingStats(this.votingId))
             .then(response => {
                 this.stats = response.data;
                 this.selectItems = this.stats.questionsstats.map((qs,index) => ({

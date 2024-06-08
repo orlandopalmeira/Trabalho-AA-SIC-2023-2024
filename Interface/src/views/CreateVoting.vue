@@ -6,10 +6,10 @@
             :message="modal.message"
             @close-modal="modal.opened=false"/>
         <v-container v-if="stage == 1"> 
-            <CreateVotingStage1 @data="goNext" @leave="leave"/>
+            <CreateVotingStage1 @data="this.stage = 2" @leave="leave"/>
         </v-container>
         <v-container v-else-if="stage == 2"> 
-            <CreateVotingStage2 @data="goNext" @leave="leave" />
+            <CreateVotingStage2 @data="createVoting" @leave="leave" />
         </v-container>
 </AuthenticatedLayout>
 </template>
@@ -21,6 +21,7 @@ import CreateVotingStage1 from '@/components/CreateVoting/CreateVotingStage1.vue
 import CreateVotingStage2 from '@/components/CreateVoting/CreateVotingStage2.vue';
 import { useVotingInfoStore } from '@/stores/votingInfoStore';
 import axios from '@/axios'
+import { API_PATHS } from '@/apiPaths';
 
 export default {
     components: {
@@ -53,38 +54,10 @@ export default {
             }
             return true;
         },
-        
-        async goNext() {
-            if(this.stage == 1){
-                if (useVotingInfoStore().getTitle && useVotingInfoStore().getDescription) {
-                    let image = useVotingInfoStore().getImage;
-                    if (image != null) {
-                        const isValid = await this.validateAspectRatio(image, 1, 1.75);
-                        if (!isValid) {
-                            return;
-                        }
-                    }
-                    this.stage = 2
-                }
-                // else - Não faz nada, e a interface indica os campos em falta.
-            } else {
-                let questions = this.useVotingInfoStore().questions;
-
-                for (let i = 0; i < questions.length; i++) {
-                    for (let j = 0; j < questions[i].options.length; j++) {
-                        if (!questions[i].options[j].image) continue;
-                        let imgValid = await this.validateAspectRatio(questions[i].options[j].image, 0.8, 1.2, { question: i, option: j }); 
-                        if (!imgValid) {
-                            return;
-                        }
-                    }
-                }
-                this.createVoting()
-            }
-        },
         leave() {
             if(this.stage == 1){
-                this.$router.push('/myvotings')
+                // this.$router.push('/myvotings')
+                this.$router.push({name: 'myvotings'})
             } else {
                 this.stage = 1
             }
@@ -115,15 +88,15 @@ export default {
                     formData.append('images', image);
                 });
                 
-                axios.post('/votings', formData, {
+                axios.post(API_PATHS.votings, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 }).then((res) => {
                     console.log(res.data);
                     let voting_id = res.data.id;
-                    let voting_url = '/voting/' + voting_id;
-                    this.$router.push(voting_url);
+                    useVotingInfoStore().reset();
+                    this.$router.push({name: 'voting', params: {id: voting_id}});
                     // this.openModal('Sucesso', 'Votação criada com sucesso.', voting_url, 3);
                 })
                 .catch((error) => {

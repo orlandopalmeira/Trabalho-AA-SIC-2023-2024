@@ -40,6 +40,7 @@ import VotingsContainer from '@/components/HomePage/VotingsContainer.vue'
 import SimpleAlert from '@/components/SimpleAlert.vue'
 
 import axios from '@/axios'
+import { API_PATHS } from '@/apiPaths'
 
 export default {
     name: 'Home',
@@ -82,17 +83,17 @@ export default {
 			}
 		},
         redirectToLogin() {
-            this.$router.push('/login')
+            this.$router.push({name: 'login'})
         },
         async getVotings() {
             try {
-                let response = await axios.get('/votings') // votações a que o user tem acesso
+                let response = await axios.get(API_PATHS.votings) // votações a que o user tem acesso
                 this.loadingVotings = false 
                 return response.data
             } catch (error) {
                 let status = error.response.status
                 if (status === 401) {
-                    // this.$router.push('/login')
+                    // this.$router.push({name: 'login'})
                     this.openModal('Credenciais inválidas','Faça primeiro login para aceder às votações!', "Ir para login")
                 }
                 else{

@@ -122,7 +122,7 @@ export default {
         }
     },
     created() {
-        this.initQuestion();
+        this.initQuestion(); // Caso não haja nenhuma questão, é criada uma questão por defeito
     },
     methods: {
         initQuestion(){
@@ -217,23 +217,13 @@ export default {
     computed: {
         areAllRulesMet() {
             let questions = this.useVotingInfoStore().questions;
-            // console.log(JSON.stringify(questions, null, 4));
-            /* questions =
-            [
-                {
+            /*[{
                     "description": "Pergunta",
                     "options": [
-                        {
-                            "description": "Opção 1",
-                            "image": null
-                        },
-                        {
-                            "description": "Opção 2",
-                            "image": null
-                        }
+                        { "description": "Opção 1", "image": null },
+                        { "description": "Opção 2", "image": null }
                     ]
-                }
-            ]
+                }]
             */
 
             if (!questions.length) {

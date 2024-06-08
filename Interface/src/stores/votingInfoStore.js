@@ -7,6 +7,7 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         description: '',
         enddate: null,
         image: null,
+        imageUrl: null,
         privatevoting: false,
         privateSelectedUsers: [],
         isFinalResultPublic: true,
@@ -27,6 +28,9 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         },
         getImage() {
             return this.image;
+        },
+        getImageUrl() {
+            return this.imageUrl;
         },
         getPrivateVoting() {
             return this.privatevoting;
@@ -60,6 +64,9 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         },
         setImage(image) {
             this.image = image;
+        },
+        setImageUrl(imageUrl) {
+            this.imageUrl = imageUrl;
         },
         setPrivateVoting(privatevoting) {
             this.privatevoting = privatevoting;

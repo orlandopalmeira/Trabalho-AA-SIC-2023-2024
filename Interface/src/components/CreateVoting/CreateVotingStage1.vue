@@ -149,6 +149,7 @@
 
 <script>
 import axios from '@/axios';
+import { API_PATHS } from '@/apiPaths';
 import { useVotingInfoStore } from '@/stores/votingInfoStore';
 
 export default {
@@ -158,7 +159,6 @@ export default {
             useVotingInfoStore,
             usersMatched: [],
             std_image: './kitten.png',
-            imageUrl: null,
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
@@ -180,26 +180,21 @@ export default {
                 }
             }
             return true;
+            //* Verificação da imagem
+            // let image = useVotingInfoStore().getImage;
+            // if (image != null) {
+            //     const isValid = this.validateAspectRatio(image, 1, 1.75).then(isValid => {
+            //         if (!isValid) {
+            //             return false;
+            //         }
+            //         else {
+            //             return true;
+            //         }
+            //     });
+            // }
         },
     },
     methods: {
-        //* Image Methods
-        onImageChange(event) {
-            if (this.useVotingInfoStore().image) {
-                const file = this.useVotingInfoStore().image;
-                this.createImageUrl(file);
-            } else {
-                this.useVotingInfoStore().imageUrl = null;
-            }
-        },
-        createImageUrl(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.useVotingInfoStore().imageUrl = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        },
-        //
         // getFieldRules: função que retorna as regras para cada campo
         getFieldRules(field) {
             // Criei esta função para o botão de submit ficar disabled caso as regras não sejam cumpridas. 
@@ -221,20 +216,36 @@ export default {
             }
             return rules;
         },
-        // goNext: função que é chamada quando se clica no botão "Seguinte"
+        //* Image Methods
+        onImageChange(event) {
+            if (this.useVotingInfoStore().image) {
+                const file = this.useVotingInfoStore().image;
+                this.createImageUrl(file);
+            } else {
+                this.useVotingInfoStore().imageUrl = null;
+            }
+        },
+        createImageUrl(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.useVotingInfoStore().imageUrl = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+        //* goNext: função que é chamada quando se clica no botão "Seguinte"
         goNext() {
             this.$emit('data');
         },
         leave() {
             this.$emit('leave');
         },
-        // onSearch: função que é chamada quando se pesquisa por utilizadores
+        //* onSearch: função que é chamada quando se pesquisa por utilizadores
         onSearch(val) {
             if (!val) {
                 this.clearMatchedUsers();
                 return;
             }
-            axios.get('/users?term=' + val).then(res => {
+            axios.get(API_PATHS.usersByTerm(val)).then(res => {
                 // Adiciona um avatar a cada utilizador, caso não o tenha.
                 let users_matched = res.data;
                 users_matched.forEach(user => {
@@ -248,10 +259,10 @@ export default {
                 console.log(err);
             });
         },
-        // onUpdateModelValue: função que é chamada quando se seleciona um utilizador privado que pode votar
+        //* onUpdateModelValue: função que é chamada quando se seleciona um utilizador privado que pode votar
         onUpdateModelValue(selectedItems) {
             this.$nextTick(() => {
-                this.$refs.autocomplete.search = '';
+                this.$refs.autocomplete.search = ''; // Limpa a pesquisa
             });
         },
         clearMatchedUsers() {

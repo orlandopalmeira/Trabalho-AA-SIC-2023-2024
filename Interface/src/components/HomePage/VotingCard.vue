@@ -17,7 +17,7 @@ export default {
     },
     methods: {
         onClick() {
-            this.$router.push({ name: 'Voting', params: { id: this.voting.id } });
+            this.$router.push({ name: 'voting', params: { id: this.voting.id } });
         }
     }
 }

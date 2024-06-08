@@ -44,6 +44,7 @@
 
 <script>
 import axios from '../axios';
+import { API_PATHS } from '@/apiPaths';
 // import Cookies from 'js-cookie'; // If using cookies
 import { useUserInfoStore } from '@/stores/userInfoStore';
 export default {
@@ -73,12 +74,12 @@ export default {
         async logout() {
             try {
                 // Alternativas para tentar remover o token, que servem como logout
-                const response = await axios.get('/auth/logout');
+                const response = await axios.get(API_PATHS.logout);
                 // Cookies.remove('token');
                 // Cookies.remove('token', { path: '/' })
                 // document.cookie = "token" +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                 
-                this.$router.push('/login');
+                this.$router.push({name: 'login'});
                 this.useUserInfoStore().logout();
                 if (response.status !== 200) {
                     throw new Error(`Error: ${response.statusText}`);

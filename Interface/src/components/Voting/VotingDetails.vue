@@ -99,6 +99,7 @@
 </template>
 <script>
 import axios from 'axios';
+import { API_PATHS } from '@/apiPaths';
 import ModalOk from '../Modais/ModalOk.vue';
 import ModalYesNo from '../Modais/ModalYesNo.vue';
 
@@ -178,8 +179,7 @@ export default {
                 showstats: this.updatedVoting.showstats,
                 showstatsrealtime: this.updatedVoting.showstatsrealtime
             };
-            
-            axios.put(`/votings/${this.updatedVoting.id}`, dataObj)
+            axios.put(API_PATHS.votingId(this.updatedVoting.id), dataObj)
                 .then(() => {
                     this.openModal('Sucesso', 'Alterações guardadas com sucesso.');
                 })
@@ -191,7 +191,7 @@ export default {
         deleteVoting() {
             this.openModalConfirm(() => {// se o utilizador confirmar a eliminação
                 this.modalConfirm.opened = false; // fecha o modal de confirmação
-                axios.delete(`/votings/${this.updatedVoting.id}`) // eliminação da votação
+                axios.delete(API_PATHS.votingId(this.updatedVoting.id)) // eliminação da votação
                 .then(() => {
                     this.openModal('Sucesso', 'Votação eliminada com sucesso.', () => {
                         this.modal.opened = false;

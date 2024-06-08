@@ -90,6 +90,7 @@ import SimpleAlert from '@/components/SimpleAlert.vue'
 import { useUserInfoStore } from '@/stores/userInfoStore';
 
 import axios from '@/axios'
+import { API_PATHS } from '@/apiPaths'
 
 export default {
     name: 'Voting',
@@ -157,17 +158,17 @@ export default {
             this.currentQuestionIndex--
         },
         leave() {
-            this.$router.push('/home')
+            this.$router.push({name: 'home'})
         },
         submitVote() {
             const vote = this.validateVote()
             if (vote) {
-                axios.post('/votes', vote)
+                axios.post(API_PATHS.votes, vote)
                 .then(() => {
                     this.modal.title = 'Voto submetido'
                     this.modal.message = 'O seu voto foi submetido com sucesso.'
                     this.modal.opened = true
-                    this.$router.push('/home')
+                    this.$router.push({name: 'home'})
                 }).catch(error => {
                     console.error(error)
                     this.modal.title = 'Erro ao submeter voto'
@@ -194,7 +195,7 @@ export default {
             }
         }
 
-        axios.get(`/votings/${this.$route.params.id}`)
+        axios.get(API_PATHS.votingId(this.$route.params.id))
         .then(response => {
             let voting = response.data
             voting.accesstype = getAccessType(voting)
