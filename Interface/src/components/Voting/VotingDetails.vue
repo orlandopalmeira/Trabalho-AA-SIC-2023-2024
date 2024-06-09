@@ -55,10 +55,14 @@
                         label="Data do fim da votação"
                         :min="new Date().toISOString().slice(0, 16)"
                         />
-                    <v-text-field v-else
+                    <v-text-field v-else-if="updatedVoting.enddate"
                         v-model="updatedVoting.enddate"
                         prepend-icon="mdi-calendar"
                         label="Data do fim da votação"
+                        readonly/>
+                    <v-text-field v-else
+                        prepend-icon="mdi-calendar"
+                        label="Fim da votação indefinido"
                         readonly/>
                     <v-checkbox
                         id="privatevoting"
