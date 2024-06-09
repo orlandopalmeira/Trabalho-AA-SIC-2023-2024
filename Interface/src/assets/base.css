@@ -131,3 +131,25 @@ body {
   background-color: #26334e !important;
   color: white;
 }
+.dark-mode .dark-lighter {
+  background-color: #324264 !important;
+  color: white;
+}
+
+
+.rounded-top-left {
+  border-top-left-radius: 15px; /* Adjust the value as needed */
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.rounded-top-right {
+  border-top-left-radius: 0;
+  border-top-right-radius: 30px; /* Adjust the value as needed */
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.rounded-top {
+  border-top-left-radius: 10px; /* Adjust the radius as needed */
+  border-top-right-radius: 10px; /* Adjust the radius as needed */
+}

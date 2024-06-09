@@ -9,7 +9,7 @@
             </h3>
             <hr class="dark"/>
             <div class="pa-10 dark">
-                <div class="dark" :style="{color: black, fontSize: '20px'}">
+                <div class="dark" :style="{color: 'black', fontSize: '20px'}">
                     {{ message }}
                 </div>
             </div>
