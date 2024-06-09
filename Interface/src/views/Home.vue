@@ -12,7 +12,7 @@
                     <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
                 </v-col>
                 <v-col>
-                    <v-select style="width: 45%"
+                    <v-select style="width: 60%"
                         label="Ordenar por"
                         :items="selectItems"
                         variant="outlined"
