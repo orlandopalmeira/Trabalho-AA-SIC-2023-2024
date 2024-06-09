@@ -48,14 +48,15 @@
                         prepend-icon="mdi-calendar"
                         label="Data de início da votação"
                         :disabled="updatedVoting.accesstype === 'creator'"/>
-                    <v-date-input v-if="updatedVoting.accesstype === 'creator'"
+                    <v-text-field v-if="updatedVoting.accesstype === 'creator'"
+                        type="datetime-local"
+                        prepend-icon="mdi-calendar"
                         v-model="updatedVoting.enddate"
                         label="Data do fim da votação"
-                        :min="new Date().toISOString().slice(0, 10)"
-                        :rules="getFieldRules('enddate')"
-                        required readonly/> <!--readonly evita que o input seja feito pelo teclado-->
+                        :min="new Date().toISOString().slice(0, 16)"
+                        /> <!--readonly evita que o input seja feito pelo teclado-->
                     <v-text-field v-else
-                        v-model="formattedEndDate"
+                        v-model="updatedVoting.enddate"
                         prepend-icon="mdi-calendar"
                         label="Data do fim da votação"
                         readonly/>
@@ -137,7 +138,6 @@ export default {
                 finalResultPublic: 'Se ativado, os resultados finais serão públicos.',
                 intermediateResultPublic: 'Se ativado, os resultados intermédios serão públicos.'
             },
-            formattedEndDate: new Date(this.voting.enddate).toISOString().slice(0, 10),
             modal: {
                 opened: false,
                 title: '',
@@ -163,9 +163,6 @@ export default {
                 case 'description':
                     rules = [this.rules.required, this.rules.maxlength500];
                     break;
-                case 'enddate':
-                    rules = [this.rules.required];
-                    break;
                 default: break;
             }
             return rules;
@@ -186,7 +183,7 @@ export default {
             let dataObj = {
                 title: this.updatedVoting.title,
                 description: this.updatedVoting.description,
-                enddate: this.updatedVoting.enddate ? this.updatedVoting.enddate.toISOString().slice(0, 19).replace('T', ' ') : null, // formato da data no backend
+                enddate: this.updatedVoting.enddate ? this.updatedVoting.enddate.replace('T',' ').slice(0, 16) + ':00' : null, // formato da data no backend
                 showstats: this.updatedVoting.showstats,
                 showstatsrealtime: this.updatedVoting.showstatsrealtime
             };
@@ -227,7 +224,7 @@ export default {
         }
     },
     created() {
-        this.updatedVoting.enddate = new Date(this.updatedVoting.enddate);
+        this.updatedVoting.enddate = this.updatedVoting.enddate ? this.updatedVoting.enddate.slice(0, 16) : null;
     }
 }
 </script>
