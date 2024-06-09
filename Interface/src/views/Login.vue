@@ -11,7 +11,7 @@
 					<v-toolbar-title class="pl-6">Login</v-toolbar-title>
 				</v-toolbar>
 				<v-card-text>
-					<v-form @keydown.enter="login">
+					<v-form @keydown.enter="login" v-model="valid" lazy-validation>
 						<v-text-field class="pl-2 pr-5 pb-2"
 							id="email"
 							prepend-icon="mdi-account"
@@ -19,6 +19,7 @@
 							label="Email"
 							type="text"
 							v-model="email"
+							:rules="[rules.required]"
 						></v-text-field>
 						<v-text-field class="pl-2 pr-5"
 							id="password"
@@ -30,13 +31,15 @@
 							label="Password"
 							type="password"
 							v-model="password"
+							:rules="[rules.required]"
 						></v-text-field>
+
+						<div class="mt-5 d-flex justify-end">
+							<v-btn :disabled="!valid" color="success" class="mr-5" @click="login">Login</v-btn>
+						</div>
 					</v-form>
 				</v-card-text>
-				<v-card-actions>
-					<v-spacer></v-spacer>
-					<v-btn :class="buttonClass" @click="login" :disabled="email === '' || password === ''">Login</v-btn>
-				</v-card-actions>
+
 			</v-card>
 		</v-container>
 	</default-layout>
@@ -55,6 +58,7 @@ export default {
 	},
 	data() {
 		return {
+			valid: false,
 			email: '',
 			password: '',
 			showPassword: false,
@@ -62,6 +66,9 @@ export default {
 				opened: false,
 				title: 'Falha no login',
 				message: 'As credenciais inseridas são inválidas, por favor tente novamente.'
+			},
+			rules: {
+				required: value => !!value || 'Campo obrigatório',
 			},
 			useUserInfoStore
 		};
@@ -108,14 +115,6 @@ export default {
 	height: 100vh;
 }
 
-.active-button {
-  background-color: #1976d2;
-  color: white;
-}
-.disabled-button {
-  background-color: #000000;
-  color: #ffffff;
-}
 .dark-mode .dark {
     background-color: #15202b !important;
     color: white;

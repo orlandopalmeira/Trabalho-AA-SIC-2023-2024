@@ -59,9 +59,9 @@
                         required
                         ></v-text-field>
                         
-                            <div class="mt-5">
-                                <v-btn :disabled="!valid" color="success" class="mr-4" @click="submit"> Criar conta </v-btn>
-                                <v-btn color="error" @click="reset"> Reset </v-btn>
+                            <div class="mt-5 d-flex justify-end">
+                                <v-btn color="error" class="mr-4" @click="reset"> Limpar </v-btn>
+                                <v-btn :disabled="!valid" color="success" @click="submit"> Criar conta </v-btn>
                             </div>
                     </v-form>
                 </v-card-text>
