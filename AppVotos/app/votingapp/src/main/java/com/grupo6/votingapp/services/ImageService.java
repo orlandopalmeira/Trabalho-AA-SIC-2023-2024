@@ -32,14 +32,14 @@ public class ImageService {
     private static final String BUCKET_NAME = "images-aa-sic";
 
     @Value("${google.cloud.serviceAccount}")
-    private String serviceAccount;
+    private static String serviceAccount;
 
     public ImageService() throws IOException {
         this.storage = getStorage();
     }
 
-    private Storage getStorage() throws IOException{
-        ClassPathResource resource = new ClassPathResource(this.serviceAccount);
+    private static Storage getStorage() throws IOException{
+        ClassPathResource resource = new ClassPathResource(serviceAccount);
         InputStream inputStream = resource.getInputStream();
         String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         ByteArrayInputStream credentialsStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
