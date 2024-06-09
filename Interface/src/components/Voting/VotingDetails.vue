@@ -54,7 +54,7 @@
                         v-model="updatedVoting.enddate"
                         label="Data do fim da votação"
                         :min="new Date().toISOString().slice(0, 16)"
-                        /> <!--readonly evita que o input seja feito pelo teclado-->
+                        />
                     <v-text-field v-else
                         v-model="updatedVoting.enddate"
                         prepend-icon="mdi-calendar"
