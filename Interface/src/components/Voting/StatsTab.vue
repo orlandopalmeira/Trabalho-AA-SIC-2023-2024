@@ -26,22 +26,22 @@
             </div>
             <div style="margin: 10px 10px;">
                 <v-row>
-                    <v-col class="vcol1 dark">
+                    <v-col class="vcol1 dark-light">
                         <p class="text-h6" style="font-weight: bold;">Número de votos</p>
                         <p style="font-size: 20pt;">{{ stats.numvotes }}</p>
                     </v-col>
-                    <v-col class="vcol1 dark" cols="3.5">
+                    <v-col class="vcol1 dark-light" cols="3.5">
                         <p class="text-h6" style="font-weight: bold;">Mais votado</p>
                         <p style="font-size: 20pt; word-break: break-word;">{{ winner.description }}</p>
                         <p>Com {{ winner.count }} votos</p>
                     </v-col>
-                    <v-col class="vcol1 dark">
+                    <v-col class="vcol1 dark-light">
                         <p class="text-h6" style="font-weight: bold;">???</p>
                         <p style="font-size: 20pt;">???</p>
                     </v-col>
                 </v-row>
                 <v-row>
-                    <v-col class="vcol1 pl-5 pr-5 votantes dark" cols="4">
+                    <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
                         <v-row v-for="(voter, index) in stats.voters" :key="index">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
@@ -60,7 +60,7 @@
                             <v-divider class="mt-1 mb-1" v-if="index < stats.voters.length - 1"/>
                         </v-row>
                     </v-col>
-                    <v-col class="vcol1 dark" style="height: 400px" >
+                    <v-col class="vcol1 dark-light" style="height: 400px" >
                         <Bar id="my-chart-id" :data="chart.data" :options="chart.options" />
                     </v-col>
                 </v-row>

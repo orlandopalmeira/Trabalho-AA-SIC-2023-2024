@@ -2,17 +2,19 @@
     <div class="modal-overlay" v-if="isVisible">
         <div class="modal">
             <h3 
-                :style="{ padding: '10px', color: 'white', backgroundColor: isErrorMessage ? '#F44336' : '#0056b3' }">
-                <v-icon>{{ icon }}</v-icon> {{ title }}
+            class="pr-10"
+            :style="{ padding: '20px', color: 'white', backgroundColor: isErrorMessage ? '#F44336' : '#0056b3', fontSize: '24px' }"
+            >
+                <v-icon class="mb-1 mr-1">{{ icon }}</v-icon> {{ title }}
             </h3>
             <hr class="dark"/>
-            <div class="padding20 dark">
-                <div class="dark" style="color: black;">
+            <div class="pa-10 dark">
+                <div class="dark" :style="{color: black, fontSize: '20px'}">
                     {{ message }}
                 </div>
             </div>
-            <div class="padding20 dark">
-                <div class="modal-buttons dark" style="margin-top: 10px">
+            <div class="pa-5 dark">
+                <div class="modal-buttons dark">
                     <button class="button" type="submit" @click="this.$emit('close-modal');">{{ buttonText }}</button>
                 </div>
             </div>
@@ -49,12 +51,18 @@ export default {
             type: String,
             required: false,
             default: ''
+        }, 
+        color: {
+            type: String,
+            required: false,
+            default: 'primary'
         }
     },
     computed: {
         isErrorMessage() {
             const erroRegex = /erro|falha/i;
-            return erroRegex.test(this.title);
+            if (this.color == "error" || erroRegex.test(this.title)) return true;
+            else return false;
         }
     },
     emits: [

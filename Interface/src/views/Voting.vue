@@ -4,6 +4,7 @@
                 :isVisible="modal.opened"
                 :title="modal.title"
                 :message="modal.message"
+                :color="modal.color"
                 @close-modal="modal.opened=false"/>
             <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
             <v-card flat v-else>
@@ -42,7 +43,7 @@
                                             Questão anterior
                                         </v-btn>
                                         <v-btn v-else
-                                            color="secondary"
+                                            color="error"
                                             @click="leave">
                                             Sair
                                         </v-btn>
@@ -112,7 +113,8 @@ export default {
             modal: {
                 opened: false,
                 title: '',
-                message: ''
+                message: '',
+                color: 'primary',
             },
             currentQuestionIndex: 0,
             tab: 'votar'
@@ -138,6 +140,7 @@ export default {
                 return vote
             } else {
                 this.modal.title = 'Perguntas por responder'
+                this.modal.color = 'error'
                 if (indexes.length === 1) {
                     this.modal.message = `A pergunta ${indexes[0]} não foi respondida.`
                 } else{

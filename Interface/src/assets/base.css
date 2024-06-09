@@ -122,3 +122,12 @@ body {
 .buttoncreatevoting:hover {
   background-color: #45a049;
 }
+
+.dark-mode .dark {
+  background-color: #15202b;
+  color: white;
+}
+.dark-mode .dark-light {
+  background-color: #26334e !important;
+  color: white;
+}
