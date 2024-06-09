@@ -56,7 +56,6 @@ export default {
         },
         leave() {
             if(this.stage == 1){
-                // this.$router.push('/myvotings')
                 this.$router.push({name: 'myvotings'})
             } else {
                 this.stage = 1
@@ -126,40 +125,6 @@ export default {
             });
 
             return images;
-        },
-        validateAspectRatio(file, min, max, stage2info = null) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const aspectRatio = img.width / img.height;
-                        if (aspectRatio < min) {
-                            let title = 'Erro'
-                            if (stage2info) {
-                                title += ' na Pergunta ' + (stage2info.question + 1) + ', Opção ' + (stage2info.option + 1);
-                            }
-                            this.openModal(title, 'Imagem demasiado comprida. Por favor submeta uma imagem mais larga.');
-                        }
-                        else if (aspectRatio > max) {
-                            let title = 'Erro'
-                            if (stage2info) {
-                                title += ' na Pergunta ' + (stage2info.question + 1) + ', Opção ' + (stage2info.option + 1);
-                            }
-                            this.openModal(title, 'Imagem demasiado larga. Por favor submeta uma imagem mais comprida.');
-                        }
-                        resolve(aspectRatio >= min && aspectRatio <= max);
-                    };
-                    img.onerror = () => {
-                        reject(false);
-                    };
-                    img.src = event.target.result;
-                };
-                reader.onerror = () => {
-                    reject(false);
-                };
-                reader.readAsDataURL(file);
-            });
         },
     },
 }

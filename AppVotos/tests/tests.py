@@ -119,7 +119,7 @@ def arg_createuser(arguments: list):
         print(e)
 
 def arg_createusers(arguments: list):
-    for _ in range(500):
+    for _ in range(10):
         arg_createuser(arguments)
 
 def arg_getuseraccessiblevotings(arguments: list):

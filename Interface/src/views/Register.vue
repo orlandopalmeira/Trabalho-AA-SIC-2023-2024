@@ -102,7 +102,7 @@ export default {
     }),
     computed: {
         passwordConfirmed() {
-            return this.password === this.password_confirm || 'Passwords não coincidem';
+            return this.password === this.password_confirm ? [] : 'Passwords não coincidem';
         }
     },
     methods: {

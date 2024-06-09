@@ -9,9 +9,9 @@
 <script setup>
 import NavBar from '../components/NavBar.vue'
 const routes = {
-    'Home': '/home',
-    'Histórico': '/history',
-    'Minhas votações': '/myvotings'
+    'Home': {name: 'home'},
+    'Histórico': {name: 'history'},
+    'Minhas votações': {name: 'myvotings'},
 }
 </script>
 
