@@ -1,5 +1,8 @@
 package com.grupo6.votingapp.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +21,13 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin(AllowedOrigin); //! Cuidado com isto se usarmos docker
+
+        List<String> allowedOrigins = Arrays.asList(AllowedOrigin.split("\\s*,\\s*"));
+        for (String allowedOrigin : allowedOrigins) {
+            System.out.println("Allowed Origin: " + allowedOrigin);
+            config.addAllowedOrigin(allowedOrigin); //! Cuidado com isto se usarmos docker
+        }
+
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
