@@ -45,12 +45,14 @@
                         @change="onImageChange"
                     />
                 </div>
-                <div v-if="useVotingInfoStore().imageUrl" class="img_card">
-                    <img
-                        :src="useVotingInfoStore().imageUrl"
-                        alt="Imagem da votação"
-                        class=""
-                    />
+                <div v-if="useVotingInfoStore().imageUrl" class="img_container">
+                    <div class="img_card">
+                        <img
+                            :src="useVotingInfoStore().imageUrl"
+                            alt="Imagem da votação"
+                            class=""
+                        />
+                    </div>
                     <p class="title">{{ useVotingInfoStore.title ? useVotingInfoStore.title : "Título" }}</p>
                 </div>
                 <v-expansion-panels>
@@ -173,7 +175,7 @@ export default {
             std_image: './kitten.png',
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
-                maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
+                maxlength50: value => (value && value.length <= 50) || 'Máximo de 50 caracteres.',
                 maxlength500: value => (value && value.length <= 500) || 'Máximo de 500 caracteres.',
                 atLeastOnePrivateVoter: value => {
                     const errorString = 'Tem de selecionar pelo menos um utilizador para aceder à votação privada.';
@@ -224,7 +226,7 @@ export default {
             // caso venham a surgir mais fields, basta adicionar aqui as regras para esse field. E também adicionar o seu nome, nos fields da função areAllRulesMet.
             switch (field) {
                 case 'title':
-                rules = [this.rules.required, this.rules.maxlength100];
+                rules = [this.rules.required, this.rules.maxlength50];
                 break;
                 case 'description':
                 rules = [this.rules.required, this.rules.maxlength500];
@@ -301,8 +303,8 @@ export default {
 <style scoped>
 img {
     border-radius: 10px;
-    width: 100%;
-    height: 140px;
+    width: 95%;
+    height: 300px;
     object-fit: cover;
 }
 /* WIP */
@@ -314,6 +316,14 @@ img {
     width: 25%;
     overflow: hidden;
 }
+.img_container {
+    background-color: #eee;
+    height: 350px; 
+    width: 300px;
+    align-items: center;
+    border-radius: 10px;
+    margin: 0 auto 30px auto;
+}
 .img_card {
     display: flex;
     flex-direction: column;
@@ -321,16 +331,16 @@ img {
     height: 300px; 
     width: 300px;
     overflow: hidden;
-    background-color: #eee;
+    margin: 0 auto;
     padding: 20px;
     border-radius: 10px;
-    margin: 0 auto 30px auto;
+    align-items: center;
 }
 .title {
     word-break: break-word;
     text-align: center;
-    font-size: 1.25rem;
-    margin-top: 15px;
+    font-size: 1.35rem;
+    margin-top: 1px;
 }
 .dark-mode .img_card {
     background-color: #121212 !important;

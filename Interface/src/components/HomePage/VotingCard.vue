@@ -76,8 +76,11 @@ img {
 .title {
     word-break: break-word;
     text-align: center;
-    font-size: 1.25rem;
-    margin-top: 15px;
+    font-size: 1.35rem;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .dark-mode .card {
     background-color: #121212 !important;
