@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class ImageService {
@@ -30,12 +31,15 @@ public class ImageService {
     private Storage storage;
     private static final String BUCKET_NAME = "images-aa-sic";
 
+    @Value("${google.cloud.serviceAccount}")
+    private String serviceAccount;
+
     public ImageService() throws IOException {
         this.storage = getStorage();
     }
 
-    private static Storage getStorage() throws IOException{
-        ClassPathResource resource = new ClassPathResource("aa-sic-424610-eea4d305377e.json");
+    private Storage getStorage() throws IOException{
+        ClassPathResource resource = new ClassPathResource(this.serviceAccount);
         InputStream inputStream = resource.getInputStream();
         String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         ByteArrayInputStream credentialsStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
