@@ -17,7 +17,7 @@
                     <h4 style="font-weight: 600;">Detalhes da votação</h4>
                     <div class="flex">
                         <v-btn @click="shareVoting" title="Partilhar esta votação" color="secondary" style="z-index: 11"><v-icon>mdi-share-variant</v-icon></v-btn>
-                        <v-btn class="ml-2" color="error" @click="deleteVoting" v-if="updatedVoting.accesstype === 'creator'">Eliminar esta votação</v-btn>
+                        <v-btn class="ml-2" color="error" @click="deleteVoting" title="Eliminar esta votação" v-if="updatedVoting.accesstype === 'creator'"><v-icon>mdi-delete</v-icon></v-btn>
                     </div>
                 </div>
             </v-card-title>
@@ -186,7 +186,7 @@ export default {
             let dataObj = {
                 title: this.updatedVoting.title,
                 description: this.updatedVoting.description,
-                enddate: this.updatedVoting.enddate.toISOString().slice(0, 19).replace('T', ' '), // formato da data no backend
+                enddate: this.updatedVoting.enddate ? this.updatedVoting.enddate.toISOString().slice(0, 19).replace('T', ' ') : null, // formato da data no backend
                 showstats: this.updatedVoting.showstats,
                 showstatsrealtime: this.updatedVoting.showstatsrealtime
             };

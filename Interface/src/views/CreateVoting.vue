@@ -73,7 +73,7 @@ export default {
                     title: this.useVotingInfoStore().title,
                     description: this.useVotingInfoStore().description,
                     //enddate: this.useVotingInfoStore().enddate.toISOString().replace('T', ' ').slice(0,19),
-                    enddate: this.useVotingInfoStore().enddate.replace('T', ' ') + ':00',
+                    enddate: this.useVotingInfoStore().enddate ? this.useVotingInfoStore().enddate.replace('T', ' ') + ':00' : null,
                     image: this.useVotingInfoStore().image,
                     privatevoting: this.useVotingInfoStore().privatevoting,
                     privateSelectedUsers: this.useVotingInfoStore().privateSelectedUsers,

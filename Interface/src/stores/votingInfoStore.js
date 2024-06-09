@@ -91,6 +91,9 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         },
         reset() {
             this.$reset();
+        },
+        printContents() { //! Not sure se funciona
+            console.log(this.$state);
         }
     }
 });

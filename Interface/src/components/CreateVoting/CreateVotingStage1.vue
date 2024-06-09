@@ -85,7 +85,6 @@
                                     multiple
                                     no-data-text="Introduza termo válido"
                                     autofocus
-                                    density="compact"
                                     @update:modelValue="onUpdateModelValue"
                                 >
                                     <template v-slot:chip="{ props, item }">
@@ -178,7 +177,6 @@ export default {
                 maxlength500: value => (value && value.length <= 500) || 'Máximo de 500 caracteres.',
                 atLeastOnePrivateVoter: value => {
                     const errorString = 'Tem de selecionar pelo menos um utilizador para aceder à votação privada.';
-                    console.log(value)
                     if (value && useVotingInfoStore().privateSelectedUsers.length === 0){
                         return errorString;
                     }
