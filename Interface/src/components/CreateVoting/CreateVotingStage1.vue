@@ -53,7 +53,7 @@
                             class=""
                         />
                     </div>
-                    <p class="title">{{ useVotingInfoStore.title ? useVotingInfoStore.title : "Título" }}</p>
+                    <p class="title">{{ useVotingInfoStore().title ? useVotingInfoStore().title : "Título" }}</p>
                 </div>
                 <v-expansion-panels>
                     <v-expansion-panel title="Definições de Privacidade" class="dark-light">
