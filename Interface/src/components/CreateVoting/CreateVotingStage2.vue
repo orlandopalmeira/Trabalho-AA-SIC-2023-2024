@@ -164,26 +164,26 @@ export default {
         getOptionImage(indexQuestion, indexOption){
             return this.useVotingInfoStore().questions[indexQuestion].options[indexOption].image;
         },
-        validateAspectRatio(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const aspectRatio = img.width / img.height;
-                        resolve(aspectRatio >= 0.8 && aspectRatio <= 1.2);
-                    };
-                    img.onerror = () => {
-                        reject(false);
-                    };
-                    img.src = event.target.result;
-                };
-                reader.onerror = () => {
-                    reject(false);
-                };
-                reader.readAsDataURL(file);
-            });
-        },
+        // validateAspectRatio(file) {
+        //     return new Promise((resolve, reject) => {
+        //         const reader = new FileReader();
+        //         reader.onload = (event) => {
+        //             const img = new Image();
+        //             img.onload = () => {
+        //                 const aspectRatio = img.width / img.height;
+        //                 resolve(aspectRatio >= 0.8 && aspectRatio <= 1.2);
+        //             };
+        //             img.onerror = () => {
+        //                 reject(false);
+        //             };
+        //             img.src = event.target.result;
+        //         };
+        //         reader.onerror = () => {
+        //             reject(false);
+        //         };
+        //         reader.readAsDataURL(file); //! Estava a dar erro aqui e tbm não é preciso esta verificação
+        //     });
+        // },
         getFieldRules(field) {
             // Criei esta função para o botão de submit ficar disabled caso as regras não sejam cumpridas. 
             // Com esta função, podemos definir aqui as regras para cada campo sem ter de alterar outros lados do código para alterar as condições do botão estar disabled.
@@ -243,15 +243,14 @@ export default {
                     if (!this.getFieldRules("option").every(rule => rule(question.options[j].description)===true )) {
                         return false;
                     }
-                    
-                    if (question.options[j].image){
-                        this.validateAspectRatio(question.options[j].image, 0.8, 1.2).then((res) => {
-                            if (!res) {
-                                // this.openModal('Erro', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem deve ter uma proporção entre 0.8 e 1.2 (largura / altura).');
-                                return false;
-                            }
-                        })
-                    }
+                    // if (question.options[j].image){
+                    //     this.validateAspectRatio(question.options[j].image, 0.8, 1.2).then((res) => {
+                    //         if (!res) {
+                    //             // this.openModal('Erro', 'Erro na Opção ' + (j+1) + ' da Pergunta ' + (i+1) + ': A imagem deve ter uma proporção entre 0.8 e 1.2 (largura / altura).');
+                    //             return false;
+                    //         }
+                    //     })
+                    // }
                 }
             }
             return true;

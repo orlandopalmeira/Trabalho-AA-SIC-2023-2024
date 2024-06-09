@@ -2,7 +2,6 @@ package com.grupo6.votingapp.controllers;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -24,12 +23,7 @@ import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.dtos.votings.UpdateVotingDTO;
 import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
-import com.grupo6.votingapp.models.Option;
-import com.grupo6.votingapp.models.Question;
-import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.models.Voting;
-import com.grupo6.votingapp.services.ImageService;
-import com.grupo6.votingapp.services.UserService;
 import com.grupo6.votingapp.services.VotingService;
 
 import lombok.AllArgsConstructor;
@@ -46,9 +40,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class VotingController {
 
     private VotingService votingService;
-    private UserService userService;
     private CheckTokenMiddlewares authMiddlewares;
-    private ImageService imageService;
     private final ObjectMapper objectMapper;
     
     private static final String MESSAGE_FIELD = "message";

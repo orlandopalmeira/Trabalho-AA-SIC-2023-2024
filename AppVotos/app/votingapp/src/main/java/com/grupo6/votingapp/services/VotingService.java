@@ -66,6 +66,13 @@ public class VotingService {
 
         Map<String, String> uploadedImages = new HashMap<>();
 
+        List<String> privateVotersIds = newVoting.getPrivateSelectedUsers();
+        if(newVoting.isPrivatevoting() && privateVotersIds != null && !privateVotersIds.isEmpty()) {
+            List<Long> privateVotersIdsLong = privateVotersIds.stream().map(Long::parseLong).toList();
+            List<User> privateVoters = userService.getUsersByIds(privateVotersIdsLong);
+            voting.setPrivatevoters(privateVoters);
+        }
+            
         if(images != null && !images.isEmpty()){
             uploadedImages = imageService.uploadImages(images);
             voting.setImage(uploadedImages.getOrDefault(newVoting.getImage(), null));
@@ -76,13 +83,6 @@ public class VotingService {
                 }
             }
         }
-        List<String> privateVotersIds = newVoting.getPrivateSelectedUsers();
-        if(newVoting.isPrivatevoting() && privateVotersIds != null && !privateVotersIds.isEmpty()) {
-            List<Long> privateVotersIdsLong = privateVotersIds.stream().map(Long::parseLong).toList();
-            List<User> privateVoters = userService.getUsersByIds(privateVotersIdsLong);
-            voting.setPrivatevoters(privateVoters);
-        }
-
         // catch (Exception e) {
         //     for(String uploadedImageName : uploadedImages.values()) {
         //         imageService.deleteFile(uploadedImageName);
@@ -110,9 +110,23 @@ public class VotingService {
 
     public void deleteVoting(Voting voting) throws NullPointerException{
         if(voting != null) {
+            //* Elimina os votantes privados associados à votação
             voting.setPrivatevoters(List.of());
             voting = votingRepository.save(voting);
+            //* Elimina as imagens associadas à votação
+            if (voting.getImage() != null){
+                imageService.deleteFile(voting.getImage());
+            }
+            for (Question question : voting.getQuestions()) {
+                for(Option option : question.getOptions()) {
+                    if (option.getImage() != null){
+                        imageService.deleteFile(option.getImage());
+                    }
+                }
+            }
+            //* Elimina os votos associados à votação
             voting.getVotes().forEach(voteRepository::delete);
+            
             votingRepository.delete(voting);
         } else {
             throw new NullPointerException("Don't delete a null voting.");

@@ -132,7 +132,7 @@ public class ImageService {
                 throw new ImageNotFoundException("Image not found in Storage.");
             }
         } catch (StorageException e) {
-            throw new ImageServerException("Error downloading image: " + e.getMessage());
+            throw new ImageServerException("Error deleting image: " + e.getMessage());
         }
     }
 }
