@@ -86,7 +86,7 @@ export default {
         SimpleAlert
     },
     props: {
-        votingId: { type: String, required: true }
+        votingId: { type: Number, required: true }
     },
     data() {
         return {

@@ -48,10 +48,10 @@
                 <div v-if="useVotingInfoStore().imageUrl" class="img_card">
                     <img
                         :src="useVotingInfoStore().imageUrl"
+                        alt="Imagem da votação"
                         class=""
-                        style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);"
                     />
-                    <p class="title">Preview</p>
+                    <p class="title">{{ useVotingInfoStore.title ? useVotingInfoStore.title : "Título" }}</p>
                 </div>
                 <v-expansion-panels>
                     <v-expansion-panel title="Definições de Privacidade" class="dark-light">
@@ -302,27 +302,35 @@ export default {
 img {
     border-radius: 10px;
     width: 100%;
-    height: 300px;
+    height: 140px;
     object-fit: cover;
+}
+/* WIP */
+.card { 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%; /* Ensure this div has a height to position the inner div at the bottom */
+    width: 25%;
+    overflow: hidden;
+}
+.img_card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 300px; 
+    width: 300px;
+    overflow: hidden;
+    background-color: #eee;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 0 auto 30px auto;
 }
 .title {
     word-break: break-word;
     text-align: center;
     font-size: 1.25rem;
     margin-top: 15px;
-}
-.img_card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 340px; 
-    width: 300px;
-    overflow: hidden;
-    background-color: #eee;
-    padding: 20px;
-    border-radius: 10px;
-
-    margin: 0 auto 30px auto;
 }
 .dark-mode .img_card {
     background-color: #121212 !important;
