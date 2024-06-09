@@ -342,7 +342,11 @@ img {
     font-size: 1.35rem;
     margin-top: 1px;
 }
-.dark-mode .img_card {
+.dark-mode .img_card{
+    background-color: #121212 !important;
+    color: white;
+}
+.dark-mode .img_container{
     background-color: #121212 !important;
     color: white;
 }
