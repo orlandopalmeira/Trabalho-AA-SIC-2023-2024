@@ -13,6 +13,7 @@ import com.grupo6.votingapp.exceptions.imageStorage.ImageServerException;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 
 @Service
@@ -32,19 +36,21 @@ public class ImageService {
     private static final String BUCKET_NAME = "images-aa-sic";
 
     @Value("${google.cloud.serviceAccount}")
-    private static String serviceAccount;
+    private String serviceAccount;
 
-    public ImageService() throws IOException {
-        this.storage = getStorage();
+    @PostConstruct
+    private void init() throws IOException {
+        this.storage = getStorage(serviceAccount);
     }
 
-    private static Storage getStorage() throws IOException{
+    private static Storage getStorage(String serviceAccount) throws IOException {
+        Assert.notNull(serviceAccount, "Service account path must not be null");
         ClassPathResource resource = new ClassPathResource(serviceAccount);
         InputStream inputStream = resource.getInputStream();
         String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         ByteArrayInputStream credentialsStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
         Credentials credentials = GoogleCredentials.fromStream(credentialsStream);
-        return StorageOptions.newBuilder().setCredentials(credentials).build().getService(); 
+        return StorageOptions.newBuilder().setCredentials(credentials).build().getService();
     }
 
     /**

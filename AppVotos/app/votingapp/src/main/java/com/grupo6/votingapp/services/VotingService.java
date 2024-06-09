@@ -1,17 +1,23 @@
 package com.grupo6.votingapp.services;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.IdentitySet;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votes.CreateVoteDTO;
+import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;
@@ -31,6 +37,9 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class VotingService {
+    ImageService imageService;
+    UserService userService;
+
     VotingRepository votingRepository;
     VoteRepository  voteRepository;
     QuestionRepository questionRepository;
@@ -49,6 +58,39 @@ public class VotingService {
 
     public Voting getVotingByCreatorId(String votingId, String userId){ //* Parece funcionar
         return votingRepository.findVotingByCreatorId(Long.parseLong(votingId), userId).orElse(null);
+    }
+
+    public Voting createVoting(RegisterVotingDTO newVoting, List<MultipartFile> images, String userId) throws Exception {
+        newVoting.setCreationdate(new Date());
+        Voting voting = newVoting.toEntity();
+
+        Map<String, String> uploadedImages = new HashMap<>();
+
+        if(images != null && !images.isEmpty()){
+            uploadedImages = imageService.uploadImages(images);
+            voting.setImage(uploadedImages.getOrDefault(newVoting.getImage(), null));
+
+            for (Question question : voting.getQuestions()) {
+                for(Option option : question.getOptions()) {
+                    option.setImage(uploadedImages.getOrDefault(option.getImage(), null));
+                }
+            }
+        }
+        List<String> privateVotersIds = newVoting.getPrivateSelectedUsers();
+        if(newVoting.isPrivatevoting() && privateVotersIds != null && !privateVotersIds.isEmpty()) {
+            List<Long> privateVotersIdsLong = privateVotersIds.stream().map(Long::parseLong).toList();
+            List<User> privateVoters = userService.getUsersByIds(privateVotersIdsLong);
+            voting.setPrivatevoters(privateVoters);
+        }
+
+        // catch (Exception e) {
+        //     for(String uploadedImageName : uploadedImages.values()) {
+        //         imageService.deleteFile(uploadedImageName);
+        //     }
+        // }
+
+        return this.saveVoting(voting, userId);
+
     }
 
     public Voting saveVoting(Voting voting){//* Parece funcionar

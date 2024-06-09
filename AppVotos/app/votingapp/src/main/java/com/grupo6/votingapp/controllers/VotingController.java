@@ -118,32 +118,9 @@ public class VotingController {
         @CookieValue(value = "token", defaultValue = "") String token
     ) {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
-            Map<String, String> uploadedImages = new HashMap<>();
             try {
                 RegisterVotingDTO newVoting = convertJsonToRegisterVotingDTO(jsonString);
-                newVoting.setCreationdate(new Date());
-                Voting voting = newVoting.toEntity();
-                //! Talvez abstrair isto no votingService?
-                if(images != null && !images.isEmpty()){
-                    uploadedImages = imageService.uploadImages(images);
-                    
-                    voting.setImage(uploadedImages.getOrDefault(newVoting.getImage(), null));
-    
-                    for (Question question : voting.getQuestions()) {
-                        for(Option option : question.getOptions()) {
-                            option.setImage(uploadedImages.getOrDefault(option.getImage(), null));
-                        }
-                    }
-                }
-                //! Talvez abstrair isto no votingService?
-                List<String> privateVotersIds = newVoting.getPrivateSelectedUsers();
-                if(newVoting.isPrivatevoting() && privateVotersIds != null && !privateVotersIds.isEmpty()) {
-                    List<Long> privateVotersIdsLong = privateVotersIds.stream().map(Long::parseLong).toList();
-                    List<User> privateVoters = userService.getUsersByIds(privateVotersIdsLong);
-                    voting.setPrivatevoters(privateVoters);
-                }
-
-                Voting registeredVoting = votingService.saveVoting(voting, user_id);
+                Voting registeredVoting = votingService.createVoting(newVoting, images, user_id);
                 Map<String, Object> responseMap = Map.of(
                     "id", registeredVoting.getId(),
                     MESSAGE_FIELD, "Votação criada com sucesso."
@@ -151,9 +128,6 @@ public class VotingController {
                 return ResponseEntity.ok(responseMap);
             } catch (Exception e) {
                 e.printStackTrace();
-                for(String uploadedImageName : uploadedImages.values()) {
-                    imageService.deleteFile(uploadedImageName);
-                }
                 Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
             }
@@ -168,9 +142,11 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
             }
-            updatedVoting.updateVotingFromDTO(voting);
-            Voting updatedVotingEntity = votingService.saveVoting(voting, userId);
-            return ResponseEntity.ok(new VotingWithNoRelationsDTO(updatedVotingEntity));
+            else{
+                updatedVoting.updateVotingFromDTO(voting);
+                Voting updatedVotingEntity = votingService.saveVoting(voting, userId);
+                return ResponseEntity.ok(new VotingWithNoRelationsDTO(updatedVotingEntity));
+            }
         });
     }
 
@@ -182,7 +158,6 @@ public class VotingController {
                 Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
             }
-            
             votingService.deleteVoting(voting);
             return ResponseEntity.ok().build();
         });
