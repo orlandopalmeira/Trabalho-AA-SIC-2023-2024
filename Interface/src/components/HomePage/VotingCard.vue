@@ -4,7 +4,11 @@
         <img alt="Voting background" :src="voting.image == null ? defaultImage : 'http://localhost:8080/images/' + voting.image"/>
         <div style="display: flex; align-items: center; justify-content:center">
             <p class="title" :title="voting.title" >{{ voting.title }}</p>
+        </div>
+        <div>
             <v-icon class="ml-2" v-if="voting.useralreadyvoted" title="Votou nesta votação">mdi-vote</v-icon>
+            <v-icon class="ml-2" color="red" v-if="voting.enddate && hasDatePassedToday(voting.enddate)" title="Período de votação acabou">mdi-calendar-remove</v-icon>
+            <v-icon class="ml-2" color="orange" v-else-if="voting.enddate && isEndingSoon(voting.enddate)" :title="'Período de votação perto de acabar.\nFalta ' + calculateTimeRemaining(voting.enddate)">mdi-clock-fast</v-icon>
         </div>
     </div>
 </template>
@@ -21,6 +25,31 @@ export default {
     methods: {
         onClick() {
             this.$router.push({ name: 'voting', params: { id: this.voting.id } });
+        },
+        hasDatePassedToday(date) {
+            return new Date(date) < new Date();
+        },
+        isEndingSoon(date){
+            let near_hours_interval = 48 // 2 days
+            return new Date(date) < new Date(new Date().getTime() + 1000*60*60*near_hours_interval);
+        },
+        calculateTimeRemaining(date){
+            let now = new Date();
+            let end = new Date(date);
+            let diff = end - now;
+            return this.timestampToFormatedDate(diff);
+        },
+        timestampToFormatedDate(time){
+            let days = Math.floor(time / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+            // let seconds = Math.floor((time % (1000 * 60)) / 1000);
+            let days_str = days > 0 ? days + 'd' : '';
+            let hours_str = hours > 0 ? hours + 'h' : '';
+            let minutes_str = minutes + 'min';
+            if (days === 0 && hours === 0 && minutes < 2) return 'menos de um minuto';
+            if (days === 0 && hours === 0) minutes_str = minutes + ' minutos';
+            return `${days_str} ${hours_str} ${minutes_str}`;
         },
         generateImages(text) {
 

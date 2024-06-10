@@ -164,10 +164,13 @@ export default {
             let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
             // let seconds = Math.floor((time % (1000 * 60)) / 1000);
-            let days_str = days > 0 ? days + 'd ' : '';
-            let hours_str = hours > 0 ? hours + 'h ' : '';
+            let days_str = days > 0 ? days + 'd' : '';
+            let hours_str = hours > 0 ? hours + 'h' : '';
             let minutes_str = minutes + 'min';
-            return `${days_str}${hours_str}${minutes_str}`;
+            if (days === 0 && hours === 0 && minutes < 1) return 'Menos de um minuto';
+            if (days === 0 && hours === 0 && minutes === 1) return '1 minuto';
+            if (days === 0 && hours === 0) minutes_str = minutes + ' minutos';
+            return `${days_str} ${hours_str} ${minutes_str}`;
         },
         getQuestionFromId(questionId){
             return this.stats.questionsstats.find(question => question.id === questionId);
