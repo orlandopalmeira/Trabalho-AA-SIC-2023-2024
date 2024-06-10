@@ -127,7 +127,7 @@ public class ImageService {
     public void deleteFile(String objectName) throws ImageServerException, ImageNotFoundException {
         BlobId blobId = BlobId.of(BUCKET_NAME, objectName);
         try{
-            Boolean res = storage.delete(blobId);
+            boolean res = storage.delete(blobId);
             if (!res) {
                 throw new ImageNotFoundException("Image not found in Storage.");
             }
