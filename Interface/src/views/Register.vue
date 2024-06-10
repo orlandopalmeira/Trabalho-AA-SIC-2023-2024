@@ -6,7 +6,8 @@
 					<v-toolbar-title class="pl-6">Criar conta</v-toolbar-title>
 				</v-toolbar>
                 <v-card-text>
-                    <v-form @keydown.enter="submit" ref="form" v-model="valid" lazy-validation>
+                    {{ valid }}
+                    <v-form @submit.prevent="submit" ref="form" v-model="valid" lazy-validation>
                         <v-text-field
                         v-model="name"
                         :rules="[rules.required]"
@@ -61,7 +62,7 @@
                         
                             <div class="mt-5 d-flex justify-end">
                                 <v-btn color="error" class="mr-4" @click="reset"> Limpar </v-btn>
-                                <v-btn :disabled="!valid" color="success" @click="submit"> Criar conta </v-btn>
+                                <v-btn :disabled="!valid" type="submit" color="success"> Criar conta </v-btn>
                             </div>
                     </v-form>
                 </v-card-text>
@@ -107,7 +108,7 @@ export default {
     },
     methods: {
         submit() {
-            if (this.$refs.form.validate()) {
+            if (this.$refs.form.validate() && this.valid) {
                 let user = {
                     name: this.name,
                     email: this.email,

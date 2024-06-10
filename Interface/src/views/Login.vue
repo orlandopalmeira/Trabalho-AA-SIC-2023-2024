@@ -11,7 +11,7 @@
 					<v-toolbar-title class="pl-6">Login</v-toolbar-title>
 				</v-toolbar>
 				<v-card-text>
-					<v-form @keydown.enter="login" v-model="valid" lazy-validation>
+					<v-form @submit.prevent="login" v-model="valid" lazy-validation>
 						<v-text-field class="pl-2 pr-5 pb-2"
 							id="email"
 							prepend-icon="mdi-account"
@@ -19,7 +19,7 @@
 							label="Email"
 							type="text"
 							v-model="email"
-							:rules="[rules.required]"
+							:rules="[rules.required, rules.email]"
 						></v-text-field>
 						<v-text-field class="pl-2 pr-5"
 							id="password"
@@ -35,7 +35,7 @@
 						></v-text-field>
 
 						<div class="mt-5 d-flex justify-end">
-							<v-btn :disabled="!valid" color="success" class="mr-5" @click="login">Login</v-btn>
+							<v-btn :disabled="!valid" type="submit" color="success" class="mr-5">Login</v-btn>
 						</div>
 					</v-form>
 				</v-card-text>
@@ -69,6 +69,10 @@ export default {
 			},
 			rules: {
 				required: value => !!value || 'Campo obrigatório',
+				email: value => {
+					const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+					return pattern.test(value) || 'E-mail inválido';
+				},
 			},
 			useUserInfoStore
 		};

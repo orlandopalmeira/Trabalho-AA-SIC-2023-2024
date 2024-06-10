@@ -20,7 +20,6 @@ export default {
             this.$router.push({ name: 'voting', params: { id: this.voting.id } });
         },
         generateImages(text) {
-            const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
 
             const canvas = document.createElement('canvas');
             canvas.width = 400;
@@ -28,7 +27,9 @@ export default {
             const context = canvas.getContext('2d');
 
             // Draw the background color
-            context.fillStyle = randomColor;
+            // const fillColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            const fillColor = "#0D4EC1";
+            context.fillStyle = fillColor;
             context.fillRect(0, 0, canvas.width, canvas.height);
             
             // Set the font size and style

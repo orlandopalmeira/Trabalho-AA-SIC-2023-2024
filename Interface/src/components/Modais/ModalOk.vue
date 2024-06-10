@@ -15,7 +15,7 @@
             </div>
             <div class="pa-5 dark">
                 <div class="modal-buttons dark">
-                    <button class="button" type="submit" @click="this.$emit('close-modal');">{{ buttonText }}</button>
+                    <button class="button" @click="this.$emit('close-modal');">{{ buttonText }}</button>
                 </div>
             </div>
         </div>
