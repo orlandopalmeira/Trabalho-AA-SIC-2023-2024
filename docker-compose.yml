@@ -1,0 +1,37 @@
+version: "3"
+services:
+  database: # nome do serviço
+    image: mysql
+    container_name: mysqldockercompose
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: votingapp
+    ports:
+      - "3307:3306" # só porque já tenho um mysql na porta 3306
+    volumes:
+      - ./votingappdatabase:/var/lib/mysql
+    networks:
+      - votingnet
+
+  appserver:
+    container_name: appserverdockercompose
+    build: ./AppVotos
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    environment: # ver application.properties
+      DB_HOST: database
+      DB_PORT: 3306 # deve usar a porta interna exposta pelo container da base de dados e não a exposta ao host (3307)
+      DB_USER: root
+      DB_PASSWORD: mysql
+      DB_NAME: votingapp
+      APP_DOMAIN: localhost
+      VUE_SERVER: localhost
+    networks:
+      - votingnet
+
+networks:
+  votingnet:
+    name: votingnet
+    driver: bridge
