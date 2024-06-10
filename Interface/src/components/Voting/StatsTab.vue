@@ -47,9 +47,7 @@
                                 <v-card-text v-else>Com {{ winnerOptions[0].count }} votos</v-card-text>
                                 <v-list class="dark-lighter">
                                     <v-list-item v-for="(option, index) in winnerOptions" :key="index">
-                                        <v-list-item-content>
-                                            <v-list-item-title class="font-weight-bold">{{ option.description }}</v-list-item-title>
-                                        </v-list-item-content>
+                                        <v-list-item-title class="font-weight-bold">{{ option.description }}</v-list-item-title>
                                         <v-divider v-if="index !== winnerOptions.length - 1"></v-divider>
                                     </v-list-item>
                                 </v-list>
@@ -158,7 +156,6 @@ export default {
             let options = this.stats.questionsstats[this.selected].options.slice();
             //* Esta lista obtem as opções que têm o máximo de votos que todas as opções têm (Por exemplo, se o maior número de votos for 300 para duas opções, essas duas opções estarão nesta lista). Se não houver nenhum voto a lista ficará vazia.
             let winnerOptions = options.filter(option => option.count > 0 && option.count === Math.max(...options.map(option => option.count)));
-            console.log("Primeiro", winnerOptions);
             winnerOptions.forEach(winner => {
                 if (winner.count === 0) {
                     return { description: 'Sem votos', countText: "" };
@@ -175,7 +172,6 @@ export default {
                 }
             });
 
-            console.log("Segundo", winnerOptions);
             return winnerOptions;
              
         },
