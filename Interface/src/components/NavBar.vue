@@ -22,7 +22,7 @@
             </ul>
         </div>
         <!--Para ecrã de telemóvel-->
-        <div class="nav flex" v-else>
+        <div class="nav flex bg-primary" v-else>
             <div class="flex2">
                 <!-- <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2> -->
                 <div class="button" @click="redirectToHome" :style="{ cursor: 'pointer', marginLeft: '20px' }">
@@ -132,7 +132,6 @@ export default {
 
 <style scoped>
 .nav {
-    background-color: #9c9c9c;
     text-decoration: none;
 }
 
