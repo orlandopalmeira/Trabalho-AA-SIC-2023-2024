@@ -128,7 +128,7 @@ export default {
                 let numRegistered = this.voting.privatevoters.length;
                 let numvotes = this.stats.numvotes;
                 let percentage = (numvotes / numRegistered) * 100;
-                let percentage_str = `${percentage.toFixed(2)}%`;
+                let percentage_str = `${Math.round(percentage)}%`;
                 return "Participação de " + percentage_str;
             }
         },
@@ -146,11 +146,8 @@ export default {
                 time = new Date() - new Date(this.voting.creationdate);
             }
             // time += this.secondsPassed * 1000;
-            let days = Math.floor(time / (1000 * 60 * 60 * 24));
-            let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-            // let seconds = Math.floor((time % (1000 * 60)) / 1000);
-            return `${days}d ${hours}h ${minutes}m`;
+            // return this.timestampToFormatedDate(time);
+            return this.timestampToFormatedDate(2*24*60*60*1000 + 74*1000);
         },
         timeLeft(){
             if (!this.voting.enddate) return '';
@@ -159,14 +156,20 @@ export default {
             if (time_left < 0) {
                 return 'Votação terminada';
             }
+            return this.timestampToFormatedDate(time_left);
+        }
+    },
+    methods: {
+        timestampToFormatedDate(time){
             let days = Math.floor(time / (1000 * 60 * 60 * 24));
             let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
             // let seconds = Math.floor((time % (1000 * 60)) / 1000);
-            return `${days}d ${hours}h ${minutes}m restantes`;
-        }
-    },
-    methods: {
+            let days_str = days > 0 ? days + 'd ' : '';
+            let hours_str = hours > 0 ? hours + 'h ' : '';
+            let minutes_str = minutes + 'min';
+            return `${days_str}${hours_str}${minutes_str}`;
+        },
         getQuestionFromId(questionId){
             return this.stats.questionsstats.find(question => question.id === questionId);
         },
