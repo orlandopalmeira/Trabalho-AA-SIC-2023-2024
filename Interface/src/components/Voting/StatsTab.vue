@@ -35,7 +35,26 @@
                         <p class="text-h6 pl-2" style="font-weight: bold;">Mais votado</p>
                         <p v-if="winnerOptions.length === 0" class="pl-2" style="font-size: 14pt; word-break: break-word;">Nenhum voto registado</p>
                         <p v-else-if="winnerOptions.length === 1" class="pl-2" style="font-size: 20pt; word-break: break-word;">{{ winnerOptions.description }}</p>
-                        <a v-else class="pl-2" style="font-size: 18pt; word-break: break-word;">{{ winnerOptions.length }} opções</a>
+                        <v-tooltip v-else location="top">
+                            <template v-slot:activator="{ props }">
+                                <p class="pl-2" style="font-size: 18pt;" v-bind="props" text>
+                                    <span class="hoverable" style="text-decoration: underline;">{{ winnerOptions.length }} opções</span>
+                                </p>
+                            </template>
+                            <v-card class="dark-light" style="margin-left: -10px; margin-right: -10px;">
+                                <v-card-title>Opções empatadas</v-card-title>
+                                <v-card-text v-if="winnerOptions[0].count === 1">Com 1 voto</v-card-text>
+                                <v-card-text v-else>Com {{ winnerOptions[0].count }} votos</v-card-text>
+                                <v-list class="dark-lighter">
+                                    <v-list-item v-for="(option, index) in winnerOptions" :key="index">
+                                        <v-list-item-content>
+                                            <v-list-item-title class="font-weight-bold">{{ option.description }}</v-list-item-title>
+                                        </v-list-item-content>
+                                        <v-divider v-if="index !== winnerOptions.length - 1"></v-divider>
+                                    </v-list-item>
+                                </v-list>
+                            </v-card>
+                        </v-tooltip>
                         <p class="pl-2">{{ winnerOptions.countText }}</p>
                     </v-col>
                     <v-col class="vcol1 dark-light">
@@ -322,5 +341,13 @@ export default {
 }
 .dark-mode .background {
     background-color: #15202b;
+}
+
+.hoverable {
+  transition: color 0.3s ease;
+}
+
+.hoverable:hover {
+  color: #42a5f5; /* Replace with your desired hover color */
 }
 </style>
