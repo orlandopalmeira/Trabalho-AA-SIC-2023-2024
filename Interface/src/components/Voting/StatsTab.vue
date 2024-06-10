@@ -98,11 +98,9 @@ export default {
             selected: null,
             selectItems: null,
             stats: null,
+            secondsPassed: 0,
+            timer: null
         }
-    },
-    mounted(){
-        // console.log(this.voting)
-        // console.log("votingstats: " + this.stats)
     },
     computed: {
         chart(){
@@ -123,8 +121,6 @@ export default {
             }
         },
         privateParticipation(){
-            console.log(this.voting)
-            console.log(this.stats)
             if (!this.voting.privatevoting){
                 return "";
             }
@@ -143,17 +139,13 @@ export default {
         },
         timeElapsed(){
             let time = null;
-            let time_f = new Date(this.voting.enddate) - new Date();
-            // console.log("Data atual: "+ new Date())
-            // console.log("Creation Date: " + this.voting.creationdate);
-            // console.log("End Date: " + this.voting.enddate);
-            
-            if (this.voting.enddate && time_f < 0) { // Se a votação já terminou
+            if (this.voting.enddate && (new Date(this.voting.enddate) - new Date()) < 0) { // Se a votação já terminou
                 time = new Date(this.voting.enddate) - new Date(this.voting.creationdate);
             }
             else{
                 time = new Date() - new Date(this.voting.creationdate);
             }
+            // time += this.secondsPassed * 1000;
             let days = Math.floor(time / (1000 * 60 * 60 * 24));
             let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
@@ -162,15 +154,16 @@ export default {
         },
         timeLeft(){
             if (!this.voting.enddate) return '';
-            let time = new Date(this.voting.enddate) - new Date();
-            if (time < 0) {
+            let time_left = new Date(this.voting.enddate) - new Date();
+            // time_left += this.secondsPassed * 1000;
+            if (time_left < 0) {
                 return 'Votação terminada';
             }
             let days = Math.floor(time / (1000 * 60 * 60 * 24));
             let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((time % (1000 * 60)) / 1000);
-            return `${days}d ${hours}h ${minutes}m ${seconds}s restantes`;
+            // let seconds = Math.floor((time % (1000 * 60)) / 1000);
+            return `${days}d ${hours}h ${minutes}m restantes`;
         }
     },
     methods: {
@@ -226,6 +219,10 @@ export default {
         }
     },
     created() {
+        // this.timer = setInterval(() => {
+        //     this.secondsPassed++;
+        //     console.log(this.secondsPassed);
+        // }, 1000);
         axios.get(API_PATHS.votingStats(this.votingId))
             .then(response => {
                 this.stats = response.data;
