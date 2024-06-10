@@ -2,7 +2,7 @@
     <div @click="onClick" class="card levitate pa-5" style="background-color: #eee;">
         <!-- TODO: ver melhor como definir a URL para a imagem -->
         <img alt="Voting background" :src="voting.image == null ? defaultImage : 'http://localhost:8080/images/' + voting.image"/>
-        <p class="title" :title="voting.title" >{{ voting.title }}</p>
+        <p class="title" :title="voting.title" >{{ voting.title }} <v-icon title="Votou nesta votação" v-if="voting.useralreadyvoted">mdi-vote</v-icon></p> 
     </div>
 </template>
 <script>
