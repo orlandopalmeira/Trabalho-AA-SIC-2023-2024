@@ -17,7 +17,7 @@ import lombok.Setter;
 public class UpdateVotingDTO {
     private String title;
     private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Europe/Lisbon")
     private Date enddate;
     private boolean showstats;
     private boolean showstatsrealtime;

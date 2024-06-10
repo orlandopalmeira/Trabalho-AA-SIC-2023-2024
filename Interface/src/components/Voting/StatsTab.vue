@@ -29,6 +29,7 @@
                     <v-col class="vcol1 dark-light">
                         <p class="text-h6" style="font-weight: bold;">Número de votos</p>
                         <p style="font-size: 20pt;">{{ stats.numvotes }}</p>
+                        <p>{{ privateParticipation }}</p>
                     </v-col>
                     <v-col class="vcol1 dark-light" cols="3.5">
                         <p class="text-h6" style="font-weight: bold;">Mais votado</p>
@@ -36,8 +37,9 @@
                         <p>Com {{ winner.count }} votos</p>
                     </v-col>
                     <v-col class="vcol1 dark-light">
-                        <p class="text-h6" style="font-weight: bold;">???</p>
-                        <p style="font-size: 20pt;">???</p>
+                        <p class="text-h6" style="font-weight: bold;">Tempo passado</p>
+                        <p style="font-size: 20pt;">{{ timeElapsed }}</p>
+                        <p> {{ timeLeft }} </p>
                     </v-col>
                 </v-row>
                 <v-row>
@@ -86,15 +88,21 @@ export default {
         SimpleAlert
     },
     props: {
-        votingId: { type: Number, required: true }
+        // votingId: { type: Number, required: true }
+        voting: { type: Object, required: true }
     },
     data() {
         return {
+            votingId: this.voting.id,
             loadingStats: true,
             selected: null,
             selectItems: null,
             stats: null,
         }
+    },
+    mounted(){
+        // console.log(this.voting)
+        // console.log("votingstats: " + this.stats)
     },
     computed: {
         chart(){
@@ -114,10 +122,55 @@ export default {
                 }
             }
         },
+        privateParticipation(){
+            console.log(this.voting)
+            console.log(this.stats)
+            if (!this.voting.privatevoting){
+                return "";
+            }
+            else{
+                let numRegistered = this.voting.privatevoters.length;
+                let numvotes = this.stats.numvotes;
+                let percentage = (numvotes / numRegistered) * 100;
+                let percentage_str = `${percentage.toFixed(2)}%`;
+                return "Participação de " + percentage_str;
+            }
+        },
         winner(){
             let options = this.stats.questionsstats[this.selected].options;
             let winner = options.reduce((op1, op2) => op1.count > op2.count ? op1 : op2); // lidamos com empates?
             return winner;
+        },
+        timeElapsed(){
+            let time = null;
+            let time_f = new Date(this.voting.enddate) - new Date();
+            // console.log("Data atual: "+ new Date())
+            // console.log("Creation Date: " + this.voting.creationdate);
+            // console.log("End Date: " + this.voting.enddate);
+            
+            if (this.voting.enddate && time_f < 0) { // Se a votação já terminou
+                time = new Date(this.voting.enddate) - new Date(this.voting.creationdate);
+            }
+            else{
+                time = new Date() - new Date(this.voting.creationdate);
+            }
+            let days = Math.floor(time / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+            // let seconds = Math.floor((time % (1000 * 60)) / 1000);
+            return `${days}d ${hours}h ${minutes}m`;
+        },
+        timeLeft(){
+            if (!this.voting.enddate) return '';
+            let time = new Date(this.voting.enddate) - new Date();
+            if (time < 0) {
+                return 'Votação terminada';
+            }
+            let days = Math.floor(time / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((time % (1000 * 60)) / 1000);
+            return `${days}d ${hours}h ${minutes}m ${seconds}s restantes`;
         }
     },
     methods: {
