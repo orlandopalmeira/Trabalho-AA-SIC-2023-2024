@@ -8,7 +8,7 @@
                 @close-modal="modal.opened=false"/>
             <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
             <v-card flat v-else>
-                <v-tabs v-model="tab" align-tabs="center" class="dark ">
+                <v-tabs v-model="tab" align-tabs="center" class="dark custom-tabs">
                     <v-tab class="dark-lighter" value="votar">Votar</v-tab>
                     <v-tab class="dark-lighter" v-if="allowedToViewStats" value="estatisticas">Estatísticas</v-tab>
                     <v-tab class="dark-lighter" value="detalhes">Detalhes</v-tab>
@@ -226,6 +226,14 @@ export default {
 }
 </script>
 <style scoped>
+.custom-tabs .v-tab:first-child {
+    border-top-left-radius: 15px;
+}
+
+.custom-tabs .v-tab:last-child {
+    border-top-right-radius: 15px;
+}
+
 .dark-mode .dark {
     background-color: #181818;
     color: white;
