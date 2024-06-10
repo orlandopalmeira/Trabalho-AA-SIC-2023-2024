@@ -146,8 +146,7 @@ export default {
                 time = new Date() - new Date(this.voting.creationdate);
             }
             // time += this.secondsPassed * 1000;
-            // return this.timestampToFormatedDate(time);
-            return this.timestampToFormatedDate(2*24*60*60*1000 + 74*1000);
+            return this.timestampToFormatedDate(time);
         },
         timeLeft(){
             if (!this.voting.enddate) return '';
@@ -156,7 +155,7 @@ export default {
             if (time_left < 0) {
                 return 'Votação terminada';
             }
-            return this.timestampToFormatedDate(time_left);
+            return this.timestampToFormatedDate(time_left) + " restantes";
         }
     },
     methods: {
