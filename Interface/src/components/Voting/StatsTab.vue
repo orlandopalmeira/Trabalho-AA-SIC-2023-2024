@@ -33,8 +33,10 @@
                     </v-col>
                     <v-col class="vcol1 dark-light" cols="3.5">
                         <p class="text-h6 pl-2" style="font-weight: bold;">Mais votado</p>
-                        <p class="pl-2" style="font-size: 20pt; word-break: break-word;">{{ winner.description }}</p>
-                        <p class="pl-2">Com {{ winner.count }} votos</p>
+                        <p v-if="winnerOptions.length === 0" class="pl-2" style="font-size: 14pt; word-break: break-word;">Nenhum voto registado</p>
+                        <p v-else-if="winnerOptions.length === 1" class="pl-2" style="font-size: 20pt; word-break: break-word;">{{ winnerOptions.description }}</p>
+                        <a v-else class="pl-2" style="font-size: 18pt; word-break: break-word;">{{ winnerOptions.length }} opções</a>
+                        <p class="pl-2">{{ winnerOptions.countText }}</p>
                     </v-col>
                     <v-col class="vcol1 dark-light">
                         <p class="text-h6 pl-2" style="font-weight: bold;">Tempo passado</p>
@@ -133,16 +135,30 @@ export default {
                 return "Participação de " + percentage_str;
             }
         },
-        winner(){
-            let options = this.stats.questionsstats[this.selected].options;
-            let winner = options.reduce((op1, op2) => op1.count > op2.count ? op1 : op2); // lidamos com empates?
-            console.log(winner)
-            if (winner.count === 0) {
-                return { description: 'Sem votos', count: 0 };
-            }
-            else{
-                return winner;
-            } 
+        winnerOptions(){
+            let options = this.stats.questionsstats[this.selected].options.slice();
+            //* Esta lista obtem as opções que têm o máximo de votos que todas as opções têm (Por exemplo, se o maior número de votos for 300 para duas opções, essas duas opções estarão nesta lista). Se não houver nenhum voto a lista ficará vazia.
+            let winnerOptions = options.filter(option => option.count > 0 && option.count === Math.max(...options.map(option => option.count)));
+            console.log("Primeiro", winnerOptions);
+            winnerOptions.forEach(winner => {
+                if (winner.count === 0) {
+                    return { description: 'Sem votos', countText: "" };
+                } else {
+                    let numVotes = winner.count;
+                    if (numVotes === 1) {
+                        winner.countText = "Com 1 voto";
+                    }
+                    else{
+                        winner.countText = "Com " + numVotes + " votos";
+                    }
+                    
+                    return winner;
+                }
+            });
+
+            console.log("Segundo", winnerOptions);
+            return winnerOptions;
+             
         },
         timeElapsed(){
             let time = null;
@@ -156,7 +172,7 @@ export default {
             return this.timestampToFormatedDate(time);
         },
         timeLeft(){
-            if (!this.voting.enddate) return 'Votação sem data de fim';
+            if (!this.voting.enddate) return 'Com duração indefinida';
             let time_left = new Date(this.voting.enddate) - new Date();
             // time_left += this.secondsPassed * 1000;
             if (time_left < 0) {
