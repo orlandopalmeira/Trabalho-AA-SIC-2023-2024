@@ -49,7 +49,7 @@
                     <div class="img_card">
                         <img
                             :src="useVotingInfoStore().imageUrl"
-                            alt="Imagem da votação"
+                            alt="Capa da votação"
                             class=""
                         />
                     </div>

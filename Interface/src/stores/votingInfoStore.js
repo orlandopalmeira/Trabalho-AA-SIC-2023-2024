@@ -11,7 +11,7 @@ export const useVotingInfoStore = defineStore('votinginfo', {
         privatevoting: false,
         privateSelectedUsers: [],
         isFinalResultPublic: true,
-        isIntermediateResultPublic: false,
+        isIntermediateResultPublic: true,
         secretvotes: false,
         questions: []
     }),
