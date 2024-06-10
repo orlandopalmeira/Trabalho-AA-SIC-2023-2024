@@ -9,4 +9,6 @@ WORKDIR /app
 RUN mvn clean
 RUN mvn package
 
+EXPOSE 8080
+
 CMD ["java", "-jar", "target/votingapp-0.0.1-SNAPSHOT.war"]
