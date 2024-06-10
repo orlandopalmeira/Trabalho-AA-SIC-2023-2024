@@ -7,8 +7,8 @@
                 :color="modal.color"
                 @close-modal="modal.opened=false"/>
             <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
-            <v-card flat v-else>
-                <v-tabs v-model="tab" align-tabs="center" class="dark custom-tabs">
+            <v-card flat v-else class="dark">
+                <v-tabs v-model="tab" align-tabs="center" class="dark custom-tabs mt-2">
                     <v-tab class="dark-lighter" value="votar">Votar</v-tab>
                     <v-tab class="dark-lighter" v-if="allowedToViewStats" value="estatisticas">Estatísticas</v-tab>
                     <v-tab class="dark-lighter" value="detalhes">Detalhes</v-tab>
@@ -31,7 +31,7 @@
                             </v-card-text>
                             <!--Se o utilizador ainda não votou => apresenta as perguntas-->
                             <v-card-text v-else-if="isVotingActive()">
-                                <v-alert type="info" class="mb-4">
+                                <v-alert dismissible type="info" class="mb-4">
                                     <p v-if="voting.secretvotes"> O voto é secreto. </p>
                                     <p v-else> O voto não é secreto. </p>
                                 </v-alert>

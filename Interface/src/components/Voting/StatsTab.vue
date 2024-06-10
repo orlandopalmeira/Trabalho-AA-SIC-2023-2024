@@ -2,10 +2,10 @@
     <div v-if="loadingStats" class="ma-5 pa-2 dark">
         <LoadingAlert message="A obter as estatísticas, por favor aguarde..." />
     </div>
-    <div v-else-if="stats.numvotes === 0" class="pa-2 dark">
+    <!-- <div v-else-if="stats.numvotes === 0" class="pa-2 dark">
         <SimpleAlert message="Esta votação ainda não tem votos." class="dark"/>
-    </div>
-    <div v-else class="pa-5 dark">
+    </div> -->
+    <div v-else class="pl-5 pr-5 pb-5 dark">
         <div class="background pa-2">
             <div style="margin: 10px 10px;" class="mb-5">
                 <div class="flex space-between">
@@ -27,24 +27,25 @@
             <div style="margin: 10px 10px;">
                 <v-row>
                     <v-col class="vcol1 dark-light">
-                        <p class="text-h6" style="font-weight: bold;">Número de votos</p>
-                        <p style="font-size: 20pt;">{{ stats.numvotes }}</p>
-                        <p>{{ privateParticipation }}</p>
+                        <p class="text-h6 pl-2" style="font-weight: bold;">Número de votos</p>
+                        <p class="pl-2" style="font-size: 20pt;">{{ stats.numvotes }}</p>
+                        <p class="pl-2">{{ privateParticipation }}</p>
                     </v-col>
                     <v-col class="vcol1 dark-light" cols="3.5">
-                        <p class="text-h6" style="font-weight: bold;">Mais votado</p>
-                        <p style="font-size: 20pt; word-break: break-word;">{{ winner.description }}</p>
-                        <p>Com {{ winner.count }} votos</p>
+                        <p class="text-h6 pl-2" style="font-weight: bold;">Mais votado</p>
+                        <p class="pl-2" style="font-size: 20pt; word-break: break-word;">{{ winner.description }}</p>
+                        <p class="pl-2">Com {{ winner.count }} votos</p>
                     </v-col>
                     <v-col class="vcol1 dark-light">
-                        <p class="text-h6" style="font-weight: bold;">Tempo passado</p>
-                        <p style="font-size: 20pt;">{{ timeElapsed }}</p>
-                        <p> {{ timeLeft }} </p>
+                        <p class="text-h6 pl-2" style="font-weight: bold;">Tempo passado</p>
+                        <p class="pl-2" style="font-size: 20pt;">{{ timeElapsed }}</p>
+                        <p class="pl-2"> {{ timeLeft }} </p>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
+                        <p v-if="stats.voters.length===0">Sem votantes</p>
                         <v-row v-for="(voter, index) in stats.voters" :key="index">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
@@ -135,7 +136,13 @@ export default {
         winner(){
             let options = this.stats.questionsstats[this.selected].options;
             let winner = options.reduce((op1, op2) => op1.count > op2.count ? op1 : op2); // lidamos com empates?
-            return winner;
+            console.log(winner)
+            if (winner.count === 0) {
+                return { description: 'Sem votos', count: 0 };
+            }
+            else{
+                return winner;
+            } 
         },
         timeElapsed(){
             let time = null;
@@ -149,7 +156,7 @@ export default {
             return this.timestampToFormatedDate(time);
         },
         timeLeft(){
-            if (!this.voting.enddate) return '';
+            if (!this.voting.enddate) return 'Votação sem data de fim';
             let time_left = new Date(this.voting.enddate) - new Date();
             // time_left += this.secondsPassed * 1000;
             if (time_left < 0) {
