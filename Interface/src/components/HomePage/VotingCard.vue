@@ -52,11 +52,7 @@ export default {
             if (days === 0 && hours === 0) minutes_str = minutes + ' minutos';
             return `${days_str} ${hours_str} ${minutes_str}`;
         },
-        getImageUrl(imageName){
-            let serverUrl = import.meta.env.VITE_BACKEND_SERVER_URL;
-            let imageUrlPath = API_PATHS.imageUrl(imageName);
-            return serverUrl + imageUrlPath;
-        },
+        getImageUrl: API_PATHS.getImageUrl,
         generateImages(text) {
 
             const canvas = document.createElement('canvas');

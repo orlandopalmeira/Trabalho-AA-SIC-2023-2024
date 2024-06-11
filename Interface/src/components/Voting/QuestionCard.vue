@@ -24,6 +24,8 @@
     </v-card>
 </template>
 <script>
+import { API_PATHS } from '@/apiPaths';
+
 export default {
     props: {
         questionIndex: { type: Number, required: true },
@@ -35,11 +37,7 @@ export default {
         }
     },
     methods: {
-        getImageUrl(imageName){
-            let serverUrl = import.meta.env.VITE_BACKEND_SERVER_URL;
-            let imageUrlPath = API_PATHS.imageUrl(imageName);
-            return serverUrl + imageUrlPath;
-        },
+        getImageUrl: API_PATHS.getImageUrl,
         handleChange(event) {
             let optionId = event.target.value
             this.$emit('option-changed', this.questionIndex, parseInt(optionId))
