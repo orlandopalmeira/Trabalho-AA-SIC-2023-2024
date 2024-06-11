@@ -8,9 +8,9 @@
 <script setup>
 import NavBar from '../components/NavBar.vue'
 const routes = {
-    'About': {name: 'about'},
-    'Login': {name: 'login'},
-    'Criar conta': {name: 'register'},
+    'About': '/',
+    'Login': '/login',
+    'Criar conta': '/register',
 }
 </script>
 
