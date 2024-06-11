@@ -1,7 +1,7 @@
 <template scoped>
     <div @click="onClick" class="card levitate pa-5" style="background-color: #eee;">
         <!-- TODO: ver melhor como definir a URL para a imagem -->
-        <img alt="Voting background" :src="voting.image == null ? defaultImage : 'http://localhost:8080/images/' + voting.image"/>
+        <img alt="Voting background" :src="voting.image == null ? defaultImage : getImageUrl(voting.image)"/>
         <div style="display: flex; align-items: center; justify-content:center">
             <p class="title" :title="voting.title" >{{ voting.title }}</p>
         </div>
@@ -13,6 +13,7 @@
     </div>
 </template>
 <script>
+import { API_PATHS } from '@/apiPaths';
 export default {
     props: {
         voting: { type: Object, required: true }
@@ -50,6 +51,11 @@ export default {
             if (days === 0 && hours === 0 && minutes < 2) return 'menos de um minuto';
             if (days === 0 && hours === 0) minutes_str = minutes + ' minutos';
             return `${days_str} ${hours_str} ${minutes_str}`;
+        },
+        getImageUrl(imageName){
+            let serverUrl = import.meta.env.VITE_BACKEND_SERVER_URL;
+            let imageUrlPath = API_PATHS.imageUrl(imageName);
+            return serverUrl + imageUrlPath;
         },
         generateImages(text) {
 

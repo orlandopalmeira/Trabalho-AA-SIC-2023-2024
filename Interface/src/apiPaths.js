@@ -11,4 +11,5 @@ export const API_PATHS = {
     votings: "/votings",
     userVotings: "/votings/user",
     votes: "/votes",
+    imageUrl: (image_name) => `/images/${image_name}`,
 };

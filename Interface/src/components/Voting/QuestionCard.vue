@@ -13,7 +13,7 @@
                                 <img v-if="option.imageUrl != null" class="img-icon" alt="Option background" 
                                     :src="option.imageUrl"/>
                                 <img v-else-if="option.image != null" class="img-icon" alt="Option background" 
-                                    :src="'http://localhost:8080/images/' + option.image"/>
+                                    :src="getImageUrl(option.image)"/>
                             </div>
                             <v-divider v-if="index < question.options.length - 1" style="margin: 5px"></v-divider>
                         </div>
@@ -35,6 +35,11 @@ export default {
         }
     },
     methods: {
+        getImageUrl(imageName){
+            let serverUrl = import.meta.env.VITE_BACKEND_SERVER_URL;
+            let imageUrlPath = API_PATHS.imageUrl(imageName);
+            return serverUrl + imageUrlPath;
+        },
         handleChange(event) {
             let optionId = event.target.value
             this.$emit('option-changed', this.questionIndex, parseInt(optionId))
