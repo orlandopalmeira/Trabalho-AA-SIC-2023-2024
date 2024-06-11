@@ -74,12 +74,15 @@
                     </v-col>
                 </v-row>
                 <v-row>
+                    <!----- Votantes Card ----->
                     <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
+                        <!-- {{ stats.privateVoters }} -->
                         <!-- Caso não seja um privateVoting e não há votantes -->
-                        <p v-if="!voting.privatevoting && stats.voters.length===0">Sem votantes</p>
+                        <p v-if="votersCardList.length===0">Sem votantes</p>
+
                         <!-- Caso seja um private voting, usa a privateVotersSorted vê os privateVoters que votaram, em primeiro -->
-                        <v-row v-else-if="voting.privatevoting" v-for="(voter, index) in privateVotersSorted" :key="voter.id">
+                        <v-row v-else-if="votersCardList" v-for="(voter, index) in paginatedVoters" :key="voter.id">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
@@ -94,8 +97,17 @@
                             </v-col>
                             <v-divider class="mt-1 mb-1" v-if="index < stats.voters.length - 1"/>
                         </v-row>
+
+                        <div class="mt-4 right width" v-if="votersCardList.length > votingPaging.itemsPerPage">
+                            <v-pagination
+                                v-model="votingPaging.page"
+                                :length="pageCount"
+                                :total-visible="4"
+                                @input="onPageChange"
+                            />
+                        </div>
                         <!-- Caso padrão em que a votação não é privada, e apenas se preocupa com mostrar os que votaram -->
-                        <v-row v-else v-for="(voter, index) in stats.voters" :key="index">
+                        <!-- <v-row v-else v-for="(voter, index) in stats.voters" :key="index">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
@@ -110,9 +122,10 @@
                                 </div>
                             </v-col>
                             <v-divider class="mt-1 mb-1" v-if="index < stats.voters.length - 1"/>
-                        </v-row>
+                        </v-row> -->
 
                     </v-col>
+                    <!----- Gráfico de barras ----->
                     <v-col class="vcol1 dark-light" style="height: 400px" >
                         <Bar id="my-chart-id" :data="chart.data" :options="chart.options" />
                     </v-col>
@@ -148,7 +161,14 @@ export default {
             loadingStats: true,
             selected: null,
             selectItems: null,
+            
             stats: null,
+
+            votersCardList: null,
+            votingPaging: {
+                page: 1,
+                itemsPerPage: 8
+            }
         }
     },
     created() {
@@ -163,6 +183,14 @@ export default {
                 }));
                 this.selected = 0;
                 this.loadingStats = false;
+
+                //* Voting card logic
+                if (this.voting.privatevoting){
+                    this.votersCardList = this.privateVotersSorted(this.voting.privatevoters);
+                }
+                else{
+                    this.votersCardList = this.stats.voters;
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -241,14 +269,13 @@ export default {
             }
             return this.timestampToFormatedDate(time_left) + " restantes";
         },
-        privateVotersSorted(){
-            return this.voting.privatevoters.sort((a, b) => {
-                const userHasVotedA = this.stats.voters.some(voter => voter.id === a.id);
-                const userHasVotedB = this.stats.voters.some(voter => voter.id === b.id);
-                if (userHasVotedA && !userHasVotedB) return -1;
-                if (!userHasVotedA && userHasVotedB) return 1;
-                return 0;
-            });
+        pageCount() {
+            return Math.ceil(this.votersCardList.length / this.votingPaging.itemsPerPage);
+        },
+        paginatedVoters() {
+            const start = (this.votingPaging.page - 1) * this.votingPaging.itemsPerPage;
+            const end = start + this.votingPaging.itemsPerPage;
+            return this.votersCardList.slice(start, end);
         }
     },
     methods: {
@@ -317,6 +344,20 @@ export default {
                 link.click();
                 document.body.removeChild(link);
             }
+        },
+        //* Voters logic
+        privateVotersSorted(privVoters){
+            return privVoters.sort((a, b) => {
+                const userHasVotedA = this.stats.voters.some(voter => voter.id === a.id);
+                const userHasVotedB = this.stats.voters.some(voter => voter.id === b.id);
+                if (userHasVotedA && !userHasVotedB) return -1;
+                if (!userHasVotedA && userHasVotedB) return 1;
+                return 0;
+            }).slice();
+        },
+        //* Voters paging logic
+        onPageChange(page) {
+            this.votingPaging.page = page;
         }
     },
 }
