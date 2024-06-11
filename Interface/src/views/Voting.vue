@@ -209,6 +209,7 @@ export default {
             voting.accesstype = getAccessType(voting)
             this.voting = voting
             this.loadingVoting = false
+            //* Toast message logic
             let toast_message = this.$route.query.toast_message
             if(toast_message){
                 ToastManager.show(toast_message, 'success', 3000)

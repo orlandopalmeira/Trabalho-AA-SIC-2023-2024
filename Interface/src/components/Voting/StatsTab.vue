@@ -34,7 +34,7 @@
                     <v-col class="vcol1 dark-light" cols="3.5">
                         <p class="text-h6 pl-2" style="font-weight: bold;">Mais votado</p>
                         <p v-if="winnerOptions.length === 0" class="pl-2" style="font-size: 14pt; word-break: break-word;">Nenhum voto registado</p>
-                        <p v-else-if="winnerOptions.length === 1" class="pl-2" style="font-size: 20pt; word-break: break-word;">{{ winnerOptions.description }}</p>
+                        <p v-else-if="winnerOptions.length === 1" class="pl-2" style="font-size: 20pt; word-break: break-word;">{{ winnerOptions[0].description }}</p>
                         <v-tooltip v-else location="top">
                             <template v-slot:activator="{ props }">
                                 <p class="pl-2" style="font-size: 18pt;" v-bind="props" text>
@@ -146,7 +146,12 @@ export default {
             }
             else{
                 let numRegistered = this.voting.privatevoters.length;
+                console.log(numRegistered)
                 let numvotes = this.stats.numvotes;
+                if (numRegistered === 0) {
+                    console.log("Erro: Não tem votantes definidos");
+                    return "Sem votantes";
+                }
                 let percentage = (numvotes / numRegistered) * 100;
                 let percentage_str = `${Math.round(percentage)}%`;
                 return "Participação de " + percentage_str;
