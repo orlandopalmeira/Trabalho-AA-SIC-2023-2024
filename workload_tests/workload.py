@@ -1,7 +1,11 @@
 import itertools
 from locust import HttpUser, TaskSet, task, between
+import random
 
 import utils.csvutils as csvutils
+from utils.dotenv_reader import DotenvReader
+
+env = DotenvReader()
 
 def get_credentials():
     """Returns a list of dictionaries with credentials"""
@@ -11,24 +15,31 @@ def get_credentials():
 
 credentials_iter = get_credentials()
 
-class UserBehavior(TaskSet):
+class VoteLoadingTest(TaskSet):
     def on_start(self):
-        # Seleciona credenciais exclusivas para cada utilizador virtual
-        self.credential = next(credentials_iter)
-        
-        # Fazer login e obter o cookie de autenticação
-        response = self.client.post("/auth/login", json=self.credential)
-        
-        # Verifica se o login foi bem-sucedido e o cookie de autenticação foi recebido
-        if response.status_code == 200 and 'set-cookie' in response.headers:
-            self.token = response.json()['token']
-        else:
-            print(f"Erro ao fazer login com {self.credential['name']}.")
+        self.voting_id = env.get("VOTING_ID_VOTE_LOADING_TEST")
 
     @task(1)
-    def get_voting_stats(self):
-        self.client.get("/votings/1/stats", cookies={"token": self.token})
+    def vote(self):
+        credential = next(credentials_iter)
 
-class WebsiteUser(HttpUser):
-    tasks = [UserBehavior]
+        login_response = self.client.post("/auth/login", json=credential)
+
+        if login_response.status_code == 200 and 'set-cookie' in login_response.headers:
+            token = login_response.json()['token']
+        else:
+            print(f"Erro ao fazer login com {credential['name']}.")
+            return
+
+        voting = self.client.get(f"/votings/{self.voting_id}", cookies={"token": token}).json()
+        vote = {
+            "votingid": voting["id"],
+            "options": {}
+        }
+        for question in voting["questions"] :
+            vote["options"][question["id"]] = [random.choice(question["options"])["id"]]
+        self.client.post("/votes", json=vote, cookies={"token": token})
+
+class ExecuteTest(HttpUser):
+    tasks = [VoteLoadingTest]
     wait_time = between(1, 5)
