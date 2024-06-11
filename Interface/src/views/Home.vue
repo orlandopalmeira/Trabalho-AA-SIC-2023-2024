@@ -12,14 +12,21 @@
                     <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
                 </v-col>
                 <v-col>
-                    <v-select style="width: 60%"
-                        label="Ordenar por"
-                        :items="selectItems"
-                        variant="outlined"
-                        density="compact"
-                        v-model="orderBy"
-                        clearable
-                        hide-details />
+                    <div class="flex">
+                        <v-select style="width: 60%"
+                            label="Ordenar por"
+                            :items="selectItems"
+                            variant="outlined"
+                            density="compact"
+                            v-model="orderBy"
+                            clearable
+                            hide-details />
+                        <v-btn :title="'Ordem ' + (reverseSort? 'descendente' : 'ascendente')" 
+                            @click="reverseSort = !reverseSort" 
+                            class="bg-transparent" flat>
+                            <v-icon>{{ reverseSort ? 'mdi-sort-descending' : 'mdi-sort-ascending' }}</v-icon>
+                        </v-btn>
+                    </div>
                 </v-col>
                 <v-col class="flex justify-end pr-5 mb-1">
                     <button class="buttoncreatevoting" @click="onClickCreateVoting">
@@ -62,7 +69,7 @@ export default {
             loadingVotings: true,
             votings: [],
             searchQuery: '',
-            orderBy: null,
+            orderBy: 'enddate',
             modal: {
 				opened: false,
 				title: '',
@@ -75,7 +82,8 @@ export default {
                 { title: 'Data de criação', value: 'creationdate' },
                 { title: 'Data de fim', value: 'enddate' },
                 { title: 'Número de votos', value: 'votes' }
-            ]
+            ],
+            reverseSort: true,
         }
     },
     methods: {
@@ -125,6 +133,7 @@ export default {
     },
     computed: {
         filteredSortedList(){
+            let sortFactor = this.reverseSort ? -1 : 1;
             let filteredList = this.votings.slice();
             if (this.searchQuery && this.searchQuery !== '') {
                 const query = this.searchQuery.toLowerCase();
@@ -138,10 +147,10 @@ export default {
             if (this.orderBy) {
                 filteredList = filteredList.sort((a, b) => {
                     if (a[this.orderBy] < b[this.orderBy]) {
-                        return -1;
+                        return -1*sortFactor;
                     }
                     if (a[this.orderBy] > b[this.orderBy]) {
-                        return 1;
+                        return 1*sortFactor;
                     }
                     return 0;
                 });
