@@ -146,6 +146,13 @@ export default {
             
             if (this.orderBy) {
                 filteredList = filteredList.sort((a, b) => {
+                    if (this.orderBy === 'enddate') {
+                        if(a.enddate === null) { // "a" não tem fim definido
+                            return 1*sortFactor;
+                        } else if (b.enddate === null) { // "b" não tem fim definido
+                            return -1*sortFactor;
+                        }
+                    }
                     if (a[this.orderBy] < b[this.orderBy]) {
                         return -1*sortFactor;
                     }
