@@ -86,7 +86,7 @@
                                 <p style="color: #454545; font-size: 0.8em">{{ voter.email }}</p>
                             </v-col>
                             <v-col class="pa-0 center-vertically justify-end options-style ml-2 mr-2" style="max-width: 38%;">
-                                <div class="options-style">g
+                                <div class="options-style">
                                     <p v-if="voting.secretvotes && stats.voters.some(vot => vot.id === voter.id)" class="green"> Votou </p>   
                                     <p v-else-if="!voting.secretvotes && getOptionsStringOfVoter(voter)" :title="getOptionsStringOfVoter(voter)">{{ getOptionsStringOfVoter(voter) }}</p>   
                                     <p v-else class="gray"> Não votou </p>

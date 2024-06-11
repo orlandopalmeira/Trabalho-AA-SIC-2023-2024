@@ -11,7 +11,7 @@
                 <v-col>
                     <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
                 </v-col>
-                <v-col cols="2">
+                <v-col cols="3">
                     <div class="flex">
                         <v-select style="width: 60%"
                             label="Ordenar por"
