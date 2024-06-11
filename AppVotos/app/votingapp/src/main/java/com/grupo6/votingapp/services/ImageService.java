@@ -67,7 +67,6 @@ public class ImageService {
             }
             return blob.getContent();
         } catch (StorageException e) {
-            // System.out.println("Error downloading image: " + e.getMessage());
             throw new ImageServerException("Error downloading image: " + e.getMessage());
         }
     }

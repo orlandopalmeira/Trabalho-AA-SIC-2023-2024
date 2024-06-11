@@ -46,11 +46,9 @@ export default {
         DefaultLayout
     },
     setup() {
-        console.log("AQUI")
         if (useUserInfoStore().isAutenticated === true) {
             router.push({name: 'home'});
         }
-
         return {}
     }
 };

@@ -157,15 +157,15 @@ public class VotingController {
 
     @GetMapping("{voting_id}/stats")
     public ResponseEntity<Object> getVotingStats(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
-        return authMiddlewares.checkTokenSimple(token, user_id -> {
-            Voting voting = votingService.getAccessibleVotingToUser(voting_id, user_id);
+        return authMiddlewares.checkTokenSimple(token, userId -> {
+            Voting voting = votingService.getAccessibleVotingToUser(voting_id, userId);
             if(voting == null){//* O user tem acesso à votação?
-                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, user_id, voting_id));
+                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
             //* Verificar se o user tem permissão para ver as estatísticas da votação.
             boolean allowedToSeeStats = false;
-            if(voting.getCreator().getId().equals(Long.parseLong(user_id))){//* O user é o criador da votação?
+            if(voting.getCreator().getId().equals(Long.parseLong(userId))){//* O user é o criador da votação?
                 allowedToSeeStats = true;
             } else if (voting.isShowstats()) {
                 Date now = new Date();

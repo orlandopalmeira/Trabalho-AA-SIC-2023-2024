@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
+import com.grupo6.votingapp.dtos.users.UserStats;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votes.CreateVoteDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
@@ -171,7 +172,7 @@ public class VotingService {
     public VotingStatsDTO getVotingStats(Long votingId) {
         Long countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId);
         List<QuestionStats> questionsStats = statsRepository.getQuestionStats(votingId);
-        List<UsersWithNoRelationsDTO> users = statsRepository.getUsersOfVoting(votingId);
+        List<UserStats> users = statsRepository.getUsersOfVoting(votingId);
         List<UserSelectedOptions> userSelectedOptions = statsRepository.getUsersSelectedOptions(votingId);
         return new VotingStatsDTO(countVotesOfVoting, questionsStats, users, userSelectedOptions);
     }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.OptionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
-import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
+import com.grupo6.votingapp.dtos.users.UserStats;
 
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
@@ -77,23 +77,22 @@ public class StatsRepository {
         return getQuestionStats(Long.parseLong(votingId));
     }
 
-    public List<UsersWithNoRelationsDTO> getUsersOfVoting(Long votingId) {
+    public List<UserStats> getUsersOfVoting(Long votingId) {
         String query = "select u.* from users u join votes v on u.id = v.voter_id where v.voting_id = ?1";
         var result = entityManager.createNativeQuery(query)
                                   .setParameter(1, votingId)
                                   .getResultList();
         
-        List<UsersWithNoRelationsDTO> users = new ArrayList<>();
+        List<UserStats> users = new ArrayList<>();
         if (!result.isEmpty()) {
             for (Object row : result) {
                 Object[] r = (Object[]) row;
-                UsersWithNoRelationsDTO user = new UsersWithNoRelationsDTO();
+                UserStats user = new UserStats();
                 user.setId((Long) r[0]);
                 Date birthdate = (Date) r[1];
                 user.setBirthdate(birthdate.toLocalDate());
                 user.setEmail((String) r[2]);
                 user.setName((String) r[3]);
-                user.setPassword((String) r[4]);
                 users.add(user);
             }
         }
@@ -101,7 +100,7 @@ public class StatsRepository {
         return users;
     }
 
-    public List<UsersWithNoRelationsDTO> getUsersOfVoting(String votingId) {
+    public List<UserStats> getUsersOfVoting(String votingId) {
         return getUsersOfVoting(Long.parseLong(votingId));
     }
 

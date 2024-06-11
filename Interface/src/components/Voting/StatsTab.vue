@@ -83,12 +83,12 @@
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
-                                <p style="color: #454545; font-size: 0.8em">{{ voter.email }}</p>
+                                <p class="gray" style="font-size: 0.8em">{{ voter.email }}</p>
                             </v-col>
                             <v-col class="pa-0 center-vertically justify-end options-style ml-2 mr-2" style="max-width: 38%;">
                                 <div class="options-style">
-                                    <p v-if="voting.secretvotes && stats.voters.some(vot => vot.id === voter.id)" class="green"> Votou </p>   
-                                    <p v-else-if="!voting.secretvotes && getOptionsStringOfVoter(voter)" :title="getOptionsStringOfVoter(voter)">{{ getOptionsStringOfVoter(voter) }}</p>   
+                                    <p v-if="voting.secretvotes && stats.voters.some(vot => vot.id === voter.id)" class="green"> Votou </p>
+                                    <p v-else-if="!voting.secretvotes && getOptionsStringOfVoter(voter)" :title="getOptionsStringOfVoter(voter)">{{ getOptionsStringOfVoter(voter) }}</p>
                                     <p v-else class="gray"> Não votou </p>
                                 </div>
                             </v-col>
@@ -99,9 +99,9 @@
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
-                                <p style="color: #454545; font-size: 0.8em">{{ voter.email }}</p>
+                                <p class="gray" style="font-size: 0.8em">{{ voter.email }}</p>
                             </v-col>
-                            <v-col 
+                            <v-col
                                 class="pa-0 center-vertically justify-end options-style ml-2 mr-2" 
                                 style="max-width: 38%;"
                                 :title="getOptionsStringOfVoter(voter)">
