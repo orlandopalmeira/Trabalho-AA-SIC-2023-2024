@@ -10,7 +10,7 @@
             <v-card flat v-else class="dark">
                 <v-tabs v-model="tab" align-tabs="center" class="dark custom-tabs mt-4">
                     <v-tab class="dark-lighter" value="votar">Votar</v-tab>
-                    <v-tab class="dark-lighter" v-if="allowedToViewStats" value="estatisticas">Estatísticas</v-tab>
+                    <v-tab class="dark-lighter" v-if="allowedToViewStats()" value="estatisticas">Estatísticas</v-tab>
                     <v-tab class="dark-lighter" value="detalhes">Detalhes</v-tab>
                 </v-tabs>
                 <v-tabs-window v-model="tab" >
@@ -71,7 +71,7 @@
                         </v-card>
                     </v-tabs-window-item>
                     <!--Tab para estatísticas-->
-                    <v-tabs-window-item v-if="allowedToViewStats" value="estatisticas">
+                    <v-tabs-window-item v-if="allowedToViewStats()" value="estatisticas">
                         <StatsTab :voting="voting" />
                     </v-tabs-window-item>
                     <!--Tab para detalhes-->
@@ -189,46 +189,7 @@ export default {
             let now = new Date().toISOString().replace('T', ' ').slice(0,19)
             let enddate = this.voting.enddate
             return enddate === null || enddate > now 
-        }
-    },
-
-    created() {
-        let firstTab = this.$route.query.firstTab
-        let availableTabs = ['votar', 'estatisticas', 'detalhes']
-        if(firstTab && availableTabs.includes(firstTab)){
-            if(firstTab === 'estatisticas' && !this.allowedToViewStats){
-                firstTab = 'detalhes'
-            } 
-            this.tab = firstTab
-        }
-
-        const getAccessType = (voting) => {
-            if(Number(voting.creator.id) === Number(useUserInfoStore().getUserId)){
-                return "creator"
-            } else if(voting.privatevoting){
-                return "privatevoter"
-            } else {
-                return "public"
-            }
-        }
-
-        axios.get(API_PATHS.votingId(this.$route.params.id))
-        .then(response => {
-            let voting = response.data
-            voting.accesstype = getAccessType(voting)
-            this.voting = voting
-            this.loadingVoting = false
-            //* Toast message logic
-            let toast_message = this.$route.query.toast_message
-            if(toast_message){
-                ToastManager.show(toast_message, 'success', 3000)
-                this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
-            }
-        }).catch(error => {
-            console.error(error)
-        })
-    },
-    computed: {
+        },
         allowedToViewStats(){
             if(this.voting.accesstype === "creator") return true
 
@@ -242,6 +203,46 @@ export default {
             }
             return false
         }
+    },
+
+    created() {
+        const getAccessType = (voting) => {
+            if(Number(voting.creator.id) === Number(useUserInfoStore().getUserId)){
+                return "creator"
+            } else if(voting.privatevoting){
+                return "privatevoter"
+            } else {
+                return "public"
+            }
+        }
+
+        axios.get(API_PATHS.votingId(this.$route.params.id))
+        .then(response => {
+            let voting = response.data
+            this.voting = voting
+            this.voting.accesstype = getAccessType(voting)
+            this.loadingVoting = false
+            //* Redireccionar para a tab vinda da URL se existir (querystring ?firstTab=...)
+            let firstTab = this.$route.query.firstTab
+            let availableTabs = ['votar', 'estatisticas', 'detalhes']
+            if(firstTab && availableTabs.includes(firstTab)){
+                if(firstTab === 'estatisticas' && !this.allowedToViewStats()){
+                    firstTab = 'detalhes'
+                } 
+                this.tab = firstTab
+            }
+            //* Toast message logic
+            let toast_message = this.$route.query.toast_message
+            if(toast_message){
+                ToastManager.show(toast_message, 'success', 3000)
+                this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
+            }
+        }).catch(error => {
+            console.error(error)
+        })
+    },
+    computed: {
+        
     }
 }
 </script>
