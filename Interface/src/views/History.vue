@@ -136,13 +136,13 @@ export default {
     created() {
         axios.get(API_PATHS.votings)
         .then(response => {
-            
             // filtrar por aqueles que ja acabaram e que user votou
-
-            let now = new Date().toISOString().replace('T', ' ').slice(0,19);
-            let finished = voting => voting.enddate < now || voting.enddate === null
-            this.historyVotings = response.data.filter(voting => finished(voting) && voting.useralreadyvoted);
-
+            // let now = new Date().toISOString().replace('T', ' ').slice(0,19);
+            // let finished = voting => voting.enddate < now || voting.enddate === null
+            // this.historyVotings = response.data.filter(voting => finished(voting) && voting.useralreadyvoted);
+            
+            // filtrar por aqueles em que o user votou
+            this.historyVotings = response.data.filter(voting => voting.useralreadyvoted);
             this.loadingHistory = false
         })
         .catch(error => {
