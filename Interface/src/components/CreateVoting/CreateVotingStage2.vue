@@ -32,7 +32,7 @@
                             </v-card-title>
                             <v-card-text style="padding: 20px;">
                                 <div v-for="(option, indexOption) in useVotingInfoStore().questions[indexQuestion].options" :key="indexOption" style="padding: 10px;">
-                                    <v-row>
+                                    <v-row class="pb-2">
                                         <v-text-field
                                             :label="'Opção ' + (indexOption + 1)"
                                             v-model="useVotingInfoStore().questions[indexQuestion].options[indexOption]['description']"
@@ -230,17 +230,17 @@ export default {
                 return false;
             }
 
-            for (let i = 0; i < questions.length; i++) {
-                let question = questions[i];
+            for (const element of questions) {
+                let question = element;
 
                 // verifica se a pergunta tem pelo menos 2 opções e se os campos da pergunta cumprem as regras
                 if (question.options.length < 2 || !this.getFieldRules("question").every(rule => rule(question.description)===true )) {
                     return false;
                 }
 
-                for (let j = 0; j < question.options.length; j++) {
+                for (const element of question.options) {
 
-                    if (!this.getFieldRules("option").every(rule => rule(question.options[j].description)===true )) {
+                    if (!this.getFieldRules("option").every(rule => rule(element.description)===true )) {
                         return false;
                     }
                     // if (question.options[j].image){
