@@ -23,8 +23,9 @@
                             hide-details />
                         <v-btn :title="'Ordem ' + (reverseSort? 'descendente' : 'ascendente')" 
                             @click="reverseSort = !reverseSort" 
-                            class="bg-transparent" flat>
-                            <v-icon>{{ reverseSort ? 'mdi-sort-descending' : 'mdi-sort-ascending' }}</v-icon>
+                            class="bg-transparent" 
+                            :icon="reverseSort ? 'mdi-arrow-down' : 'mdi-arrow-up'"
+                            flat>
                         </v-btn>
                     </div>
                 </v-col>
