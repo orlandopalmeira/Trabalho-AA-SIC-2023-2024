@@ -193,6 +193,15 @@ export default {
     },
 
     created() {
+        let firstTab = this.$route.query.firstTab
+        let availableTabs = ['votar', 'estatisticas', 'detalhes']
+        if(firstTab && availableTabs.includes(firstTab)){
+            if(firstTab === 'estatisticas' && !this.allowedToViewStats){
+                firstTab = 'detalhes'
+            } 
+            this.tab = firstTab
+        }
+
         const getAccessType = (voting) => {
             if(Number(voting.creator.id) === Number(useUserInfoStore().getUserId)){
                 return "creator"
