@@ -23,10 +23,12 @@
                 </v-row>
                 <LoadingAlert v-if="loadingHistory" message="A carregar as votações, por favor aguarde." />
                 <v-data-table v-else class="dark"
-                :headers="headers"
-                :items="processedVotings"
-                :search="search"
-                hover>
+                    :headers="headers"
+                    :items="processedVotings"
+                    :search="search"
+                    @click:row="rowClicked"
+                    hover
+                >
                 <template v-slot:[`item.title`]="{ item }">
                     <p>{{ item.title }}</p>
                 </template>
@@ -99,7 +101,11 @@ export default {
                 this.filters = filters
             }
             this.modalFiltering.opened = false
-        }
+        },
+        rowClicked(event, item) { // Para usar se quisermos clicar na linha inteira da tabela e levar para a votação específica
+            // Access the item here using item.item retorna o objeto inputed
+            this.$router.push({name: 'voting', params: {id: item.item.id}})
+        },
     },
 
     computed: {

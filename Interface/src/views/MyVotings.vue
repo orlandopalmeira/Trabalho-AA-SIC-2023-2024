@@ -113,7 +113,7 @@ export default {
                 const response = await axios.get(API_PATHS.userVotings)
                 return response.data
             } catch (error) {
-                let response = error.response
+                //let response = error.response
                 //this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
                 console.log(error);
                 return []
@@ -121,14 +121,10 @@ export default {
         },
         rowClicked(event, item) { // Para usar se quisermos clicar na linha inteira da tabela e levar para a votação específica
             // Access the item here using item.item retorna o objeto inputed
-            // console.log(item.item.id);
             // Aceder à pagina do item clicado.
-            // this.$router.push(`/voting/${item.item.id}`)
             this.$router.push({name: 'voting', params: {id: item.item.id}})
         },
         votingClicked(id){
-            // console.log(id)
-            // this.$router.push(`/voting/${id}`)
             this.$router.push({name: 'voting', params: {id: id}})
         },
         formatDateTime(dateTimeString) {
