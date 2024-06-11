@@ -33,6 +33,19 @@
                         <p v-if="winnerOptions.length === 0" class="pl-2" style="font-size: 14pt; word-break: break-word;">Nenhum voto registado</p>
                         <p v-else-if="winnerOptions.length === 1" class="pl-2" style="font-size: 20pt; word-break: break-word;">
                             {{ winnerOptions[0].description }}
+                            <v-tooltip v-if="winnerOptions[0].image">
+                                <template v-slot:activator="{ props }">
+                                    <span v-bind="props" text>
+                                        <v-icon>mdi-image</v-icon>
+                                    </span>
+                                </template>
+                                <v-card class="dark-light" style="margin-left: -10px; margin-right: -10px;">
+                                    <v-card-title>Imagem</v-card-title>
+                                    <v-card-text>
+                                        <img :src="getImageUrl(winnerOptions[0].image)" alt="Opção" style="max-width: 100%;">
+                                    </v-card-text>
+                                </v-card>
+                            </v-tooltip>
                         </p>
                         <v-tooltip v-else location="top">
                             <template v-slot:activator="{ props }">
@@ -63,7 +76,7 @@
                 <v-row>
                     <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
-                        <p v-if="stats.voters.length===0">Sem votantes</p>
+                        <p v-if="!voting.privatevoting && stats.voters.length===0">Sem votantes</p>
                         <v-row v-else-if="voting.privatevoting" v-for="(voter, index) in privateVotersSorted" :key="voter.id">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
@@ -75,7 +88,7 @@
                                 style="max-width: 38%;"
                                 :title="getOptionsStringOfVoter(voter)">
                                 <div class="options-style" >
-                                    <p v-if="getOptionsStringOfVoter(voter)">{{ getOptionsStringOfVoter(voter) }}</p>   
+                                    <p v-if="getOptionsStringOfVoter(voter) ">{{ getOptionsStringOfVoter(voter) }}</p>   
                                     <p v-else style="color: gray;"> Não votou </p> 
                                 </div>
                             </v-col>
@@ -263,6 +276,9 @@ export default {
             if (days === 0 && hours === 0 && minutes === 1) return '1 minuto';
             if (days === 0 && hours === 0) minutes_str = minutes + ' minutos';
             return `${days_str} ${hours_str} ${minutes_str}`;
+        },
+        getImageUrl(image){
+            return API_PATHS.getImageUrl(image)
         },
         getQuestionFromId(questionId){
             return this.stats.questionsstats.find(question => question.id === questionId);

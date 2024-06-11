@@ -12,7 +12,7 @@
         <v-container>
             <v-card flat style="padding: 10px;" class="dark">
                 <v-row>
-                    <v-col>
+                    <v-col cols="6">
                         <div class="flex">
                             <v-text-field class="mr-5" v-model="search" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
                             <button @click="modalFiltering.opened = true" class="filterbutton">
