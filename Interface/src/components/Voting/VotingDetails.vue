@@ -220,7 +220,7 @@ export default {
             let url = window.location.href;
             navigator.clipboard.writeText(url)
                 .then(() => {
-                    ToastManager.show('Link copiado para a área de transferência.', 'info');
+                    ToastManager.show('Link copiado para a área de transferência.', 'success');
                 })
                 .catch(() => {
                     ToastManager.show('Erro ao copiar o link para a área de transferência.', 'error');

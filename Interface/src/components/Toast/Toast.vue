@@ -49,7 +49,7 @@ export default {
 <style>
 .toast {
     position: fixed;
-    top: 20px;
+    top: 80px;
     right: 20px;
     padding: 10px 10px;
     color: #fff;
