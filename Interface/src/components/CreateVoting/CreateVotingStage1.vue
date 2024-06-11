@@ -85,7 +85,7 @@
                                     chips
                                     closable-chips
                                     multiple
-                                    no-data-text="Introduza termo válido"
+                                    no-data-text="Introduza um nome válido"
                                     autofocus
                                     @update:modelValue="onUpdateModelValue"
                                 >

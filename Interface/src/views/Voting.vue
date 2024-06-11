@@ -8,7 +8,7 @@
                 @close-modal="modal.opened=false"/>
             <LoadingAlert v-if="loadingVoting" message="A carregar a votação, por favor aguarde." />
             <v-card flat v-else class="dark">
-                <v-tabs v-model="tab" align-tabs="center" class="dark custom-tabs mt-2">
+                <v-tabs v-model="tab" align-tabs="center" class="dark custom-tabs mt-4">
                     <v-tab class="dark-lighter" value="votar">Votar</v-tab>
                     <v-tab class="dark-lighter" v-if="allowedToViewStats" value="estatisticas">Estatísticas</v-tab>
                     <v-tab class="dark-lighter" value="detalhes">Detalhes</v-tab>

@@ -2,9 +2,6 @@
     <div v-if="loadingStats" class="ma-5 pa-2 dark">
         <LoadingAlert message="A obter as estatísticas, por favor aguarde..." />
     </div>
-    <!-- <div v-else-if="stats.numvotes === 0" class="pa-2 dark">
-        <SimpleAlert message="Esta votação ainda não tem votos." class="dark"/>
-    </div> -->
     <div v-else class="pl-5 pr-5 pb-5 dark">
         <div class="background pa-2">
             <div style="margin: 10px 10px;" class="mb-5">
