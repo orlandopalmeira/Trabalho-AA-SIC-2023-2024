@@ -88,7 +88,7 @@
                                 style="max-width: 38%;"
                                 :title="getOptionsStringOfVoter(voter)">
                                 <div class="options-style" >
-                                    <p v-if="getOptionsStringOfVoter(voter) ">{{ getOptionsStringOfVoter(voter) }}</p>   
+                                    <p v-if="getOptionsStringOfVoter(voter) !== ''">{{ getOptionsStringOfVoter(voter) }}</p>   
                                     <p v-else style="color: gray;"> Não votou </p> 
                                 </div>
                             </v-col>
