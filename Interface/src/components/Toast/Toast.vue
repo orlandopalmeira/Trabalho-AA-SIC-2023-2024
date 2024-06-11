@@ -27,7 +27,7 @@ export default {
                 case 'warning':
                     return 'mdi-alert';
                 default:
-                    return 'info';
+                    return 'mdi-information';
             }
         },
         showToast(message, type = 'info', duration = 2000) {
