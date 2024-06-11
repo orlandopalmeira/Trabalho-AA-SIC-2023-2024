@@ -91,6 +91,7 @@ import QuestionCard from '@/components/Voting/QuestionCard.vue'
 import VotingDetails from '@/components/Voting/VotingDetails.vue'
 import StatsTab from '@/components/Voting/StatsTab.vue'
 import SimpleAlert from '@/components/SimpleAlert.vue'
+import ToastManager from '@/components/Toast/ToastManager'
 
 import { useUserInfoStore } from '@/stores/userInfoStore';
 
@@ -208,6 +209,11 @@ export default {
             voting.accesstype = getAccessType(voting)
             this.voting = voting
             this.loadingVoting = false
+            let toast_message = this.$route.query.toast_message
+            if(toast_message){
+                ToastManager.show(toast_message, 'success', 3000)
+                this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
+            }
         }).catch(error => {
             console.error(error)
         })

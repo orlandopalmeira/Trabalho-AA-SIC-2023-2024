@@ -96,7 +96,7 @@ export default {
                     console.log(res.data);
                     let voting_id = res.data.id;
                     useVotingInfoStore().reset();
-                    this.$router.push({name: 'voting', params: {id: voting_id}});
+                    this.$router.push({name: 'voting', params: { id: voting_id }, query: { toast_message: 'Votação criada com sucesso.' }});
                     // this.openModal('Sucesso', 'Votação criada com sucesso.', voting_url, 3);
                 })
                 .catch((error) => {
