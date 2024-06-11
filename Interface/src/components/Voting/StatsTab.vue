@@ -62,11 +62,28 @@
                     <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
                         <p v-if="stats.voters.length===0">Sem votantes</p>
-                        <v-row v-for="(voter, index) in stats.voters" :key="index">
+                        <v-row v-else-if="voting.privatevoting" v-for="(voter, index) in privateVotersSorted" :key="voter.id">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
-                                <p style="color: #454545">{{ voter.email }}</p>
+                                <p style="color: #454545; font-size: 0.8em">{{ voter.email }}</p>
+                            </v-col>
+                            <v-col 
+                                class="pa-0 center-vertically justify-end options-style ml-2 mr-2" 
+                                style="max-width: 38%;"
+                                :title="getOptionsStringOfVoter(voter)">
+                                <div class="options-style" >
+                                    <p v-if="getOptionsStringOfVoter(voter)">{{ getOptionsStringOfVoter(voter) }}</p>   
+                                    <p v-else style="color: gray;"> Não votou </p> 
+                                </div>
+                            </v-col>
+                            <v-divider class="mt-1 mb-1" v-if="index < stats.voters.length - 1"/>
+                        </v-row>
+                        <v-row v-else v-for="(voter, index) in stats.voters" :key="index">
+                            <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
+                            <v-col class="pa-0 mr-2">
+                                <p>{{ voter.name }}</p>
+                                <p style="color: #454545; font-size: 0.8em">{{ voter.email }}</p>
                             </v-col>
                             <v-col 
                                 class="pa-0 center-vertically justify-end options-style ml-2 mr-2" 
@@ -78,6 +95,7 @@
                             </v-col>
                             <v-divider class="mt-1 mb-1" v-if="index < stats.voters.length - 1"/>
                         </v-row>
+
                     </v-col>
                     <v-col class="vcol1 dark-light" style="height: 400px" >
                         <Bar id="my-chart-id" :data="chart.data" :options="chart.options" />
@@ -119,6 +137,24 @@ export default {
             timer: null
         }
     },
+    created() {
+        //* No privatevoters não vem o criador da votação, por isso adicionamos o criador à lista de votantes privados
+        this.voting.privatevoters.push(this.voting.creator);
+        axios.get(API_PATHS.votingStats(this.votingId))
+            .then(response => {
+                this.stats = response.data;
+                this.selectItems = this.stats.questionsstats.map((qs,index) => ({
+                    title: `Pergunta ${index+1}: "` + qs.description + '"',
+                    value: index
+                }));
+                this.selected = 0;
+                this.loadingStats = false;
+            })
+            .catch(error => {
+                console.error(error);
+                this.loadingStats = false;
+            });
+    },
     computed: {
         chart(){
             let question = this.stats.questionsstats[this.selected];
@@ -143,12 +179,8 @@ export default {
             }
             else{
                 let numRegistered = this.voting.privatevoters.length;
-                console.log(numRegistered)
+                // numRegistered++; // O utilizador que criou a votação não é contabilizado
                 let numvotes = this.stats.numvotes;
-                if (numRegistered === 0) {
-                    console.log("Erro: Não tem votantes definidos");
-                    return "Sem votantes";
-                }
                 let percentage = (numvotes / numRegistered) * 100;
                 let percentage_str = `${Math.round(percentage)}%`;
                 return "Participação de " + percentage_str;
@@ -196,6 +228,24 @@ export default {
                 return 'Votação terminada';
             }
             return this.timestampToFormatedDate(time_left) + " restantes";
+        },
+        privateVotersSorted(){
+            return this.voting.privatevoters.sort((a, b) => {
+                const optionsA = this.getOptionsStringOfVoter(a) || '';
+                console.log(optionsA);
+                const optionsB = this.getOptionsStringOfVoter(b) || '';
+                console.log(optionsB);
+                // If optionsA is empty and optionsB is not, sort optionsA after optionsB
+                if (!optionsA && optionsB) {
+                    return 1;
+                }
+                // If optionsB is empty and optionsA is not, sort optionsB after optionsA
+                if (!optionsB && optionsA) {
+                    return -1;
+                }
+                // If both are empty or both are non-empty, use localeCompare
+                return optionsA.localeCompare(optionsB);
+            });
         }
     },
     methods: {
@@ -263,27 +313,6 @@ export default {
             }
         }
     },
-    created() {
-        // this.timer = setInterval(() => {
-        //     this.secondsPassed++;
-        //     console.log(this.secondsPassed);
-        // }, 1000);
-        axios.get(API_PATHS.votingStats(this.votingId))
-            .then(response => {
-                this.stats = response.data;
-                this.selectItems = this.stats.questionsstats.map((qs,index) => ({
-                    title: `Pergunta ${index+1}: "` + qs.description + '"',
-                    value: index
-                }));
-                this.selected = 0;
-                this.loadingStats = false;
-            })
-            .catch(error => {
-                console.error(error);
-                this.loadingStats = false;
-            });
-    },
-
 }
 </script>
 <style scoped>
