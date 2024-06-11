@@ -45,6 +45,7 @@ import ModalOk from '@/components/Modais/ModalOk.vue'
 import LoadingAlert from '@/components/LoadingAlert.vue'
 import axios from '@/axios'
 import ModalFiltering from '@/components/Modais/ModalFiltering.vue'
+import ToastManager from '@/components/Toast/ToastManager'
 import { API_PATHS } from '@/apiPaths'
 
 const table_headers = [
@@ -134,13 +135,14 @@ export default {
         }
     }, 
     created() {
+        // lógica do Toast
+        let toast_message = this.$route.query.toast_message // mensagem de voto submetido com sucesso vinda da Voting.vue
+        if(toast_message){
+            ToastManager.show(toast_message, 'success', 3000)
+            this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
+        }
         axios.get(API_PATHS.votings)
         .then(response => {
-            // filtrar por aqueles que ja acabaram e que user votou
-            // let now = new Date().toISOString().replace('T', ' ').slice(0,19);
-            // let finished = voting => voting.enddate < now || voting.enddate === null
-            // this.historyVotings = response.data.filter(voting => finished(voting) && voting.useralreadyvoted);
-            
             // filtrar por aqueles em que o user votou
             this.historyVotings = response.data.filter(voting => voting.useralreadyvoted);
             this.loadingHistory = false
