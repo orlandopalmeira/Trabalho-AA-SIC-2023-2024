@@ -117,9 +117,6 @@ export default {
                 };
                 axios.post(API_PATHS.register, user)
                     .then((response) => {
-                        //TODO: Meter lógica de ir para a página inicial, por exemplo.
-                        // alert('Registo efectuado com sucesso!\nEfectue o login para aceder à sua conta na página seguinte.');
-                        // this.$router.push({name: 'login'});
                         useUserInfoStore().setUserId(response.data.id);
 				        this.$router.push({name: 'home'});
                     })
