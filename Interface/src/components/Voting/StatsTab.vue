@@ -40,9 +40,9 @@
                                     </span>
                                 </template>
                                 <v-card class="dark-light" style="margin-left: -10px; margin-right: -10px;">
-                                    <v-card-title>Imagem</v-card-title>
+                                    <v-card-title>Opção: <b>{{ winnerOptions[0].description }}</b></v-card-title>
                                     <v-card-text>
-                                        <img :src="getImageUrl(winnerOptions[0].image)" alt="Opção" style="max-width: 100%;">
+                                        <img :src="getImageUrl(winnerOptions[0].image)" :alt="'Opção: '+winnerOptions[0].description" style="max-width: 100%;">
                                     </v-card-text>
                                 </v-card>
                             </v-tooltip>
@@ -76,24 +76,25 @@
                 <v-row>
                     <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
+                        <!-- Caso não seja um privateVoting e não há votantes -->
                         <p v-if="!voting.privatevoting && stats.voters.length===0">Sem votantes</p>
+                        <!-- Caso seja um private voting, usa a privateVotersSorted vê os privateVoters que votaram, em primeiro -->
                         <v-row v-else-if="voting.privatevoting" v-for="(voter, index) in privateVotersSorted" :key="voter.id">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
                                 <p style="color: #454545; font-size: 0.8em">{{ voter.email }}</p>
                             </v-col>
-                            <v-col 
-                                class="pa-0 center-vertically justify-end options-style ml-2 mr-2" 
-                                style="max-width: 38%;"
-                                :title="getOptionsStringOfVoter(voter)">
-                                <div class="options-style" >
-                                    <p v-if="getOptionsStringOfVoter(voter) !== ''">{{ getOptionsStringOfVoter(voter) }}</p>   
-                                    <p v-else style="color: gray;"> Não votou </p> 
+                            <v-col class="pa-0 center-vertically justify-end options-style ml-2 mr-2" style="max-width: 38%;">
+                                <div class="options-style">g
+                                    <p v-if="voting.secretvotes && stats.voters.some(vot => vot.id === voter.id)" class="green"> Votou </p>   
+                                    <p v-else-if="!voting.secretvotes && getOptionsStringOfVoter(voter)" :title="getOptionsStringOfVoter(voter)">{{ getOptionsStringOfVoter(voter) }}</p>   
+                                    <p v-else class="gray"> Não votou </p>
                                 </div>
                             </v-col>
                             <v-divider class="mt-1 mb-1" v-if="index < stats.voters.length - 1"/>
                         </v-row>
+                        <!-- Caso padrão em que a votação não é privada, e apenas se preocupa com mostrar os que votaram -->
                         <v-row v-else v-for="(voter, index) in stats.voters" :key="index">
                             <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
                             <v-col class="pa-0 mr-2">
@@ -148,8 +149,6 @@ export default {
             selected: null,
             selectItems: null,
             stats: null,
-            secondsPassed: 0,
-            timer: null
         }
     },
     created() {
@@ -232,13 +231,11 @@ export default {
             else{
                 time = new Date() - new Date(this.voting.creationdate);
             }
-            // time += this.secondsPassed * 1000;
             return this.timestampToFormatedDate(time);
         },
         timeLeft(){
             if (!this.voting.enddate) return 'Com duração indefinida';
             let time_left = new Date(this.voting.enddate) - new Date();
-            // time_left += this.secondsPassed * 1000;
             if (time_left < 0) {
                 return 'Votação terminada';
             }
@@ -246,20 +243,11 @@ export default {
         },
         privateVotersSorted(){
             return this.voting.privatevoters.sort((a, b) => {
-                const optionsA = this.getOptionsStringOfVoter(a) || '';
-                console.log(optionsA);
-                const optionsB = this.getOptionsStringOfVoter(b) || '';
-                console.log(optionsB);
-                // If optionsA is empty and optionsB is not, sort optionsA after optionsB
-                if (!optionsA && optionsB) {
-                    return 1;
-                }
-                // If optionsB is empty and optionsA is not, sort optionsB after optionsA
-                if (!optionsB && optionsA) {
-                    return -1;
-                }
-                // If both are empty or both are non-empty, use localeCompare
-                return optionsA.localeCompare(optionsB);
+                const userHasVotedA = this.stats.voters.some(voter => voter.id === a.id);
+                const userHasVotedB = this.stats.voters.some(voter => voter.id === b.id);
+                if (userHasVotedA && !userHasVotedB) return -1;
+                if (!userHasVotedA && userHasVotedB) return 1;
+                return 0;
             });
         }
     },
@@ -394,5 +382,17 @@ export default {
 
 .hoverable:hover {
   color: #42a5f5; /* Replace with your desired hover color */
+}
+
+.green {
+    color: #4CAF50;
+}
+
+.red {
+    color: #f44336;
+}
+
+.gray {
+    color: #707070;
 }
 </style>
