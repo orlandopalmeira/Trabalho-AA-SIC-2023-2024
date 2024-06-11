@@ -1,7 +1,8 @@
 <template scoped>
     <div @click="onClick" class="card levitate pa-5" style="background-color: #eee;">
-        <!-- TODO: ver melhor como definir a URL para a imagem -->
-        <img alt="Voting background" :src="voting.image == null ? defaultImage : getImageUrl(voting.image)"/>
+        <img 
+            alt="Voting background" 
+            :src="voting.image == null ? this.generateImages(this.voting.title) : getImageUrl(voting.image)"/>
         <div style="display: flex; align-items: center; justify-content:center">
             <p class="title" :title="voting.title" >{{ voting.title }}</p>
         </div>
@@ -17,11 +18,6 @@ import { API_PATHS } from '@/apiPaths';
 export default {
     props: {
         voting: { type: Object, required: true }
-    },
-    data() {
-        return {
-            defaultImage: this.generateImages(this.voting.title)
-        }
     },
     methods: {
         onClick() {
