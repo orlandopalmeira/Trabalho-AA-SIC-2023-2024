@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.hibernate.internal.util.collections.IdentitySet;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,10 @@ import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
 import com.grupo6.votingapp.dtos.users.UserStats;
-import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votes.CreateVoteDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
+import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
+import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
 import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;
@@ -53,6 +55,25 @@ public class VotingService {
 
     public List<Voting> getAccessibleVotingsToUser(String userId){ //* Parece funcionar
         return votingRepository.findAccessibleVotingsToUser(userId);
+    }
+
+    public List<VotingWithNoRelationsDTO> getAccessibleVotingsToUser(String userId, boolean alreadyvotedonly){
+        List<Voting> votings = votingRepository.findAccessibleVotingsToUser(userId);
+        List<Long> votingIds = votings.stream().map(Voting::getId).toList(); //* ids das votações para descobrir a contagem de votos em cada uma delas
+        Map<Long, Long> votesCounts = getVotesCount(votingIds);//* N.º votos por cada votação -> formato {voting_id: votes_count}
+        Stream<VotingWithNoRelationsDTO> votingsWithNoRelations = votings.stream()
+        .map(voting -> {
+            Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
+            VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
+            boolean userAlreadyVoted = userAlreadyVoted(voting.getId(), Long.parseLong(userId)); //! Tentar ver se dá para fazer isto numa só query.
+            votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
+            return votingWithNoRelationsDTO;
+        });
+        if (alreadyvotedonly) {
+            return votingsWithNoRelations.filter(voting -> voting.isUseralreadyvoted()).toList();
+        } else {
+            return votingsWithNoRelations.toList();
+        }
     }
 
     public Voting getVotingByCreatorId(String votingId, String userId){ //* Parece funcionar
