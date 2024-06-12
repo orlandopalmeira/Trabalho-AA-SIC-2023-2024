@@ -1,4 +1,4 @@
-<template scoped>
+<template>
     <AuthenticatedLayout>
         <ModalOk 
 			:isVisible="modal.opened"
@@ -12,7 +12,7 @@
         <v-container>
             <v-card flat class="dark pa-2 rounded-xl">
                 <v-row class="pa-2">
-                    <v-col>
+                    <v-col cols="6">
                         <div class="flex">
                             <v-text-field class="mr-5" v-model="search" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
                             <button @click="modalFiltering.opened = true" class="filterbutton">
@@ -34,8 +34,10 @@
                 :headers="headers"
                 :items="processedVotings"
                 :search="search"
+                v-model:sort-by="sortBy"
                 @click:row="rowClicked"
-                hover>
+                hover
+                >
                 <template v-slot:[`item.title`]="{ item }">
                     <p :title="'Descrição: '+item.description" style="max-width: 200px; font-weight: 500; ">
                         {{ item.title }}
@@ -49,11 +51,11 @@
                         <v-icon>{{ item.privatevoting }}</v-icon>
                     </template>
                 </v-data-table>
-
             </v-card>
         </v-container>
     </AuthenticatedLayout>
 </template>
+
 <script>
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import ModalOk from '@/components/Modais/ModalOk.vue'
@@ -61,23 +63,32 @@ import LoadingAlert from '@/components/LoadingAlert.vue'
 import axios from '@/axios'
 import router from '@/router'
 import ModalFiltering from '@/components/Modais/ModalFiltering.vue'
+import ToastManager from '@/components/Toast/ToastManager'
 import { API_PATHS } from '@/apiPaths'
 
 const table_headers = [
-    { align: 'start', key: 'title',         title: 'Votação' },
-    // {                 key: 'description',   title: 'Descrição' },
-    {                 key: 'creationdate',  title: 'Data' },
-    {                 key: 'status',        title: 'Estado'},
-    {                 key: 'votes',         title: 'Votos' },
+    { align: 'start', key: 'title',         title: 'Votação', sortable: true  },
+    // {                 key: 'description',   title: 'Descrição', sortable: true  },
+    {                 key: 'creationdate',  title: 'Data de Criação', sortable: true },
+    {                 key: 'status',        title: 'Estado', sortable: true },
+    {                 key: 'votes',         title: 'Votos', sortable: true },
     {                 key: 'privatevoting', title: 'Visibilidade', sortable: false },
 ]
 
 export default {
+
+    props: {
+        votingsRoute: {
+            type: String,
+            required: true,
+            // default: API_PATHS.userVotings
+        }
+    },
     components: {
         AuthenticatedLayout,
         ModalOk,
+        ModalFiltering,
         LoadingAlert,
-        ModalFiltering
     },
     data() {
         return {
@@ -93,8 +104,31 @@ export default {
             modalFiltering: {
                 opened: false
             },
-            filters: null
+            filters: null,
+
+            // Default sort configuration
+            sortBy: [{ key: 'creationdate', order:'desc' }],
         }
+    },
+    created() {
+        // lógica do Toast
+        let toast_message = this.$route.query.toast_message // mensagem de voto submetido com sucesso vinda da Voting.vue
+        if(toast_message){
+            ToastManager.show(toast_message, 'success', 3000)
+            this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
+        }
+
+        // Obter as votações pedidas
+        console.log(this.votingsRoute)
+        axios.get(this.votingsRoute)
+            .then(response => {
+                this.votings = response.data;
+                this.loadingVotings = false
+            })
+            .catch(error => {
+                console.error(error)
+            }
+        )
     },
     methods: {
         onClickCreateVoting(){
@@ -107,26 +141,13 @@ export default {
 				message: message
 			}
 		},
-        async getVotings(){
-            this.loadingVotings = false;
-            try {
-                const response = await axios.get(API_PATHS.userVotings)
-                return response.data
-            } catch (error) {
-                //let response = error.response
-                //this.openModal('Erro inesperado','Resposta do servidor "' + response.data.message + '"')
-                console.log(error);
-                return []
-            }
-        },
         rowClicked(event, item) { // Para usar se quisermos clicar na linha inteira da tabela e levar para a votação específica
             // Access the item here using item.item retorna o objeto inputed
-            // Aceder à pagina do item clicado.
             this.$router.push({name: 'voting', params: {id: item.item.id}})
         },
-        votingClicked(id){
-            this.$router.push({name: 'voting', params: {id: id}})
-        },
+        // votingClicked(id){
+        //     this.$router.push({name: 'voting', params: {id: id}})
+        // },
         formatDateTime(dateTimeString) {
             // 2024-06-04 16:18:07
             let parts = dateTimeString.split(" ");
@@ -152,6 +173,7 @@ export default {
     computed: {
         processedVotings() {
             let now = new Date().toISOString().replace('T', ' ').slice(0,19)
+            // console.log(this.votings)
             let processedVotings = this.votings.map(voting => {
                 let active = voting.enddate > now || voting.enddate === null
                 // console.log(voting.creationdate)
@@ -183,15 +205,6 @@ export default {
             return processedVotings
         }
     }, 
-    created() {
-        this.getVotings()
-        .then(votings => {
-            this.votings = votings
-            this.loadingVotings = false
-        }).catch(error => {
-            console.error(error)
-        })
-    }
 }
 </script>
 <style scoped>
@@ -213,6 +226,35 @@ export default {
 }
 .highlighted-row {
   border-bottom: 2px solid #868686; /* Grey line under the row */
+}
+.flex {
+    display: flex;
+    
+}
+.plus-icon {
+    color: rgb(0, 162, 255);
+    background-color: white;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.justify-end {
+    justify-content:end;
+}
+.buttoncreatevoting {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+}
+.buttoncreatevoting:hover {
+    background-color: #45a049;
 }
 .filterbutton {
     border: 2px solid rgb(156, 156, 156);

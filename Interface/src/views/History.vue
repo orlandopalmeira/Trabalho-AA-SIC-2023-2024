@@ -66,12 +66,15 @@ export default {
         AuthenticatedLayout,
         ModalOk,
         ModalFiltering,
-        LoadingAlert
+        LoadingAlert,
     },
 
     data() {
         return {
             search: '',
+            loadingHistory: true,
+            historyVotings: [],
+            headers: table_headers,
             modal: {
                 opened: false,
                 title: '',
@@ -81,14 +84,27 @@ export default {
                 opened: false
             },
             filters: null,
-            loadingHistory: true,
-            headers: table_headers,
-            historyVotings: [],
+            
             // Default sort configuration
             sortBy: [{ key: 'creationdate', order:'desc' }],
         }
     },
-
+    created() {
+        // lógica do Toast
+        let toast_message = this.$route.query.toast_message // mensagem de voto submetido com sucesso vinda da Voting.vue
+        if(toast_message){
+            ToastManager.show(toast_message, 'success', 3000)
+            this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
+        }
+        axios.get(API_PATHS.votings)
+        .then(response => {
+            this.historyVotings = response.data.filter(voting => voting.useralreadyvoted);
+            this.loadingHistory = false
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    },
     methods: {
         openModal(title,message) {
 			this.modal = {
@@ -97,6 +113,10 @@ export default {
 				message: message
 			}
 		},
+        rowClicked(event, item) { // Para usar se quisermos clicar na linha inteira da tabela e levar para a votação específica
+            // Access the item here using item.item retorna o objeto inputed
+            this.$router.push({name: 'voting', params: {id: item.item.id}})
+        },
         onFilter(filters) {
             if(Object.values(filters).every(v => v === null)) {
                 this.filters = null
@@ -105,10 +125,7 @@ export default {
             }
             this.modalFiltering.opened = false
         },
-        rowClicked(event, item) { // Para usar se quisermos clicar na linha inteira da tabela e levar para a votação específica
-            // Access the item here using item.item retorna o objeto inputed
-            this.$router.push({name: 'voting', params: {id: item.item.id}})
-        },
+        
     },
 
     computed: {
@@ -143,23 +160,6 @@ export default {
             return processedVotings
         }
     }, 
-    created() {
-        // lógica do Toast
-        let toast_message = this.$route.query.toast_message // mensagem de voto submetido com sucesso vinda da Voting.vue
-        if(toast_message){
-            ToastManager.show(toast_message, 'success', 3000)
-            this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
-        }
-        axios.get(API_PATHS.votings)
-        .then(response => {
-            // filtrar por aqueles em que o user votou
-            this.historyVotings = response.data.filter(voting => voting.useralreadyvoted);
-            this.loadingHistory = false
-        })
-        .catch(error => {
-            console.log(error)
-        })
-    }
 }
 </script>
 

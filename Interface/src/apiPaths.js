@@ -9,6 +9,7 @@ export const API_PATHS = {
     votingId: (votingId) => `/votings/${votingId}`,
     votingStats: (votingId) => `/votings/${votingId}/stats`,
     votings: "/votings",
+    votingsAlreadyVoted: "/votings?alreadyvotedonly=true",
     userVotings: "/votings/user",
     votes: "/votes",
     imageUrl: (image_name) => `/images/${image_name}`,

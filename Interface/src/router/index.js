@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { API_PATHS } from '@/apiPaths'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,8 @@ const router = createRouter({
     {
       path: '/myvotings',
       name: 'myvotings',
-      component: () => import('../views/MyVotings.vue')
+      component: () => import('../views/MyVotings.vue'),
+      props: {votingsRoute: API_PATHS.userVotings}
     },
     {
       path: '/createvoting',
@@ -41,7 +43,9 @@ const router = createRouter({
     {
       path: '/history',
       name: 'history',
-      component: () => import('../views/History.vue')
+      // component: () => import('../views/History.vue'),
+      component: () => import('../views/MyVotings.vue'),
+      props: {votingsRoute: API_PATHS.votingsAlreadyVoted}
     }
   ]
 })
