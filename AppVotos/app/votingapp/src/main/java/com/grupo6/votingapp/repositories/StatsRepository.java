@@ -89,10 +89,11 @@ public class StatsRepository {
                 Object[] r = (Object[]) row;
                 UserStats user = new UserStats();
                 user.setId((Long) r[0]);
-                Date birthdate = (Date) r[1];
+                user.setAvatar((String) r[1]);
+                Date birthdate = (Date) r[2];
                 user.setBirthdate(birthdate.toLocalDate());
-                user.setEmail((String) r[2]);
-                user.setName((String) r[3]);
+                user.setEmail((String) r[3]);
+                user.setName((String) r[4]);
                 users.add(user);
             }
         }

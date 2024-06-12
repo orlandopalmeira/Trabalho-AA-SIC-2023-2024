@@ -13,6 +13,7 @@ public class UserStats {
     private String name;
     private String email;
     private LocalDate birthdate;
+    private String avatar;
 
     public UserStats() {
     }
@@ -22,6 +23,7 @@ public class UserStats {
         this.name = user.getName();
         this.email = user.getEmail();
         this.birthdate = user.getBirthdate();
+        this.avatar = user.getAvatar();
     }
 
     public User toEntity() {
@@ -30,6 +32,7 @@ public class UserStats {
         user.setName(this.name);
         user.setEmail(this.email);
         user.setBirthdate(this.birthdate);
+        user.setAvatar(this.avatar);
         return user;
     }
     
