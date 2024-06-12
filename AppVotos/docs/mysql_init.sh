@@ -15,6 +15,6 @@ docker run -d \
 
 sleep 1
 docker exec -it mysql mysql -p $DB_PASS -e "CREATE DATABASE $DB_NAME;"
-#docker exec -it mysql mysql -u root -pmysql -e "CREATE DATABASE vottingapp;"
+#docker exec -it mysql mysql -u root -pmysql -e "CREATE DATABASE votingapp;"
 
 
