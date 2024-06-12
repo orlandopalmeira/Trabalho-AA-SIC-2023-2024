@@ -72,38 +72,64 @@ public class ImageService {
     }
 
     /**
+     * Download an image from the Google Cloud Storage bucket, within a specified folder.
+     * @param folderName
+     * @param objectName
+     * @return
+     * @throws ImageServerException
+     * @throws ImageNotFoundException
+     */
+    public byte[] downloadImage(String folderName, String objectName) throws ImageServerException, ImageNotFoundException{
+        String fullObjectName = folderName == null || folderName.isEmpty() ? objectName : folderName + "/" + objectName;
+        return downloadImage(fullObjectName);
+    }
+
+    /**
+     * Upload an image to the Google Cloud Storage bucket, within a specified folder.
+     * @param folderName Pode ser null ou vazio, caso não queira guardar em folder.
+     * @param objectName
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public String uploadImage(String folderName, String objectName, MultipartFile file) throws IOException {
+        
+        String fullObjectName = folderName == null || folderName.isEmpty() ? objectName : folderName + "/" + objectName;
+
+        String fileName = fullObjectName.substring(0, fullObjectName.lastIndexOf("."));
+        String extension = fullObjectName.substring(fullObjectName.lastIndexOf("."));
+        
+        // Acrescenta um número ao nome do arquivo se ele já existir, até que seja gerado um nome único (pouco provável de acontecer)
+        Blob blob = storage.get(BlobId.of(BUCKET_NAME, fullObjectName));
+        int index = 1;
+        while (blob != null) {
+            fullObjectName = System.currentTimeMillis() + "_" + fileName + "_" + index++ + extension;
+            System.out.println("Object name already exists. Renaming it to " + fullObjectName + ".");
+            blob = storage.get(BlobId.of(BUCKET_NAME, fullObjectName));
+        }
+
+        BlobId blobId = BlobId.of(BUCKET_NAME, fullObjectName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
+        try {
+            storage.create(blobInfo, file.getBytes());
+            return fullObjectName;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Upload an image to the Google Cloud Storage bucket.
      * @param file The image file to upload.
      * @return The name of the object in the bucket.
      * @throws IOException If the image could not be uploaded.
      */
     public String uploadImage(MultipartFile file) throws IOException {
-        
         String originalFileName = file.getOriginalFilename();
-        String fileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
-        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        // Adiciona um timestamp ao nome do arquivo para evitar duplicatas
-        String objName = System.currentTimeMillis() + "_" + fileName + extension;
-        
-        // Acrescenta um número ao nome do arquivo se ele já existir, até que seja gerado um nome único
-        Blob blob = storage.get(BlobId.of(BUCKET_NAME, objName));
-        int index = 1;
-        while (blob != null) {
-            objName = System.currentTimeMillis() + "_" + fileName + "_" + index++ + extension;
-            System.out.println("Object name already exists. Renaming it to " + objName + ".");
-            blob = storage.get(BlobId.of(BUCKET_NAME, objName));
-        }
-
-        BlobId blobId = BlobId.of(BUCKET_NAME, objName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
-        try {
-            storage.create(blobInfo, file.getBytes());
-            return objName;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return uploadImage("", originalFileName, file);
     }
+
 
     public Map<String, String> uploadImages(List<MultipartFile> images) throws IOException {
         Map<String, String> uploadedImages = new HashMap<>();
