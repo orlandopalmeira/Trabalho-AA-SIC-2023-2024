@@ -1,6 +1,3 @@
-// src/apiPaths.js
-// export const API_BASE_URL = 'https://localhost:5173/';
-
 export const API_PATHS = {
     logout: "/auth/logout",
     login: "/auth/login",
