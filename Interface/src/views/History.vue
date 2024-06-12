@@ -26,6 +26,7 @@
                     :headers="headers"
                     :items="processedVotings"
                     :search="search"
+                    v-model:sort-by="sortBy"
                     @click:row="rowClicked"
                     hover
                 >
@@ -51,10 +52,10 @@ import ToastManager from '@/components/Toast/ToastManager'
 import { API_PATHS } from '@/apiPaths'
 
 const table_headers = [
-    { align: 'start', key: 'title',         title: 'Votação' },
-    {                 key: 'description',   title: 'Descrição' },
-    {                 key: 'creationdate',  title: 'Data' },
-    {                 key: 'votes',         title: 'Votos' },
+    { align: 'start', key: 'title',         title: 'Votação', sortable: true },
+    {                 key: 'description',   title: 'Descrição', sortable: true },
+    {                 key: 'creationdate',  title: 'Data', sortable: true },
+    {                 key: 'votes',         title: 'Votos', sortable: true },
     {                 key: 'privatevoting', title: 'Visibilidade', sortable: false },
 ]
 
@@ -82,7 +83,9 @@ export default {
             filters: null,
             loadingHistory: true,
             headers: table_headers,
-            historyVotings: []
+            historyVotings: [],
+            // Default sort configuration
+            sortBy: [{ key: 'creationdate', order:'desc' }],
         }
     },
 
