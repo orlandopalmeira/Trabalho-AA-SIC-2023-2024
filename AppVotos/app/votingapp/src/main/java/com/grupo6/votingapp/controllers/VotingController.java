@@ -1,7 +1,6 @@
 package com.grupo6.votingapp.controllers;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -16,13 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
+import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
 import com.grupo6.votingapp.dtos.votings.UpdateVotingDTO;
-import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
-import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.models.Voting;
 import com.grupo6.votingapp.services.VotingService;
 
@@ -44,50 +40,37 @@ public class VotingController {
     private final ObjectMapper objectMapper;
     
     private static final String MESSAGE_FIELD = "message";
-    private static final String NOT_FOUND_VOTING_WITH_USER_MESSAGE = "User with id '%s' does not have access to a voting with id '%s'!";
 
     @GetMapping //* Parece funcionar
     public ResponseEntity<Object> getVotings(
         @RequestParam(value="alreadyvotedonly", required = false, defaultValue = "false") boolean alreadyvotedonly,
         @CookieValue(value = "token", defaultValue = "") String token
     ) {
-        return authMiddlewares.checkTokenSimple(token, user_id -> {
-            return ResponseEntity.ok(votingService.getAccessibleVotingsToUser(user_id, alreadyvotedonly));
-        });
+        return authMiddlewares.checkTokenSimple(token, user_id -> 
+            ResponseEntity.ok(votingService.getAccessibleVotingsToUser(user_id, alreadyvotedonly))
+        );
     }
 
     @GetMapping("/user") //* Parece funcionar
     public ResponseEntity<Object> getVotingsFromUser(@CookieValue(value = "token", defaultValue = "") String token) {
-        return authMiddlewares.checkTokenSimple(token, user_id -> {
-            List<Voting> votings = votingService.getVotingsFromCreatorId(user_id);
-            List<Long> votingIds = votings.stream().map(Voting::getId).toList();
-            Map<Long, Long> votesCounts = votingService.getVotesCount(votingIds);
-            List<VotingWithNoRelationsDTO> response = votings
-                .stream()
-                .map(voting -> {
-                    Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
-                    VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
-                    boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
-                    votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
-                    return votingWithNoRelationsDTO;
-                }).toList();
-            return ResponseEntity.ok(response);
-        });
+        return authMiddlewares.checkTokenSimple(token, user_id -> 
+            ResponseEntity.ok(votingService.getVotingsFromCreatorId(user_id))
+        );
     }
 
     @GetMapping("/{voting_id}") //* Parece funcionar
     public ResponseEntity<Object> getVoting(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
-            Voting voting = votingService.getAccessibleVotingToUser(voting_id, user_id);
-            if(voting == null){
-                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, user_id, voting_id));
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            try{
+                return ResponseEntity.ok(votingService.getAccessibleVotingToUser(voting_id, user_id));
+            } catch (UnauthorizedException e) {
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
             }
-            VotingWithNoCreatorDTO response = new VotingWithNoCreatorDTO(voting);
-            boolean userAlreadyVoted = votingService.userAlreadyVoted(voting.getId(), Long.parseLong(user_id));
-            response.setUseralreadyvoted(userAlreadyVoted);
-            response.setCreator(new UsersWithNoRelationsDTO(voting.getCreator()));
-            return ResponseEntity.ok(response);
         });
     }
 
@@ -95,7 +78,7 @@ public class VotingController {
         return objectMapper.readValue(jsonString, RegisterVotingDTO.class);
     }
 
-    @PostMapping
+    @PostMapping //* Parece funcionar
     public ResponseEntity<Object> createVote(
         @RequestParam("voting") String jsonString, 
         @RequestParam(value = "images", required = false) List<MultipartFile> images,
@@ -118,59 +101,52 @@ public class VotingController {
         });
     }
 
-    @PutMapping("/{voting_id}")
+    @PutMapping("/{voting_id}") //* Parece funcionar
     public ResponseEntity<Object> updateVoting(@PathVariable String voting_id, @RequestBody UpdateVotingDTO updatedVoting, @CookieValue(value = "token", defaultValue = "") String token) {
         return authMiddlewares.checkTokenSimple(token, userId -> {
-            Voting voting = votingService.getVotingByCreatorId(voting_id, userId);
-            if(voting == null){
-                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
+            try {
+                return ResponseEntity.ok(votingService.updateVoting(updatedVoting, voting_id, userId));
+            } catch (UnauthorizedException e) {
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
-            }
-            else{
-                updatedVoting.updateVotingFromDTO(voting);
-                Voting updatedVotingEntity = votingService.saveVoting(voting, userId);
-                return ResponseEntity.ok(new VotingWithNoRelationsDTO(updatedVotingEntity));
+            } catch (Exception e) {
+                e.printStackTrace();
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
             }
         });
     }
 
-    @DeleteMapping("/{voting_id}")
+    @DeleteMapping("/{voting_id}") //* Parece funcionar
     public ResponseEntity<Object> deleteVoting(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
         return authMiddlewares.checkTokenSimple(token, userId -> {
-            Voting voting = votingService.getVotingByCreatorId(voting_id, userId);
-            if(voting == null){
-                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
+            try {
+                votingService.deleteVoting(voting_id, userId);
+                return ResponseEntity.ok().build();
+            } catch (UnauthorizedException e) {
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
             }
-            votingService.deleteVoting(voting);
-            return ResponseEntity.ok().build();
         });
     }
 
-    @GetMapping("{voting_id}/stats")
+    @GetMapping("{voting_id}/stats") //* Parece funcionar
     public ResponseEntity<Object> getVotingStats(@PathVariable String voting_id, @CookieValue(value = "token", defaultValue = "") String token) {
         return authMiddlewares.checkTokenSimple(token, userId -> {
-            Voting voting = votingService.getAccessibleVotingToUser(voting_id, userId);
-            if(voting == null){//* O user tem acesso à votação?
-                Map<String, String> error = Map.of(MESSAGE_FIELD, String.format(NOT_FOUND_VOTING_WITH_USER_MESSAGE, userId, voting_id));
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-            }
-            //* Verificar se o user tem permissão para ver as estatísticas da votação.
-            boolean allowedToSeeStats = false;
-            if(voting.getCreator().getId().equals(Long.parseLong(userId))){//* O user é o criador da votação?
-                allowedToSeeStats = true;
-            } else if (voting.isShowstats()) {
-                Date now = new Date();
-                Date enddate = voting.getEnddate();
-                boolean active = enddate == null || now.before(enddate);
-                if(active) allowedToSeeStats = voting.isShowstatsrealtime();
-                else allowedToSeeStats = true;
-            }
-            if(!allowedToSeeStats){
-                Map<String, String> error = Map.of(MESSAGE_FIELD, "User does not have permission to see the stats of this voting!");
+            try {
+                return ResponseEntity.ok(votingService.getVotingStats(userId, voting_id));
+            } catch (UnauthorizedException e) {
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Map<String, String> error = Map.of(MESSAGE_FIELD, e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
             }
-            return ResponseEntity.ok(votingService.getVotingStats(voting_id));
         });
     }
     

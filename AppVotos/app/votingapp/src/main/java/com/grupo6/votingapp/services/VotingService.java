@@ -15,10 +15,16 @@ import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
 import com.grupo6.votingapp.dtos.users.UserStats;
+import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votes.CreateVoteDTO;
+import com.grupo6.votingapp.dtos.votes.VoteWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votings.RegisterVotingDTO;
+import com.grupo6.votingapp.dtos.votings.UpdateVotingDTO;
 import com.grupo6.votingapp.dtos.votings.VotingNoRelationsVotesCountDTO;
+import com.grupo6.votingapp.dtos.votings.VotingWithNoCreatorDTO;
 import com.grupo6.votingapp.dtos.votings.VotingWithNoRelationsDTO;
+import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
+import com.grupo6.votingapp.exceptions.votingservice.UserAlreadyVotedException;
 import com.grupo6.votingapp.models.Option;
 import com.grupo6.votingapp.models.Question;
 import com.grupo6.votingapp.models.User;
@@ -48,19 +54,29 @@ public class VotingService {
     UserRepository userRepository;
     StatsRepository statsRepository;
     
-    //* Entidade Voting
-    public Voting getAccessibleVotingToUser(String votingId, String userId){ //* Parece funcionar
-        return votingRepository.findAccessibleVotingToUser(userId, Long.parseLong(votingId)).orElse(null);
+    //* Verificar se um user já votou numa votação
+    private boolean userAlreadyVoted(Long votingId, Long userId) {
+        return voteRepository.findVoteByVoterIdAndVotingId(userId, votingId).isPresent();
     }
 
-    public List<Voting> getAccessibleVotingsToUser(String userId){ //* Parece funcionar
-        return votingRepository.findAccessibleVotingsToUser(userId);
+    //* Obter uma votação específica a que o user tem acesso
+    public VotingWithNoCreatorDTO getAccessibleVotingToUser(String votingId, String userId) throws UnauthorizedException{ //* Parece funcionar
+        Voting voting = votingRepository.findAccessibleVotingToUser(userId, Long.parseLong(votingId)).orElse(null);
+        if(voting == null){
+            throw new UnauthorizedException("User with id '"+ userId + "' does not have access to a voting with id '" + votingId + "'!" );
+        }
+        VotingWithNoCreatorDTO result = new VotingWithNoCreatorDTO(voting);
+        boolean userAlreadyVoted = userAlreadyVoted(Long.parseLong(votingId), Long.parseLong(userId));
+        result.setUseralreadyvoted(userAlreadyVoted);
+        result.setCreator(new UsersWithNoRelationsDTO(voting.getCreator()));
+        return result;
     }
 
+    //* Obter todas as votações a que o user tem acesso
     public List<VotingWithNoRelationsDTO> getAccessibleVotingsToUser(String userId, boolean alreadyvotedonly){
         List<Voting> votings = votingRepository.findAccessibleVotingsToUser(userId);
         List<Long> votingIds = votings.stream().map(Voting::getId).toList(); //* ids das votações para descobrir a contagem de votos em cada uma delas
-        Map<Long, Long> votesCounts = getVotesCount(votingIds);//* N.º votos por cada votação -> formato {voting_id: votes_count}
+        Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);//* N.º votos por cada votação -> formato {voting_id: votes_count}
         Stream<VotingWithNoRelationsDTO> votingsWithNoRelations = votings.stream()
         .map(voting -> {
             Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
@@ -76,10 +92,50 @@ public class VotingService {
         }
     }
 
-    public Voting getVotingByCreatorId(String votingId, String userId){ //* Parece funcionar
-        return votingRepository.findVotingByCreatorId(Long.parseLong(votingId), userId).orElse(null);
+    //* Obter todas as votações criadas por um user
+    public List<VotingWithNoRelationsDTO> getVotingsFromCreatorId(String userId){
+        List<Voting> votings = votingRepository.findByUserId(userId);
+        List<Long> votingIds = votings.stream().map(Voting::getId).toList();
+        Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);
+        return votings.stream()
+        .map(voting -> {
+            Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
+            VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
+            boolean userAlreadyVoted = userAlreadyVoted(voting.getId(), Long.parseLong(userId));
+            votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
+            return votingWithNoRelationsDTO;
+        }).toList();
     }
 
+    //* Obter as estatísticas de uma votação
+    public VotingStatsDTO getVotingStats(String userId, String votingId) {
+        Voting voting = votingRepository.findAccessibleVotingToUser(userId, Long.parseLong(votingId)).orElse(null);
+        if(voting == null){//* O user tem acesso à votação?
+            throw new UnauthorizedException("User with id '"+ userId + "' does not have access to a voting with id '" + votingId + "'!" );
+        }
+        //* Verificar se o user tem permissão para ver as estatísticas da votação.
+        boolean allowedToSeeStats = false;
+        if(voting.getCreator().getId().equals(Long.parseLong(userId))){//* O user é o criador da votação?
+            allowedToSeeStats = true;
+        } else if (voting.isShowstats()) {
+            Date now = new Date();
+            Date enddate = voting.getEnddate();
+            boolean active = enddate == null || now.before(enddate);
+            if(active) allowedToSeeStats = voting.isShowstatsrealtime();
+            else allowedToSeeStats = true;
+        }
+        if(!allowedToSeeStats){
+            throw new UnauthorizedException("User with id '"+ userId + "' does not have permission to see the stats of the voting with id '" + votingId + "'!" );
+        }
+
+        Long countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId);
+        List<QuestionStats> questionsStats = statsRepository.getQuestionStats(votingId);
+        List<UserStats> users = statsRepository.getUsersOfVoting(votingId);
+        List<UserSelectedOptions> userSelectedOptions = statsRepository.getUsersSelectedOptions(votingId);
+        return new VotingStatsDTO(countVotesOfVoting, questionsStats, users, userSelectedOptions);
+    }
+
+    //* Criar uma nova votação
     public Voting createVoting(RegisterVotingDTO newVoting, List<MultipartFile> images, String userId) throws Exception {
         newVoting.setCreationdate(new Date());
         Voting voting = newVoting.toEntity();
@@ -109,52 +165,67 @@ public class VotingService {
         //     }
         // }
 
-        return this.saveVoting(voting, userId);
-
-    }
-
-    public Voting saveVoting(Voting voting){//* Parece funcionar
-        return votingRepository.save(voting); //* Guarda a votação na base de dados
-    }
-
-    public Voting saveVoting(Voting voting, String creator_id) {//* Parece funcionar
         User dummyUser = new User(); //* Este dummyUser serve só para a nova votação ter informação do id do seu criador.
-        dummyUser.setId(Long.parseLong(creator_id)); //* mete o id do criador no objecto dummyUser
+        dummyUser.setId(Long.parseLong(userId)); //* mete o id do criador no objecto dummyUser
         voting.setCreator(dummyUser); //* para ser associado ao seu user criador na base de dados
-        return saveVoting(voting);//* Guarda a votação na base de dados
+        return votingRepository.save(voting);//* Guarda a votação na base de dados
     }
 
-    public List<Voting> getVotingsFromCreatorId(String userId){ //* Parece funcionar
-        return votingRepository.findByUserId(userId);
-    }
-
-    public void deleteVoting(Voting voting) throws NullPointerException{
-        if(voting != null) {
-            //* Elimina os votantes privados associados à votação
-            voting.setPrivatevoters(List.of());
-            voting = votingRepository.save(voting);
-            //* Elimina as imagens associadas à votação
-            if (voting.getImage() != null){
-                imageService.deleteFile(voting.getImage());
-            }
-            for (Question question : voting.getQuestions()) {
-                for(Option option : question.getOptions()) {
-                    if (option.getImage() != null){
-                        imageService.deleteFile(option.getImage());
-                    }
-                }
-            }
-            //* Elimina os votos associados à votação
-            voting.getVotes().forEach(voteRepository::delete);
-            
-            votingRepository.delete(voting);
+    //* Actualizar uma votação
+    public VotingWithNoRelationsDTO updateVoting(UpdateVotingDTO updatedVoting, String votingId, String userId){
+        Voting voting = votingRepository.findVotingByCreatorId(Long.parseLong(votingId), userId).orElse(null);
+        if(voting == null){
+            throw new UnauthorizedException("User with id '"+ userId + "' can not edit voting with id '" + votingId + "'!" );
         } else {
-            throw new NullPointerException("Don't delete a null voting.");
+            updatedVoting.updateVotingFromDTO(voting);
+            Voting updatedVotingEntity = votingRepository.save(voting);
+            return new VotingWithNoRelationsDTO(updatedVotingEntity);
         }
     }
+
+    //* Apagar uma votação
+    public void deleteVoting(String votingId, String userId) throws UnauthorizedException{
+        Voting voting = votingRepository.findVotingByCreatorId(Long.parseLong(votingId), userId).orElse(null);
+        if(voting == null){
+            throw new UnauthorizedException("User with id '"+ userId + "' can not delete voting with id '" + votingId + "'!" );
+        }
+        
+        //* Elimina os votantes privados associados à votação
+        voting.setPrivatevoters(List.of());
+        voting = votingRepository.save(voting);
+        //* Elimina as imagens associadas à votação
+        if (voting.getImage() != null){
+            imageService.deleteFile(voting.getImage());
+        }
+        for (Question question : voting.getQuestions()) {
+            for(Option option : question.getOptions()) {
+                if (option.getImage() != null){
+                    imageService.deleteFile(option.getImage());
+                }
+            }
+        }
+        //* Elimina os votos associados à votação
+        voting.getVotes().forEach(voteRepository::delete);
+        
+        votingRepository.delete(voting);
+    }
     
-    //* Entidade Vote
-    public Vote saveVote(CreateVoteDTO voteDto, String userId) {
+    //* Submeter um voto
+    public VoteWithNoRelationsDTO createVote(CreateVoteDTO voteDto, String userId) throws UnauthorizedException, UserAlreadyVotedException{
+        VotingWithNoCreatorDTO voting = getAccessibleVotingToUser(voteDto.getVotingid(), userId);
+        if(voting == null){
+            throw new UnauthorizedException("Voting not found or not accessible to user!");
+        }
+        if(userAlreadyVoted(voting.getId(), Long.parseLong(userId))){
+            throw new UserAlreadyVotedException("User already voted in this voting!");
+        }
+
+        Vote registeredVote = saveVote(voteDto, userId);
+        return new VoteWithNoRelationsDTO(registeredVote);
+    }
+
+    //* Guardar um voto
+    private Vote saveVote(CreateVoteDTO voteDto, String userId) {
         Vote vote = new Vote();
         //* Associa o voto ao user que vota e à votação 
         User voter = userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new RuntimeException("User not found"));
@@ -185,27 +256,7 @@ public class VotingService {
         return voteRepository.save(vote);
     }
 
-    public boolean userAlreadyVoted(Long votingId, Long userId) {
-        return voteRepository.findVoteByVoterIdAndVotingId(userId, votingId).isPresent();
-    }
-
-    //* Entidade VotingStatsDTO
-    public VotingStatsDTO getVotingStats(Long votingId) {
-        Long countVotesOfVoting = statsRepository.getCountVotesOfVoting(votingId);
-        List<QuestionStats> questionsStats = statsRepository.getQuestionStats(votingId);
-        List<UserStats> users = statsRepository.getUsersOfVoting(votingId);
-        List<UserSelectedOptions> userSelectedOptions = statsRepository.getUsersSelectedOptions(votingId);
-        return new VotingStatsDTO(countVotesOfVoting, questionsStats, users, userSelectedOptions);
-    }
-
-    public VotingStatsDTO getVotingStats(String votingId) {
-        return getVotingStats(Long.parseLong(votingId));
-    }
-
-    public Map<Long,Long> getVotesCount(List<Long> votingIds) {
-        return statsRepository.getCountVotesOfVotings(votingIds);
-    }
-
+    //* Obtém o id de uma votação que contenha uma imagem específica
     public Long votingIdWithImage(String userId, String imageName) {
         return votingRepository.votingWithImage(userId, imageName).orElse(null);
     }
