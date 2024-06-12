@@ -27,7 +27,7 @@
                         <v-date-input
                         v-model="birthdate"
                         label="Data de nascimento"
-                        :max="new Date().toISOString().substr(0, 10)"
+                        :max="new Date().toISOString().slice(0, 10)"
                         :rules="[rules.required]"
                         required
                         readonly
