@@ -22,7 +22,7 @@
                     <v-avatar v-if="useUserInfoStore().avatar" size="55px" class="mr-5">
                         <v-img :src="getImageUrl(useUserInfoStore().avatar)"/>
                     </v-avatar>
-                    <v-avatar v-else-if="useUserInfoStore().isAutenticated" size="55px" class="mr-5">
+                    <v-avatar v-else-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" size="55px" class="mr-5">
                         <v-img :src="generateImages(useUserInfoStore().name)"/>
                     </v-avatar>
                 </div>
