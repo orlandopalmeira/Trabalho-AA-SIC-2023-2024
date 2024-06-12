@@ -10,6 +10,7 @@ public class UserNameEmailDTO {
     private Long id;
     private String name;
     private String email;
+    private String avatar;
 
     public UserNameEmailDTO() {
     }
@@ -18,6 +19,7 @@ public class UserNameEmailDTO {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
+        this.avatar = user.getAvatar();
     }
 
     public User toEntity() {
@@ -25,6 +27,7 @@ public class UserNameEmailDTO {
         user.setId(this.id);
         user.setName(this.name);
         user.setEmail(this.email);
+        user.setAvatar(this.avatar);
         return user;
     }
     

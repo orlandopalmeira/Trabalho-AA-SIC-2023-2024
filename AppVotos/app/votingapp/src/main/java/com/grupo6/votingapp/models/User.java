@@ -36,6 +36,7 @@ public class User implements Comparable<User>{
     private String email;
     private String password;
     private LocalDate birthdate;
+    private String avatar;
 
     //* Relações
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
@@ -58,6 +59,7 @@ public class User implements Comparable<User>{
         claims.put("id", this.id);
         claims.put("name", this.name);
         claims.put("email", this.email);
+        claims.put("avatar", this.avatar != null ? this.avatar : "");
         return claims;
     }
 

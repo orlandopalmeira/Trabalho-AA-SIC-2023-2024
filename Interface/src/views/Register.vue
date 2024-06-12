@@ -59,6 +59,22 @@
                         counter
                         required
                         ></v-text-field>
+
+                        <div class="mt-5" style="display: flex;">
+                            <v-file-input
+                            id="image"
+                            prepend-icon="mdi-image"
+                            name="image"
+                            label="Imagem (opcional)"
+                            v-model="this.avatar"
+                            accept="image/*"
+                            @change="onAvatarChange"
+                            />
+                            
+                            <v-avatar v-if="this.avatarURL" size="55px" class="ml-4">
+                                <v-img :src="avatarURL" />
+                            </v-avatar>
+                        </div>
                         
                             <div class="mt-5 d-flex justify-end">
                                 <v-btn color="error" class="mr-4" @click="reset"> Limpar </v-btn>
@@ -88,6 +104,8 @@ export default {
         birthdate: null,
         password: '',
         password_confirm: '',
+        avatar: null,
+        avatarURL: null,
         showPassword: false,
         showPassword_confirm: false,
         menu: false,
@@ -109,16 +127,24 @@ export default {
     methods: {
         submit() {
             if (this.$refs.form.validate() && this.valid) {
+                let formData = new FormData();
                 let user = {
                     name: this.name,
                     email: this.email,
                     birthdate: this.birthdate,
-                    password: this.password
+                    password: this.password,
                 };
-                axios.post(API_PATHS.register, user)
-                    .then((response) => {
-                        useUserInfoStore().setUserId(response.data.id);
-				        this.$router.push({name: 'home'});
+                formData.append('user', JSON.stringify(user));
+                formData.append('avatar', this.avatar);
+
+                axios.post(API_PATHS.register, formData, { 
+                    headers: { 
+                        'Content-Type': 'multipart/form-data' 
+                    }
+                }).then((response) => {
+                    useUserInfoStore().setUserId(response.data.id);
+                    useUserInfoStore().setAvatar(response.data.avatar);
+				    this.$router.push({name: 'home'});
                     })
                     .catch((error) => {
                         let response = error.response;
@@ -134,6 +160,17 @@ export default {
         reset() {
             this.$refs.form.reset();
         },
+        onAvatarChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.avatarURL = e.target.result;
+                    this.avatar = file;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
     },
 };
 </script>

@@ -103,7 +103,7 @@ public class ImageService {
         Blob blob = storage.get(BlobId.of(BUCKET_NAME, fullObjectName));
         int index = 1;
         while (blob != null) {
-            fullObjectName = System.currentTimeMillis() + "_" + fileName + "_" + index++ + extension;
+            fullObjectName = fileName + "_" + index++ + '_' + System.currentTimeMillis() + extension;
             System.out.println("Object name already exists. Renaming it to " + fullObjectName + ".");
             blob = storage.get(BlobId.of(BUCKET_NAME, fullObjectName));
         }

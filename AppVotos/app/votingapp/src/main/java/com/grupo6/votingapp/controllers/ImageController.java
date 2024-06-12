@@ -61,6 +61,30 @@ public class ImageController {
         });
     }
 
+    @GetMapping(value = "/avatar/{avatarName}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<Object> getAvatar(@PathVariable String avatarName, @CookieValue(value = "token", defaultValue = "") String token) {
+        return authMiddlewares.checkTokenSimple(token, userId -> {
+            try {
+                byte[] imageBytes = storageService.downloadImage("avatar", avatarName);
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.IMAGE_PNG);
+                headers.setContentLength(imageBytes.length);
+
+                return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+            } catch (ImageServerException e) {
+                System.out.println(e.getMessage() + " Image name: " + avatarName);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            } catch (ImageNotFoundException e) {
+                System.out.println(e.getMessage() + " Image name: " + avatarName);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            }
+        });
+    }
+
     // Posting an image to the bucket
     // @PostMapping(value = "/{imageName}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     // public void postImage(@PathVariable String imageName, @RequestPart MultipartFile file) {

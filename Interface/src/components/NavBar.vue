@@ -18,6 +18,12 @@
                     :class="buttonClass(route)" 
                     @click="goTo(route)">{{ title }}
                 </li>
+                <v-avatar v-if="useUserInfoStore().avatar" size="55px" class="mr-5">
+                    <v-img :src="getImageUrl(useUserInfoStore().avatar)"/>
+                </v-avatar>
+                <v-avatar v-else-if="useUserInfoStore().isAutenticated" size="55px" class="mr-5">
+                    <v-img :src="generateImages('User')"/>
+                </v-avatar>
                 <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
             </ul>
         </div>
@@ -110,7 +116,39 @@ export default {
             this.isDarkMode = !this.isDarkMode;
             localStorage.setItem('dark-mode', this.isDarkMode);
             // a Watch trata de adicionar ou remover a classe dark-mode
-        }
+        },
+        getImageUrl: API_PATHS.getImageUrl,
+        generateImages(text) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 100;
+            canvas.height = 100;
+            const context = canvas.getContext('2d');
+
+            // Draw the background color
+            // const fillColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            const fillColor = "#0D4EC1";
+            context.fillStyle = fillColor;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Set the font size and style
+            context.font = '40px Arial';
+            context.fillStyle = '#ffffff';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+
+            // Check if the full title fits
+            let displayText = text.charAt(0).toUpperCase();
+            const maxWidth = canvas.width - 20; // Adjust max width to fit within the canvas
+
+            // Calculate the starting Y position for the text to be vertically centered
+            const startY = canvas.height / 2;
+
+            // Draw the text
+            context.fillText(displayText, canvas.width / 2, startY);
+
+            const dataURL = canvas.toDataURL('image/png');
+            return dataURL;
+            }
     },
     watch: {
         isDarkMode(newVal) {

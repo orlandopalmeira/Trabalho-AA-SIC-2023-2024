@@ -13,15 +13,17 @@ public class RegisterUserDTO {
     private String email;
     private LocalDate birthdate;
     private String password;
+    private String avatar;
 
     public RegisterUserDTO() {
     }
 
-    public RegisterUserDTO(String name, String email, LocalDate birthdate, String password) {
+    public RegisterUserDTO(String name, String email, LocalDate birthdate, String password, String avatar) {
         this.name = name;
         this.email = email;
         this.birthdate = birthdate;
         this.password = password;
+        this.avatar = avatar;
     }
 
     public User toEntity() {
@@ -30,6 +32,7 @@ public class RegisterUserDTO {
         user.setEmail(email);
         user.setBirthdate(birthdate);
         user.setPassword(password);
+        user.setAvatar(avatar);
         return user;
     }
     

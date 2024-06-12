@@ -35,6 +35,11 @@ public class JwtService {
         return Long.toString(claims.get("id", Long.class));
     }
 
+    public String extractUserAvatar(String token) {
+        final Claims claims = extractAllClaims(token);
+        return claims.get("avatar", String.class);
+    }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -59,9 +64,11 @@ public class JwtService {
         final String username = extractUsername(token);
         final String userId = extractUserId(token);
         final String email = extractEmail(token);
+        final String avatar = extractUserAvatar(token);
         return (username.equals(user.getEmail())) && 
                (userId.equals(Long.toString(user.getId()))) && 
                (email.equals(user.getEmail())) && 
+               (avatar.equals(user.getAvatar())) &&
                !isTokenExpired(token);
     }
 

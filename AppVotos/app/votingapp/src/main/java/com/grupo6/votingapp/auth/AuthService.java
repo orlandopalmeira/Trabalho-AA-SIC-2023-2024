@@ -1,12 +1,15 @@
 package com.grupo6.votingapp.auth;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.exceptions.authentication.UnauthorizedException;
 import com.grupo6.votingapp.models.User;
+import com.grupo6.votingapp.services.ImageService;
 import com.grupo6.votingapp.services.UserService;
 
 import jakarta.servlet.http.Cookie;
@@ -15,13 +18,16 @@ import jakarta.servlet.http.Cookie;
 public class AuthService {
     private JwtService jwtService;
     private UserService userService;
+    private ImageService imageService;
+
 
     @Value("${app.domain}")
     private String appDomain;
 
-    public AuthService(JwtService jwtService, UserService userService) {
+    public AuthService(JwtService jwtService, UserService userService, ImageService imageService) {
         this.jwtService = jwtService;
         this.userService = userService;
+        this.imageService = imageService;
     }
 
     /**
@@ -58,28 +64,41 @@ public class AuthService {
      * @return Retorna a instância de User registado
      * @throws UnauthorizedException
      */
-    public User register(User user) throws UnauthorizedException{
+    public User register(User user, MultipartFile avatar) throws UnauthorizedException{
         // Verifica se o email já existe
         String email = user.getEmail();
         if (userService.emailExists(email)) {
             throw new UnauthorizedException("User with email '" + user.getEmail() + "' already exists!");
         }
+
+        if (avatar != null) {
+            try {
+                String folderName = "avatar";
+                String avatarName = avatar.getOriginalFilename();
+                String uploadedImageName = imageService.uploadImage(folderName, avatarName, avatar);
+                user.setAvatar(uploadedImageName);
+            } catch (IOException e) {
+                throw new UnauthorizedException("Error uploading avatar: " + e.getMessage());
+            }
+        }
         return userService.saveUser(user);
 
     }
 
-    public User register(String name, String email, LocalDate birthDate, String password) throws UnauthorizedException {
+    public User register(String name, String email, LocalDate birthDate, String password, String avatar, MultipartFile a) throws UnauthorizedException {
         if(name == null) throw new UnauthorizedException("Name is null");
         if(email == null) throw new UnauthorizedException("Email is null");
         if(birthDate == null) throw new UnauthorizedException("BirthDate is null");
         if(password == null) throw new UnauthorizedException("Password is null");
+        if(avatar == null) throw new UnauthorizedException("Avatar is null");
 
         User user = new User();
         user.setName(name);
         user.setEmail(email);
         user.setBirthdate(birthDate);
         user.setPassword(password);
-        return register(user);
+        user.setAvatar(avatar);
+        return register(user, a);
     }
 
     public boolean checkUserId(String token, String userId) {
@@ -130,6 +149,10 @@ public class AuthService {
 
     public String extractUserId(String token) {
         return jwtService.extractUserId(token);
+    }
+
+    public String extractUserAvatar(String token) {
+        return jwtService.extractUserAvatar(token);
     }
 
     public Cookie generateCookie(String email, String password){

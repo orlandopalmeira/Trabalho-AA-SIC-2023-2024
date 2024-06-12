@@ -87,6 +87,7 @@ export default {
 				//* Se a response for diferente de 200, dá throw de um erro que tem de ser tratado no catch
 				// console.log("Token: " + response.data.token);
 				useUserInfoStore().setUserId(response.data.id);
+				useUserInfoStore().setAvatar(response.data.avatar);
 				this.$router.push({name: 'home'});
 			} catch (error) {
 				let response = error.response;
