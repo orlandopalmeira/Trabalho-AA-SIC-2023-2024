@@ -49,10 +49,12 @@ public class AuthController {
         response.addCookie(authService.generateCookie(email, password));
         String user_id = authService.extractUserId(token);
         String avatar = authService.extractUserAvatar(token);
+        String name = authService.extractName(token);
 
         return Map.of(TOKEN_FIELD, token,
                     "id", user_id,
                     "avatar", avatar,
+                    "name", name,
                     MESSAGE_FIELD, "Login successful (" + email + ")");
     }
 

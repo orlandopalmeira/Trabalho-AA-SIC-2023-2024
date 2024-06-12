@@ -88,6 +88,7 @@ export default {
 				// console.log("Token: " + response.data.token);
 				useUserInfoStore().setUserId(response.data.id);
 				useUserInfoStore().setAvatar(response.data.avatar);
+				useUserInfoStore().setName(response.data.name);
 				this.$router.push({name: 'home'});
 			} catch (error) {
 				let response = error.response;

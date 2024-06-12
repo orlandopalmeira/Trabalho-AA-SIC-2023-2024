@@ -18,12 +18,14 @@
                     :class="buttonClass(route)" 
                     @click="goTo(route)">{{ title }}
                 </li>
-                <v-avatar v-if="useUserInfoStore().avatar" size="55px" class="mr-5">
-                    <v-img :src="getImageUrl(useUserInfoStore().avatar)"/>
-                </v-avatar>
-                <v-avatar v-else-if="useUserInfoStore().isAutenticated" size="55px" class="mr-5">
-                    <v-img :src="generateImages('User')"/>
-                </v-avatar>
+                <div :title="useUserInfoStore().name">
+                    <v-avatar v-if="useUserInfoStore().avatar" size="55px" class="mr-5">
+                        <v-img :src="getImageUrl(useUserInfoStore().avatar)"/>
+                    </v-avatar>
+                    <v-avatar v-else-if="useUserInfoStore().isAutenticated" size="55px" class="mr-5">
+                        <v-img :src="generateImages(useUserInfoStore().name)"/>
+                    </v-avatar>
+                </div>
                 <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
             </ul>
         </div>

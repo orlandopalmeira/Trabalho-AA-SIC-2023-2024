@@ -277,7 +277,6 @@ export default {
                 let users_matched = res.data;
                 users_matched = users_matched.filter(user => user.id !== own_id);
                 users_matched.forEach(user => {
-                    console.log(user);
                     if (!user.avatar) {
                         user.avatar = this.generateImages(user.name);
                     }

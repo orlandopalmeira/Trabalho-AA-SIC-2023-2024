@@ -60,7 +60,7 @@
                         required
                         ></v-text-field>
 
-                        <div class="mt-5" style="display: flex;">
+                        <div style="display: flex;">
                             <v-file-input
                             id="image"
                             prepend-icon="mdi-image"
@@ -144,6 +144,7 @@ export default {
                 }).then((response) => {
                     useUserInfoStore().setUserId(response.data.id);
                     useUserInfoStore().setAvatar(response.data.avatar);
+                    useUserInfoStore().setName(response.data.name);
 				    this.$router.push({name: 'home'});
                     })
                     .catch((error) => {

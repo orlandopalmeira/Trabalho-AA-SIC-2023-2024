@@ -155,6 +155,10 @@ public class AuthService {
         return jwtService.extractUserAvatar(token);
     }
 
+    public String extractName(String token) {
+        return jwtService.extractName(token);
+    }
+
     public Cookie generateCookie(String email, String password){
         String token = login(email, password);
         Cookie cookie = new Cookie("token", token);
