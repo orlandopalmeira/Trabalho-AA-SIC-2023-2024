@@ -77,6 +77,11 @@ export default {
                 displayText = text.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
             }
 
+            if (context.measureText(displayText).width > maxWidth) {
+                // If text is still too wide, use only the first letter
+                displayText = text.charAt(0).toUpperCase();
+            }
+
             // Calculate the starting Y position for the text to be vertically centered
             const startY = canvas.height / 2;
 
