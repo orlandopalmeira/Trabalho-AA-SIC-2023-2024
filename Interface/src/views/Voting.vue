@@ -183,10 +183,10 @@ export default {
             }
         },
         isVotingActive() {
+            if (this.voting.enddate === null) return true;
+
             let now = new Date()
             let enddate = new Date(this.voting.enddate)
-            console.log("endate", enddate)
-            console.log("now", now)
             return enddate === null || enddate > now 
         },
         allowedToViewStats(){

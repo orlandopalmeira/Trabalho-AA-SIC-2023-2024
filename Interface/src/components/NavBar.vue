@@ -21,8 +21,8 @@
 
                 <v-menu v-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" :title="useUserInfoStore().name">
                     <template v-slot:activator="{ props }">
-                        <button class="ml-4 mr-3" v-bind="props">
-                            <Avatar :avatar="useUserInfoStore().avatar" :name="useUserInfoStore().name"/>
+                        <button class="ml-3 mr-3" v-bind="props">
+                            <Avatar :avatar="useUserInfoStore().avatar" :name="useUserInfoStore().name" size="49px"/>
                         </button>
                     </template>
                     <div class="profile-box dark">
