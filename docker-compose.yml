@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   database: # nome do serviço
-    image: mysql
+    image: orlandopalmeira/aamysql:v1
     container_name: mysqldockercompose
     environment:
       MYSQL_ROOT_PASSWORD: mysql
