@@ -25,10 +25,10 @@
                             <Avatar :avatar="useUserInfoStore().avatar" :name="useUserInfoStore().name"/>
                         </button>
                     </template>
-                    <div class="profile-box">
+                    <div class="profile-box dark">
                         <div class="profile-info">
-                        <h2>{{ useUserInfoStore().name }}</h2>
-                        <p>{{ useUserInfoStore().email }}</p>
+                        <h2 class="dark">{{ useUserInfoStore().name }}</h2>
+                        <p class="dark">{{ useUserInfoStore().email }}</p>
                         <button class="logout-button" @click="logout">Logout</button>
                         </div>
                     </div>
@@ -197,7 +197,7 @@ export default {
 
 .dark-mode .dark {
     background-color: #15202b !important;
-    color: rgb(214, 176, 176);
+    color: rgb(255, 255, 255);
 }
 
 .profile-box {
