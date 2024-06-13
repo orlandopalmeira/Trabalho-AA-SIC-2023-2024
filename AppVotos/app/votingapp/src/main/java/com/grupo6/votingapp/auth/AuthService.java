@@ -1,7 +1,6 @@
 package com.grupo6.votingapp.auth;
 
 import java.io.IOException;
-import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

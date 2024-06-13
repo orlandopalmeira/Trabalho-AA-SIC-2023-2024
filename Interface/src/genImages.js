@@ -1,6 +1,16 @@
 import axios from './axios';
 import { API_PATHS } from './apiPaths';
 
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
 export const GEN_IMAGES = {
     generateVotingImage(text){
         const canvas = document.createElement('canvas');
@@ -75,11 +85,15 @@ export const GEN_IMAGES = {
         return dataURL;
     },
     async createAvatarUrl(filePath) {
-        try{
+        try {
             const fileUrl = API_PATHS.getImageUrl(filePath);
             const response = await axios.get(fileUrl, { responseType: 'arraybuffer' });
-            const blob = new Blob([response.data], { type: response.headers['content-type'] });
-            const avatarUrl = URL.createObjectURL(blob);
+    
+            // Convert the ArrayBuffer to a Base64 string
+            const base64String = arrayBufferToBase64(response.data);
+            const mimeType = response.headers['content-type'];
+            const avatarUrl = `data:${mimeType};base64,${base64String}`;
+            
             return avatarUrl;
         } catch (error) {
             console.error(error);
