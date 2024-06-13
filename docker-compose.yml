@@ -18,7 +18,7 @@ services:
       timeout: 10s
       retries: 5
 
-  appserver1:
+  appserver:
     build: ./AppVotos
     deploy:
       replicas: 2
@@ -36,7 +36,7 @@ services:
     networks:
       - votingnet
 
-  nginx: # este é o servidor utilizado pelo vue que faz o load balancing entre os dois servidores de aplicação (appserver1 e appserver2)
+  nginx: # este é o servidor utilizado pelo vue que faz o load balancing entre os dois servidores de aplicação (appserver)
     image: nginx
     container_name: nginxdockercompose
     ports:
@@ -45,7 +45,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - appserver1
+      - appserver
     networks:
       - votingnet
 

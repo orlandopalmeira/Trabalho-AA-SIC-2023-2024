@@ -2,6 +2,7 @@ import requests
 import concurrent.futures
 import sys
 import types
+import json
 
 import randomdata as rd
 
@@ -19,7 +20,11 @@ def arg_createrandomusers(arguments: list):
         users = rd.get_sample_users(number_of_users)
 
         def create_user(user):
-            response = requests.post(f"{SERVER}/auth/register", json=user)
+            user_json = json.dumps(user)
+            form_data = {
+                "user": user_json
+            }
+            response = requests.post(f"{SERVER}/auth/register", data=form_data)
             if response.status_code == 200:
                 print(f"User '{user['name']}' created successfully")
             else:
