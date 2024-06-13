@@ -18,10 +18,23 @@
                     :class="buttonClass(route)" 
                     @click="goTo(route)">{{ title }}
                 </li>
-                <div v-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" :title="useUserInfoStore().name">
-                    <Avatar :avatar="useUserInfoStore().avatar" :name="useUserInfoStore().name"/>
-                </div>
-                <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
+
+                <v-menu v-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" :title="useUserInfoStore().name">
+                    <template v-slot:activator="{ props }">
+                        <button v-bind="props">
+                            <Avatar :avatar="useUserInfoStore().avatar" :name="useUserInfoStore().name"/>
+                        </button>
+                    </template>
+                    <v-list class="dark" style="padding: 5px;">
+                        <v-list-item-title style="font-weight: bold;">
+                            {{ useUserInfoStore().name }}
+                        </v-list-item-title>
+                        <v-list-item-title >
+                            {{ useUserInfoStore().email }}
+                        </v-list-item-title >
+                        <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
+                    </v-list>
+                </v-menu>
             </ul>
         </div>
         <!--Para ecrã de telemóvel-->
@@ -196,6 +209,11 @@ export default {
 .btn-logout-style:hover {
     background-color: #ff4d4d;
     transition: 0.5s ease;
+}
+
+.dark-mode .dark {
+    background-color: #15202b !important;
+    color: white;
 }
 
 /* Responsive styles */
