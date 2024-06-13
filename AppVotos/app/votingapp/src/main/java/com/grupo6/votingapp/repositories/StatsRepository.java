@@ -78,7 +78,8 @@ public class StatsRepository {
     }
 
     public List<UserStats> getUsersOfVoting(Long votingId) {
-        String query = "select u.* from users u join votes v on u.id = v.voter_id where v.voting_id = ?1";
+        String columns = "u.id, u.avatar, u.birthdate, u.email, u.name";
+        String query = "select " + columns + " from users u join votes v on u.id = v.voter_id where v.voting_id = ?1";
         var result = entityManager.createNativeQuery(query)
                                   .setParameter(1, votingId)
                                   .getResultList();
