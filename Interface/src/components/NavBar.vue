@@ -21,19 +21,17 @@
 
                 <v-menu v-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" :title="useUserInfoStore().name">
                     <template v-slot:activator="{ props }">
-                        <button v-bind="props">
+                        <button class="ml-4 mr-3" v-bind="props">
                             <Avatar :avatar="useUserInfoStore().avatar" :name="useUserInfoStore().name"/>
                         </button>
                     </template>
-                    <v-list class="dark" style="padding: 5px;">
-                        <v-list-item-title style="font-weight: bold;">
-                            {{ useUserInfoStore().name }}
-                        </v-list-item-title>
-                        <v-list-item-title >
-                            {{ useUserInfoStore().email }}
-                        </v-list-item-title >
-                        <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
-                    </v-list>
+                    <div class="profile-box">
+                        <div class="profile-info">
+                        <h2>{{ useUserInfoStore().name }}</h2>
+                        <p>{{ useUserInfoStore().email }}</p>
+                        <button class="logout-button" @click="logout">Logout</button>
+                        </div>
+                    </div>
                 </v-menu>
             </ul>
         </div>
@@ -197,25 +195,47 @@ export default {
     transition: 0.5s ease;
 }
 
-.btn-logout-style {
-    padding: 15px;
-    margin: 5px 10px;
-    cursor: pointer;
-    border-radius: 10px;
-    background-color: #e12222;
-    color: white;
-}
-
-.btn-logout-style:hover {
-    background-color: #ff4d4d;
-    transition: 0.5s ease;
-}
-
 .dark-mode .dark {
     background-color: #15202b !important;
-    color: white;
+    color: rgb(214, 176, 176);
 }
 
+.profile-box {
+  width: 220px;
+  padding: 20px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile-info h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  color: #333;
+}
+
+.profile-info p {
+  margin: 0 0 20px;
+  font-size: 16px;
+  color: #666;
+}
+
+.logout-button {
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #ff4d4d;
+  border: 2px solid #ff4d4d;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #ff4d4d;
+  color: #fff;
+}
 /* Responsive styles */
 @media (max-width: 768px) {
     .nav {
