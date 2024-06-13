@@ -1,3 +1,6 @@
+import axios from './axios';
+import { API_PATHS } from './apiPaths';
+
 export const GEN_IMAGES = {
     generateVotingImage(text){
         const canvas = document.createElement('canvas');
@@ -70,5 +73,17 @@ export const GEN_IMAGES = {
     
         const dataURL = canvas.toDataURL('image/png');
         return dataURL;
+    },
+    async createAvatarUrl(filePath) {
+        try{
+            const fileUrl = API_PATHS.getImageUrl(filePath);
+            const response = await axios.get(fileUrl, { responseType: 'arraybuffer' });
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const avatarUrl = URL.createObjectURL(blob);
+            return avatarUrl;
+        } catch (error) {
+            console.error(error);
+            return '';
+        }
     }
 }

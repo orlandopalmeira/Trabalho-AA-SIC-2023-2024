@@ -8,7 +8,6 @@ export const useUserInfoStore = defineStore('userinfo', {
         name: localStorage.getItem('name') || null,
         email: localStorage.getItem('email') || null,
         birthdate: localStorage.getItem('birthdate') || null,
-        genAvatar: localStorage.getItem('genAvatar') || null,
     }),
     // getters, equivalentes aos computed properties
     getters: {
@@ -26,9 +25,6 @@ export const useUserInfoStore = defineStore('userinfo', {
         },
         getBirthdate() {
             return this.birthdate;
-        },
-        getGenAvatar() {
-            return this.genAvatar;
         },
         isAutenticated() {
             return this.user_id !== null;
@@ -56,10 +52,6 @@ export const useUserInfoStore = defineStore('userinfo', {
             this.birthdate = birthdate;
             localStorage.setItem('birthdate', birthdate);
         },
-        setGenAvatar(genAvatar){
-            this.genAvatar = genAvatar;
-            localStorage.setItem('genAvatar', genAvatar);
-        },
         logout() {
             this.user_id = null;
             this.avatar = null;
@@ -68,7 +60,6 @@ export const useUserInfoStore = defineStore('userinfo', {
             localStorage.removeItem('name');
             localStorage.removeItem('email');
             localStorage.removeItem('birthdate');
-            localStorage.removeItem('genAvatar');
         }
     }
 });

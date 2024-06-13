@@ -19,11 +19,7 @@
                     @click="goTo(route)">{{ title }}
                 </li>
                 <div v-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" :title="useUserInfoStore().name">
-                    <Avatar 
-                    :avatar="useUserInfoStore().avatar"
-                    :name="useUserInfoStore().name"
-                    :genAvatar="useUserInfoStore().genAvatar"
-                    />
+                    <Avatar :avatar="useUserInfoStore().avatar" :name="useUserInfoStore().name"/>
                 </div>
                 <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
             </ul>

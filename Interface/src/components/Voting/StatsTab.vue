@@ -85,11 +85,7 @@
                         <v-row v-else-if="votersCardList" v-for="(voter, index) in paginatedVoters" :key="voter.id">
                             
                             <v-col class="center mr-2" cols="1">
-                                <!-- <v-avatar size="40px">    
-                                    <v-img v-if="voter.avatar" :src="this.getImageUrl(voter.avatar)"/>
-                                    <v-img v-else :src="this.generateAvatar(voter.name)" alt="ELSE"/>
-                                </v-avatar> -->
-                                <Avatar :avatar="voter.avatar" :name="voter.name" :size="'40px'"/>
+                                <Avatar :avatar="getImageUrl(voter.avatar)" :name="voter.name" :size="'40px'"/>
                             </v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>

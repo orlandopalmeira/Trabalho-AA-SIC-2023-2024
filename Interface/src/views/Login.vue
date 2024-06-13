@@ -93,10 +93,10 @@ export default {
                 useUserInfoStore().setBirthdate(response.data.birthdate);
 
 				if(response.data.avatar != ''){
-                    useUserInfoStore().setAvatar(response.data.avatar);
+                    useUserInfoStore().setAvatar(await this.createAvatarUrl(response.data.avatar));
                 }
                 else{
-                    useUserInfoStore().setGenAvatar(this.generateAvatar(response.data.name));
+                    useUserInfoStore().setAvatar(this.generateAvatar(response.data.name));
                 }
 				this.$router.push({name: 'home'});
 			} catch (error) {
@@ -116,7 +116,8 @@ export default {
 				message: message
 			}
 		},
-		generateAvatar: GEN_IMAGES.generateAvatar
+		generateAvatar: GEN_IMAGES.generateAvatar,
+		createAvatarUrl: GEN_IMAGES.createAvatarUrl
 	},
 	computed: {
 		buttonClass() {

@@ -143,17 +143,17 @@ export default {
                     headers: { 
                         'Content-Type': 'multipart/form-data' 
                     }
-                }).then((response) => {
+                }).then(async (response) => {
                     useUserInfoStore().setUserId(response.data.id);
                     useUserInfoStore().setName(response.data.name);
                     useUserInfoStore().setEmail(response.data.email);
                     useUserInfoStore().setBirthdate(response.data.birthdate);
 
                     if(response.data.avatar != ''){
-                        useUserInfoStore().setAvatar(response.data.avatar);
+                        useUserInfoStore().setAvatar(await this.createAvatarUrl(response.data.avatar));
                     }
                     else{
-                        useUserInfoStore().setGenAvatar(this.generateAvatar(response.data.name));
+                        useUserInfoStore().setAvatar(this.generateAvatar(response.data.name));
                     }
 				    this.$router.push({name: 'home'});
                     })
@@ -182,7 +182,8 @@ export default {
                 reader.readAsDataURL(file);
             }
         },
-        generateAvatar: GEN_IMAGES.generateAvatar
+        generateAvatar: GEN_IMAGES.generateAvatar,
+        createAvatarUrl: GEN_IMAGES.createAvatarUrl
     },
 };
 </script>

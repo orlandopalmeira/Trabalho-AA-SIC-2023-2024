@@ -11,6 +11,9 @@ export const API_PATHS = {
     votes: "/votes",
     imageUrl: (image_name) => `/images/${image_name}`,
     getImageUrl(imageName){
+        if (imageName == "" || imageName == null){
+            return null;
+        }
         let serverUrl = import.meta.env.VITE_BACKEND_SERVER_URL;
         let imageUrlPath = API_PATHS.imageUrl(imageName);
         return serverUrl + imageUrlPath;
