@@ -183,8 +183,10 @@ export default {
             }
         },
         isVotingActive() {
-            let now = new Date().toISOString().replace('T', ' ').slice(0,19)
-            let enddate = this.voting.enddate
+            let now = new Date()
+            let enddate = new Date(this.voting.enddate)
+            console.log("endate", enddate)
+            console.log("now", now)
             return enddate === null || enddate > now 
         },
         allowedToViewStats(){
