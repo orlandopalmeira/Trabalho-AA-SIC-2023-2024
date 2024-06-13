@@ -89,7 +89,7 @@
                                     <v-img v-if="voter.avatar" :src="this.getImageUrl(voter.avatar)"/>
                                     <v-img v-else :src="this.generateAvatar(voter.name)" alt="ELSE"/>
                                 </v-avatar> -->
-                                <Avatar :avatar="voter.avatar" :name="voter.name"/>
+                                <Avatar :avatar="voter.avatar" :name="voter.name" :size="'40px'"/>
                             </v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>

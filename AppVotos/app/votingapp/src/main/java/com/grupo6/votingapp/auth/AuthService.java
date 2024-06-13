@@ -159,8 +159,8 @@ public class AuthService {
         return jwtService.extractName(token);
     }
 
-    public String extractBirthDate(String token) {
-        return jwtService.extractEmail(token);
+    public String extractBirthdate(String token) {
+        return jwtService.extractBirthdate(token);
     }
 
     public Cookie generateCookie(String email, String password){
