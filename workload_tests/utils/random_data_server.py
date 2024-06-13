@@ -32,9 +32,9 @@ def arg_createrandomusers(arguments: list):
                 future.result()
         
         with open(f'random_users_{len(users)}.csv', 'w') as f:
-            f.write("name,email,password,birthdate\n")
+            f.write("name,email,password\n")
             for user in users:
-                f.write(f"{user['name']},{user['email']},{user['password']},{user['birthdate']}\n")
+                f.write(f"{user['name']},{user['email']},{user['password']}\n")
     except Exception as e:
         print(f"Error: {e}")
 

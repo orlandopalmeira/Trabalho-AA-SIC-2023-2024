@@ -1,5 +1,4 @@
 package com.grupo6.votingapp.dtos.users;
-import java.time.LocalDate;
 
 import com.grupo6.votingapp.models.User;
 
@@ -11,17 +10,15 @@ import lombok.Setter;
 public class RegisterUserDTO {
     private String name;
     private String email;
-    private LocalDate birthdate;
     private String password;
     private String avatar;
 
     public RegisterUserDTO() {
     }
 
-    public RegisterUserDTO(String name, String email, LocalDate birthdate, String password, String avatar) {
+    public RegisterUserDTO(String name, String email, String password, String avatar) {
         this.name = name;
         this.email = email;
-        this.birthdate = birthdate;
         this.password = password;
         this.avatar = avatar;
     }
@@ -30,7 +27,6 @@ public class RegisterUserDTO {
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setBirthdate(birthdate);
         user.setPassword(password);
         user.setAvatar(avatar);
         return user;

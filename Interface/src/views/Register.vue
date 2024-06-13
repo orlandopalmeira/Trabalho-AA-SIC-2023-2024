@@ -24,15 +24,6 @@
                         required
                         ></v-text-field>
                         
-                        <v-date-input
-                        v-model="birthdate"
-                        label="Data de nascimento"
-                        :max="new Date().toISOString().slice(0, 10)"
-                        :rules="[rules.required]"
-                        required
-                        readonly
-                        ></v-date-input>
-                    
                         <v-text-field
                         v-model="password"
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -93,7 +84,7 @@ import axios from '../axios';
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import { API_PATHS } from '@/apiPaths';
 import { GEN_IMAGES } from '@/genImages';
-import { generate, generateCodeFrame } from '@vue/compiler-core';
+
 export default {
     name: 'Register',
     components: {
@@ -103,7 +94,6 @@ export default {
         valid: false,
         name: '',
         email: '',
-        birthdate: null,
         password: '',
         password_confirm: '',
         avatar: null,
@@ -133,7 +123,6 @@ export default {
                 let user = {
                     name: this.name,
                     email: this.email,
-                    birthdate: this.birthdate,
                     password: this.password,
                 };
                 formData.append('user', JSON.stringify(user));
@@ -147,7 +136,6 @@ export default {
                     useUserInfoStore().setUserId(response.data.id);
                     useUserInfoStore().setName(response.data.name);
                     useUserInfoStore().setEmail(response.data.email);
-                    useUserInfoStore().setBirthdate(response.data.birthdate);
 
                     if(response.data.avatar != ''){
                         useUserInfoStore().setAvatar(await this.createAvatarUrl(response.data.avatar));

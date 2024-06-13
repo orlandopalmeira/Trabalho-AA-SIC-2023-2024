@@ -7,7 +7,6 @@ export const useUserInfoStore = defineStore('userinfo', {
         avatar: localStorage.getItem('avatar') || null,
         name: localStorage.getItem('name') || null,
         email: localStorage.getItem('email') || null,
-        birthdate: localStorage.getItem('birthdate') || null,
     }),
     // getters, equivalentes aos computed properties
     getters: {
@@ -22,9 +21,6 @@ export const useUserInfoStore = defineStore('userinfo', {
         },
         getEmail() {
             return this.email;
-        },
-        getBirthdate() {
-            return this.birthdate;
         },
         isAutenticated() {
             return this.user_id !== null;
@@ -48,10 +44,6 @@ export const useUserInfoStore = defineStore('userinfo', {
             this.email = email;
             localStorage.setItem('email', email);
         },
-        setBirthdate(birthdate){
-            this.birthdate = birthdate;
-            localStorage.setItem('birthdate', birthdate);
-        },
         logout() {
             this.user_id = null;
             this.avatar = null;
@@ -59,7 +51,6 @@ export const useUserInfoStore = defineStore('userinfo', {
             localStorage.removeItem('avatar');
             localStorage.removeItem('name');
             localStorage.removeItem('email');
-            localStorage.removeItem('birthdate');
         }
     }
 });

@@ -1,7 +1,5 @@
 package com.grupo6.votingapp.dtos.users;
 
-import java.time.LocalDate;
-
 import com.grupo6.votingapp.models.User;
 
 import lombok.Getter;
@@ -12,7 +10,6 @@ public class UserStats {
     private Long id;
     private String name;
     private String email;
-    private LocalDate birthdate;
     private String avatar;
 
     public UserStats() {
@@ -22,7 +19,6 @@ public class UserStats {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.birthdate = user.getBirthdate();
         this.avatar = user.getAvatar();
     }
 
@@ -31,7 +27,6 @@ public class UserStats {
         user.setId(this.id);
         user.setName(this.name);
         user.setEmail(this.email);
-        user.setBirthdate(this.birthdate);
         user.setAvatar(this.avatar);
         return user;
     }

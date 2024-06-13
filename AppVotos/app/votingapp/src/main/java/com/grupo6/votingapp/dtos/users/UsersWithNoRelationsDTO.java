@@ -12,7 +12,6 @@ public class UsersWithNoRelationsDTO {
     private Long id;
     private String name;
     private String email;
-    private LocalDate birthdate;
     private String avatar;
 
     public UsersWithNoRelationsDTO() {
@@ -22,7 +21,6 @@ public class UsersWithNoRelationsDTO {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.birthdate = user.getBirthdate();
         this.avatar = user.getAvatar();
     }
 
@@ -31,7 +29,6 @@ public class UsersWithNoRelationsDTO {
         user.setId(this.id);
         user.setName(this.name);
         user.setEmail(this.email);
-        user.setBirthdate(this.birthdate);
         user.setAvatar(this.avatar);
         return user;
     }

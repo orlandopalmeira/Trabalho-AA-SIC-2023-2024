@@ -35,7 +35,6 @@ public class User implements Comparable<User>{
     private String name;
     private String email;
     private String password;
-    private LocalDate birthdate;
     private String avatar;
 
     //* Relações
@@ -59,7 +58,6 @@ public class User implements Comparable<User>{
         claims.put("id", this.id);
         claims.put("name", this.name);
         claims.put("email", this.email);
-        claims.put("birthdate", this.birthdate.toString());
         claims.put("avatar", this.avatar != null ? this.avatar : "");
         return claims;
     }

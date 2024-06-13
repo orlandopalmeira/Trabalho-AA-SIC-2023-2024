@@ -85,17 +85,15 @@ public class AuthService {
 
     }
 
-    public User register(String name, String email, LocalDate birthDate, String password, String avatar, MultipartFile a) throws UnauthorizedException {
+    public User register(String name, String email, String password, String avatar, MultipartFile a) throws UnauthorizedException {
         if(name == null) throw new UnauthorizedException("Name is null");
         if(email == null) throw new UnauthorizedException("Email is null");
-        if(birthDate == null) throw new UnauthorizedException("BirthDate is null");
         if(password == null) throw new UnauthorizedException("Password is null");
         if(avatar == null) throw new UnauthorizedException("Avatar is null");
 
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setBirthdate(birthDate);
         user.setPassword(password);
         user.setAvatar(avatar);
         return register(user, a);
@@ -157,10 +155,6 @@ public class AuthService {
 
     public String extractName(String token) {
         return jwtService.extractName(token);
-    }
-
-    public String extractBirthdate(String token) {
-        return jwtService.extractBirthdate(token);
     }
 
     public Cookie generateCookie(String email, String password){

@@ -78,7 +78,7 @@ public class StatsRepository {
     }
 
     public List<UserStats> getUsersOfVoting(Long votingId) {
-        String columns = "u.id, u.avatar, u.birthdate, u.email, u.name";
+        String columns = "u.id, u.avatar, u.email, u.name";
         String query = "select " + columns + " from users u join votes v on u.id = v.voter_id where v.voting_id = ?1";
         var result = entityManager.createNativeQuery(query)
                                   .setParameter(1, votingId)
@@ -91,10 +91,8 @@ public class StatsRepository {
                 UserStats user = new UserStats();
                 user.setId((Long) r[0]);
                 user.setAvatar((String) r[1]);
-                Date birthdate = (Date) r[2];
-                user.setBirthdate(birthdate.toLocalDate());
-                user.setEmail((String) r[3]);
-                user.setName((String) r[4]);
+                user.setEmail((String) r[2]);
+                user.setName((String) r[3]);
                 users.add(user);
             }
         }

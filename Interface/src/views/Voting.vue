@@ -173,9 +173,6 @@ export default {
             if (vote) {
                 axios.post(API_PATHS.votes, vote)
                 .then(() => {
-                    // this.modal.title = 'Voto submetido'
-                    // this.modal.message = 'O seu voto foi submetido com sucesso.'
-                    // this.modal.opened = true
                     this.$router.push({name: 'history', query: {toast_message: 'Voto submetido com sucesso.'}})
                 }).catch(error => {
                     console.error(error)

@@ -90,7 +90,6 @@ export default {
 				useUserInfoStore().setUserId(response.data.id);
 				useUserInfoStore().setName(response.data.name);
 				useUserInfoStore().setEmail(response.data.email);
-                useUserInfoStore().setBirthdate(response.data.birthdate);
 
 				if(response.data.avatar != ''){
                     useUserInfoStore().setAvatar(await this.createAvatarUrl(response.data.avatar));

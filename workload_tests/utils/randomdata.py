@@ -36,7 +36,6 @@ def get_sample_user():
         "name": final_name,
         "email": email,
         "password": f"user_{number}",
-        "birthdate": gen_random_past_date()
     }
 
 def get_sample_users(quantity: int):
