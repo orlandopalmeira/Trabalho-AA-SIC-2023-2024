@@ -50,11 +50,14 @@ public class AuthController {
         String user_id = authService.extractUserId(token);
         String avatar = authService.extractUserAvatar(token);
         String name = authService.extractName(token);
+        String birthdate = authService.extractBirthDate(token);
 
         return Map.of(TOKEN_FIELD, token,
                     "id", user_id,
                     "avatar", avatar,
                     "name", name,
+                    "email", email,
+                    "brithdate", birthdate,
                     MESSAGE_FIELD, "Login successful (" + email + ")");
     }
 

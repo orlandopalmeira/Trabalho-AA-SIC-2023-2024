@@ -77,7 +77,7 @@
                     <!----- Votantes Card ----->
                     <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
-                        {{ JSON.stringify(voting, null, 2) }}
+                        <!-- {{ JSON.stringify(voting, null, 2) }} -->
                         <!-- Caso não seja um privateVoting e não há votantes -->
                         <p v-if="votersCardList.length===0">Sem votantes</p>
 
@@ -85,11 +85,11 @@
                         <v-row v-else-if="votersCardList" v-for="(voter, index) in paginatedVoters" :key="voter.id">
                             
                             <v-col class="center mr-2" cols="1">
-                                <v-avatar size="40px">
-                                    
-                                    <v-img v-if="voter.avatar" :src="getImageUrl(voter.avatar)"/>
-                                    <!-- <v-img v-else :src="getImageUrl(voter.name)" alt="ELSE"/> -->
-                                </v-avatar>
+                                <!-- <v-avatar size="40px">    
+                                    <v-img v-if="voter.avatar" :src="this.getImageUrl(voter.avatar)"/>
+                                    <v-img v-else :src="this.generateAvatar(voter.name)" alt="ELSE"/>
+                                </v-avatar> -->
+                                <Avatar :avatar="voter.avatar" :name="voter.name"/>
                             </v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
@@ -144,6 +144,7 @@
 <script>
 import LoadingAlert from '../LoadingAlert.vue';
 import SimpleAlert from '../SimpleAlert.vue';
+import Avatar from '../Avatar.vue';
 import axios from '@/axios';
 import { API_PATHS } from '@/apiPaths';
 
@@ -156,7 +157,8 @@ export default {
     components: {
         Bar,
         LoadingAlert,
-        SimpleAlert
+        SimpleAlert,
+        Avatar
     },
     props: {
         // votingId: { type: Number, required: true }

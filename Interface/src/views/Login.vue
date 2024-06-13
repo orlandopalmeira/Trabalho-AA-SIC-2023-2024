@@ -51,6 +51,7 @@ import axios from '../axios';
 import DefaultLayout  from '../layouts/DefaultLayout.vue'
 import ModalOk from '../components/Modais/ModalOk.vue';
 import { API_PATHS } from '@/apiPaths';
+import { GEN_IMAGES } from '@/genImages';
 export default {
 	components: {
 		DefaultLayout,
@@ -87,8 +88,16 @@ export default {
 				//* Se a response for diferente de 200, dá throw de um erro que tem de ser tratado no catch
 				// console.log("Token: " + response.data.token);
 				useUserInfoStore().setUserId(response.data.id);
-				useUserInfoStore().setAvatar(response.data.avatar);
 				useUserInfoStore().setName(response.data.name);
+				useUserInfoStore().setEmail(response.data.email);
+                useUserInfoStore().setBirthdate(response.data.birthdate);
+
+				if(response.data.avatar != ''){
+                    useUserInfoStore().setAvatar(response.data.avatar);
+                }
+                else{
+                    useUserInfoStore().setGenAvatar(this.generateAvatar(response.data.name));
+                }
 				this.$router.push({name: 'home'});
 			} catch (error) {
 				let response = error.response;
@@ -106,7 +115,8 @@ export default {
 				title: title,
 				message: message
 			}
-		}
+		},
+		generateAvatar: GEN_IMAGES.generateAvatar
 	},
 	computed: {
 		buttonClass() {

@@ -2,7 +2,7 @@
     <div @click="onClick" class="card levitate pa-5" style="background-color: #eee;">
         <img 
             alt="Voting background" 
-            :src="voting.image == null ? this.generateImages(this.voting.title) : getImageUrl(voting.image)"/>
+            :src="voting.image == null ? this.generateVotingImage(voting.title) : getImageUrl(voting.image)"/>
         <div style="display: flex; align-items: center; justify-content:center">
             <p class="title" :title="voting.title" >{{ voting.title }}</p>
         </div>
@@ -15,6 +15,7 @@
 </template>
 <script>
 import { API_PATHS } from '@/apiPaths';
+import { GEN_IMAGES } from '@/genImages';
 export default {
     props: {
         voting: { type: Object, required: true }
@@ -49,48 +50,7 @@ export default {
             return `${days_str} ${hours_str} ${minutes_str}`;
         },
         getImageUrl: API_PATHS.getImageUrl,
-        generateImages(text) {
-
-            const canvas = document.createElement('canvas');
-            canvas.width = 400;
-            canvas.height = 200;
-            const context = canvas.getContext('2d');
-
-            // Draw the background color
-            // const fillColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            const fillColor = "#0D4EC1";
-            context.fillStyle = fillColor;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Set the font size and style
-            context.font = '40px Arial';
-            context.fillStyle = '#ffffff';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-
-            // Check if the full title fits
-            let displayText = text;
-            const maxWidth = canvas.width - 20; // Adjust max width to fit within the canvas
-
-            if (context.measureText(displayText).width > maxWidth) {
-                // If text is too wide, use only the first letters of each word
-                displayText = text.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
-            }
-
-            if (context.measureText(displayText).width > maxWidth) {
-                // If text is still too wide, use only the first letter
-                displayText = text.charAt(0).toUpperCase();
-            }
-
-            // Calculate the starting Y position for the text to be vertically centered
-            const startY = canvas.height / 2;
-
-            // Draw the text
-            context.fillText(displayText, canvas.width / 2, startY);
-
-            const dataURL = canvas.toDataURL('image/png');
-            return dataURL;
-        }
+        generateVotingImage: GEN_IMAGES.generateVotingImage
     }
 }
 </script>

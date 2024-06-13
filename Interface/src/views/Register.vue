@@ -92,6 +92,8 @@ import { useUserInfoStore } from '@/stores/userInfoStore';
 import axios from '../axios';
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import { API_PATHS } from '@/apiPaths';
+import { GEN_IMAGES } from '@/genImages';
+import { generate, generateCodeFrame } from '@vue/compiler-core';
 export default {
     name: 'Register',
     components: {
@@ -143,8 +145,16 @@ export default {
                     }
                 }).then((response) => {
                     useUserInfoStore().setUserId(response.data.id);
-                    useUserInfoStore().setAvatar(response.data.avatar);
                     useUserInfoStore().setName(response.data.name);
+                    useUserInfoStore().setEmail(response.data.email);
+                    useUserInfoStore().setBirthdate(response.data.birthdate);
+
+                    if(response.data.avatar != ''){
+                        useUserInfoStore().setAvatar(response.data.avatar);
+                    }
+                    else{
+                        useUserInfoStore().setGenAvatar(this.generateAvatar(response.data.name));
+                    }
 				    this.$router.push({name: 'home'});
                     })
                     .catch((error) => {
@@ -171,7 +181,8 @@ export default {
                 };
                 reader.readAsDataURL(file);
             }
-        }
+        },
+        generateAvatar: GEN_IMAGES.generateAvatar
     },
 };
 </script>

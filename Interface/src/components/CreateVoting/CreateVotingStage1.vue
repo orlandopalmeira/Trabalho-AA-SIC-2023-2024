@@ -163,6 +163,7 @@
 <script>
 import axios from '@/axios';
 import { API_PATHS } from '@/apiPaths';
+import { GEN_IMAGES } from '@/genImages';
 import { useVotingInfoStore } from '@/stores/votingInfoStore';
 import { useUserInfoStore } from '@/stores/userInfoStore';
 
@@ -278,7 +279,7 @@ export default {
                 users_matched = users_matched.filter(user => user.id !== own_id);
                 users_matched.forEach(user => {
                     if (!user.avatar) {
-                        user.avatar = this.generateImages(user.name);
+                        user.avatar = this.generateAvatar(user.name);
                     }
                     else {
                         user.avatar = API_PATHS.getImageUrl(user.avatar);
@@ -299,37 +300,7 @@ export default {
         clearMatchedUsers() {
             this.usersMatched = [];
         },
-        generateImages(text) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 100;
-            canvas.height = 100;
-            const context = canvas.getContext('2d');
-
-            // Draw the background color
-            // const fillColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            const fillColor = "#0D4EC1";
-            context.fillStyle = fillColor;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Set the font size and style
-            context.font = '40px Arial';
-            context.fillStyle = '#ffffff';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-
-            // Check if the full title fits
-            let displayText = text.charAt(0).toUpperCase();
-            const maxWidth = canvas.width - 20; // Adjust max width to fit within the canvas
-
-            // Calculate the starting Y position for the text to be vertically centered
-            const startY = canvas.height / 2;
-
-            // Draw the text
-            context.fillText(displayText, canvas.width / 2, startY);
-
-            const dataURL = canvas.toDataURL('image/png');
-            return dataURL;
-            }
+        generateAvatar: GEN_IMAGES.generateAvatar
     },
 };
 </script>
