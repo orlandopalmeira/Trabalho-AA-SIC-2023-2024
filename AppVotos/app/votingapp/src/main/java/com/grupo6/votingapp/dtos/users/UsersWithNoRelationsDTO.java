@@ -12,8 +12,8 @@ public class UsersWithNoRelationsDTO {
     private Long id;
     private String name;
     private String email;
-    private String password;
     private LocalDate birthdate;
+    private String avatar;
 
     public UsersWithNoRelationsDTO() {
     }
@@ -22,8 +22,8 @@ public class UsersWithNoRelationsDTO {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.password = user.getPassword();
         this.birthdate = user.getBirthdate();
+        this.avatar = user.getAvatar();
     }
 
     public User toEntity() {
@@ -31,8 +31,8 @@ public class UsersWithNoRelationsDTO {
         user.setId(this.id);
         user.setName(this.name);
         user.setEmail(this.email);
-        user.setPassword(this.password);
         user.setBirthdate(this.birthdate);
+        user.setAvatar(this.avatar);
         return user;
     }
     
