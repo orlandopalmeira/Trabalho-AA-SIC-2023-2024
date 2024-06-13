@@ -3,7 +3,7 @@
         <!--Para ecrã de PC-->
         <div style="width: 100%; justify-content: space-between;" class="nav flex pa-2 bg-primary" v-if="!phonePage">
             <div class="button" @click="redirectToHome" :style="{ cursor: 'pointer', marginLeft: '20px' }">
-                <h2 class="ml-5"> <img :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
+                <h2 class="ml-5"> <img alt="Logótipo" :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
             </div>
             <ul class="flex">
                 <li>
@@ -20,10 +20,8 @@
                 </li>
                 <div :title="useUserInfoStore().name">
                     <v-avatar v-if="useUserInfoStore().avatar" size="55px" class="mr-5">
-                        <v-img :src="getImageUrl(useUserInfoStore().avatar)"/>
-                    </v-avatar>
-                    <v-avatar v-else-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" size="55px" class="mr-5">
-                        <v-img :src="generateImages(useUserInfoStore().name)"/>
+                        <v-img v-if="useUserInfoStore().avatar" :src="getImageUrl(useUserInfoStore().avatar)"/>
+                        <v-img v-else-if="useUserInfoStore().isAutenticated && useUserInfoStore().name != null" :src="getImageUrl(useUserInfoStore().avatar)"/>
                     </v-avatar>
                 </div>
                 <li v-if="logout_button" class="btn-logout-style" @click="logout">Logout</li>
@@ -32,9 +30,8 @@
         <!--Para ecrã de telemóvel-->
         <div class="nav flex bg-primary" v-else>
             <div class="flex2">
-                <!-- <h2 class="ml-5" style="width: 100%;">VotaçãoApp</h2> -->
                 <div class="button" @click="redirectToHome" :style="{ cursor: 'pointer', marginLeft: '20px' }">
-                    <h2 class="ml-5"> <img :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
+                    <h2 class="ml-5"> <img alt="Logótipo" :src="'../../favicon.ico'" :style="{ width: '1.2em', height: '1.2em', position: 'relative', top: '5px'}" /> {{ title }}</h2>
                 </div>
                 <button style="width: auto;" class="btn-style" @click="togglePhoneMenu">
                     <v-icon>mdi-menu</v-icon>
@@ -53,14 +50,12 @@
 <script>
 import axios from '../axios';
 import { API_PATHS } from '@/apiPaths';
-// import Cookies from 'js-cookie'; // If using cookies
 import { useUserInfoStore } from '@/stores/userInfoStore';
 export default {
     name: 'NavBar',
     created() {
         // Storing darkmode preferences in LocalStorage
         this.isDarkMode = JSON.parse(localStorage.getItem('dark-mode') || 'false');
-        /* this.isDarkMode = document.documentElement.classList.contains('dark-mode'); */
         
         // Resize event to determine size of the page
         window.addEventListener('resize', this.handleResize);
@@ -83,9 +78,6 @@ export default {
             try {
                 // Alternativas para tentar remover o token, que servem como logout
                 const response = await axios.get(API_PATHS.logout);
-                // Cookies.remove('token');
-                // Cookies.remove('token', { path: '/' })
-                // document.cookie = "token" +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                 
                 this.$router.push({name: 'login'});
                 this.useUserInfoStore().logout();

@@ -77,13 +77,20 @@
                     <!----- Votantes Card ----->
                     <v-col class="vcol1 pl-5 pr-5 votantes dark-light" cols="4">
                         <p class="text-h6 mb-3" style="font-weight: bold;">Votantes</p>
-                        <!-- {{ stats.privateVoters }} -->
+                        {{ JSON.stringify(voting, null, 2) }}
                         <!-- Caso não seja um privateVoting e não há votantes -->
                         <p v-if="votersCardList.length===0">Sem votantes</p>
 
                         <!-- Caso seja um private voting, usa a privateVotersSorted vê os privateVoters que votaram, em primeiro -->
                         <v-row v-else-if="votersCardList" v-for="(voter, index) in paginatedVoters" :key="voter.id">
-                            <v-col class="center mr-2" cols="1"><v-icon size="x-large">mdi-account-circle</v-icon></v-col>
+                            
+                            <v-col class="center mr-2" cols="1">
+                                <v-avatar size="40px">
+                                    
+                                    <v-img v-if="voter.avatar" :src="getImageUrl(voter.avatar)"/>
+                                    <!-- <v-img v-else :src="getImageUrl(voter.name)" alt="ELSE"/> -->
+                                </v-avatar>
+                            </v-col>
                             <v-col class="pa-0 mr-2">
                                 <p>{{ voter.name }}</p>
                                 <p class="gray" style="font-size: 0.8em">{{ voter.email }}</p>
@@ -186,9 +193,11 @@ export default {
 
                 //* Voting card logic
                 if (this.voting.privatevoting){
+                    console.log("privateVOters")
                     this.votersCardList = this.privateVotersSorted(this.voting.privatevoters);
                 }
                 else{
+                    console.log("voters")
                     this.votersCardList = this.stats.voters;
                 }
             })
