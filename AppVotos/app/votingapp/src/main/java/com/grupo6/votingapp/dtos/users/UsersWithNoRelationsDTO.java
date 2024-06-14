@@ -1,6 +1,5 @@
 package com.grupo6.votingapp.dtos.users;
 
-import java.time.LocalDate;
 
 import com.grupo6.votingapp.models.User;
 

@@ -87,7 +87,7 @@
                             <v-col class="center mr-2" cols="1">
                                 <Avatar :avatar="getImageUrl(voter.avatar)" :name="voter.name" :size="'40px'"/>
                             </v-col>
-                            <v-col class="pa-0 mr-2">
+                            <v-col class="pa-0 mr-2 mt-2">
                                 <p>{{ voter.name }}</p>
                                 <p class="gray" style="font-size: 0.8em">{{ voter.email }}</p>
                             </v-col>
