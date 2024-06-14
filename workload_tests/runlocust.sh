@@ -39,3 +39,5 @@ echo "A iniciar o locust..."
 
 echo "Aceder a http://localhost:8089 para aceder ao locust"
 locust -f workload.py --host=http://localhost:8080
+
+# locust -f workload.py -u 50 -r 10 --host=http://localhost:8080 --headless

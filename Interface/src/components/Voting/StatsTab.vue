@@ -172,7 +172,7 @@ export default {
             votersCardList: null,
             votingPaging: {
                 page: 1,
-                itemsPerPage: 8
+                itemsPerPage: 6
             }
         }
     },

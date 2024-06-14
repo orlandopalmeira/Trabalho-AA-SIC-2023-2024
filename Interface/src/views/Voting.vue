@@ -31,9 +31,8 @@
                             </v-card-text>
                             <!--Se o utilizador ainda não votou => apresenta as perguntas-->
                             <v-card-text v-else-if="isVotingActive()">
-                                <v-alert closable type="info" class="mb-4">
-                                    <p v-if="voting.secretvotes"> O voto é secreto. </p>
-                                    <p v-else> O voto não é secreto. </p>
+                                <v-alert closable type="info" class="mb-4 pa-2">
+                                    <p> {{ voting.secretvotes ? 'O voto é secreto.' : 'O voto não é secreto.' }} </p>
                                 </v-alert>
                                 <QuestionCard :key="currentQuestionIndex"
                                     :questionIndex="currentQuestionIndex"

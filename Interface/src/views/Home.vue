@@ -70,7 +70,7 @@ export default {
             loadingVotings: true,
             votings: [],
             searchQuery: '',
-            orderBy: 'enddate',
+            orderBy: 'creationdate',
             modal: {
 				opened: false,
 				title: '',

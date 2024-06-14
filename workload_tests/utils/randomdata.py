@@ -1,27 +1,9 @@
-import random
+import random, os
 from datetime import datetime, timedelta
 
 def gen_number():
     return random.randint(1, 10_000_000_000)
 
-def gen_random_past_date():
-    # Define the start date
-    start_date = datetime(1970, 1, 1)
-    
-    # Get the current date
-    end_date = datetime.now()
-    
-    # Calculate the difference between the start and end dates in days
-    date_difference = (end_date - start_date).days
-    
-    # Generate a random number of days within the range
-    random_days = random.randint(0, date_difference)
-    
-    # Add the random number of days to the start date to get the random date
-    random_date = start_date + timedelta(days=random_days)
-    
-    # Return the random date
-    return str(random_date.date())
 
 def get_sample_user():
     """Returns a random user"""
@@ -41,3 +23,37 @@ def get_sample_user():
 def get_sample_users(quantity: int):
     """Returns a list of random users"""
     return [get_sample_user() for _ in range(quantity)]
+
+
+def get_random_image(folder_path):
+    """
+    Get a random image file from a specified folder.
+
+    Parameters:
+    folder_path (str): The path to the folder containing images.
+
+    Returns:
+    str: The path to the randomly selected image.
+    """
+    # List all files in the folder
+    files = os.listdir(folder_path)
+
+    # Filter the list to include only image files
+    image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff']
+    images = [file for file in files if os.path.splitext(file)[1].lower() in image_extensions]
+
+    if not images:
+        raise ValueError("No image files found in the specified folder.")
+
+    # Select a random image from the list
+    random_image = random.choice(images)
+
+    # Return the full path to the random image
+    return os.path.join(folder_path, random_image)
+
+
+if __name__ == "__main__":
+
+    for i in range(10):
+        image_path = get_random_image("../images/")
+        print(image_path)

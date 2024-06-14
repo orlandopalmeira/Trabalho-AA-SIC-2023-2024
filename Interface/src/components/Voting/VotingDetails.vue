@@ -14,7 +14,8 @@
         <v-card class="dark">
             <v-card-title class="mb-5">
                 <div class="flex space-between">
-                    <h4 style="font-weight: 600;">Detalhes da votação</h4>
+                    <h4 v-if="updatedVoting.accesstype === 'creator'" style="font-weight: 600;">Detalhes da votação - Editar</h4>
+                    <h4 v-else style="font-weight: 600;">Detalhes da votação</h4>
                     <div class="flex">
                         <v-btn @click="shareVoting" title="Partilhar esta votação" color="secondary" style="z-index: 11"><v-icon>mdi-share-variant</v-icon></v-btn>
                         <v-btn class="ml-2" color="error" @click="deleteVoting" title="Eliminar esta votação" v-if="updatedVoting.accesstype === 'creator'"><v-icon>mdi-delete</v-icon></v-btn>
