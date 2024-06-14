@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  database: # nome do serviço
+  database:
     image: orlandopalmeira/aamysql:v2
     container_name: mysqldockercompose
     environment:
@@ -48,6 +48,17 @@ services:
       - appserver
     networks:
       - votingnet
+
+  vueapp:
+    build: ./Interface
+    container_name: vueapp
+    environment:
+      VITE_BACKEND_SERVER_URL: http://nginx:8080
+    ports:
+      - "4173:4173"
+    networks:
+      - votingnet
+
 
 networks:
   votingnet:
