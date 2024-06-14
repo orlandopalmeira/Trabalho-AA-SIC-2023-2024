@@ -118,6 +118,7 @@ export default {
     },
     methods: {
         submit() {
+            console.log("URL FORMAT DEBUG:", API_PATHS.register)
             if (this.$refs.form.validate() && this.valid) {
                 let formData = new FormData();
                 let user = {

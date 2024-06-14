@@ -14,8 +14,8 @@ services:
       - votingnet
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 30s
-      timeout: 10s
+      interval: 20s
+      timeout: 5s
       retries: 5
 
   appserver:
@@ -36,9 +36,8 @@ services:
     networks:
       - votingnet
 
-  nginx: # este é o servidor utilizado pelo vue que faz o load balancing entre os dois servidores de aplicação (appserver)
+  nginx:
     image: nginx
-    container_name: nginxdockercompose
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -49,11 +48,12 @@ services:
     networks:
       - votingnet
 
-  vueapp:
+  vite:
     build: ./Interface
-    container_name: vueapp
     environment:
-      VITE_BACKEND_SERVER_URL: http://nginx:8080
+      VITE_BACKEND_SERVER_URL: http://nginx:8080 # Não funciona
+    # env_file:
+    #   - ./Interface/.env_docker
     ports:
       - "4173:4173"
     networks:
