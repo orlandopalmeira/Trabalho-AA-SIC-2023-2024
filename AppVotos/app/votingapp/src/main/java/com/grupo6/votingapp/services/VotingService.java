@@ -88,24 +88,24 @@ public class VotingService {
         List<Long> votingIds = votings.stream().map(Voting::getId).toList(); //* ids das votações para descobrir a contagem de votos em cada uma delas
         Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);//* N.º votos por cada votação -> formato {voting_id: votes_count}
         
-        Stream<VotingNoRelationsVotesCountDTO> votingsWithNoRelations = votings.stream()
+        List<VotingNoRelationsVotesCountDTO> votingsWithNoRelations = votings.stream()
         .map(voting -> {
             Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
             VotingNoRelationsVotesCountDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
             boolean userAlreadyVoted = userAlreadyVoted(voting.getId(), Long.parseLong(userId)); //! Tentar ver se dá para fazer isto numa só query.
             votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
             return votingWithNoRelationsDTO;
-        });
+        }).toList();
         
         if (alreadyvotedonly) {
-            votingsWithNoRelations.filter(voting -> voting.isUseralreadyvoted());
+            votingsWithNoRelations.removeIf(voting -> !voting.isUseralreadyvoted());
         }
 
         if(orderBy.equals("votes")) {//* O campo votes não existe na base de dados, pelo que a ordenação tem de ser calculada em código
-            votingsWithNoRelations.sorted((v1, v2) -> v1.getVotes().compareTo(v2.getVotes()) * (order.equals("desc") ? -1 : 1));
+            votingsWithNoRelations.sort((v1, v2) -> v1.getVotes().compareTo(v2.getVotes()) * (order.equals("desc") ? -1 : 1));
         }
-        
-        return votingsWithNoRelations.map(v -> (VotingWithNoRelationsDTO)v).toList();
+
+        return votingsWithNoRelations.stream().map(v -> (VotingWithNoRelationsDTO) v).toList();
     }
 
     //* Obter todas as votações criadas por um user
