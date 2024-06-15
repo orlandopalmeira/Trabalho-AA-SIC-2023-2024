@@ -50,7 +50,7 @@
                         <v-tooltip v-else location="top">
                             <template v-slot:activator="{ props }">
                                 <p class="pl-2" style="font-size: 18pt;" v-bind="props" text>
-                                    <span class="hoverable" style="text-decoration: underline;">{{ winnerOptions.length }} opções</span>
+                                    <span class="hoverable" style="text-decoration: underline;">{{ winnerOptions.length }} opções empatadas</span>
                                 </p>
                             </template>
                             <v-card class="dark-light" style="margin-left: -10px; margin-right: -10px;">
