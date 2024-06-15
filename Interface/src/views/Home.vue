@@ -22,7 +22,7 @@
                             clearable
                             hide-details />
                         <v-btn :title="'Ordem ' + (reverseSort? 'descendente' : 'ascendente')" 
-                            @click="reverseSort = !reverseSort" 
+                            @click="onclickReverseSort" 
                             class="bg-transparent" 
                             :icon="reverseSort ? 'mdi-arrow-down' : 'mdi-arrow-up'"
                             flat>
@@ -54,6 +54,7 @@ import SimpleAlert from '@/components/SimpleAlert.vue'
 
 import axios from '@/axios'
 import { API_PATHS } from '@/apiPaths'
+import { useUserInfoStore } from '@/stores/userInfoStore'
 
 export default {
     name: 'Home',
@@ -70,7 +71,7 @@ export default {
             loadingVotings: true,
             votings: [],
             searchQuery: '',
-            orderBy: 'creationdate',
+            orderBy: useUserInfoStore().homeOrderBy,
             modal: {
 				opened: false,
 				title: '',
@@ -84,7 +85,7 @@ export default {
                 { title: 'Data de fim', value: 'enddate' },
                 { title: 'Número de votos', value: 'votes' }
             ],
-            reverseSort: true,
+            reverseSort: useUserInfoStore().homeReverseSort,
         }
     },
     methods: {
@@ -119,9 +120,15 @@ export default {
                     return []
                 }
             }
+        },
+        onclickReverseSort(){
+            this.reverseSort = !this.reverseSort
+            useUserInfoStore().setHomeReverseSort(this.reverseSort)
         }
     }, 
     created() {
+        useUserInfoStore().setHomeOrderBy(this.orderBy)
+        useUserInfoStore().setHomeReverseSort(this.reverseSort)
         this.getVotings()
         .then(votings => {
             this.votings = votings
@@ -168,8 +175,10 @@ export default {
         }	
     },
     watch: {
-        orderBy(oldValue, newValue) {
-            console.log('orderBy: ', oldValue, newValue)
+        orderBy(newValue, oldValue) {
+            if (newValue != null) {
+                useUserInfoStore().setHomeOrderBy(newValue)
+            }
         }
     }
 }
