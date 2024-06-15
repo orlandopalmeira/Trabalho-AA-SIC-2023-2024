@@ -28,7 +28,7 @@ def get_sample_users(quantity: int):
     return [get_sample_user() for _ in range(quantity)]
 
 
-def get_random_image(folder_path):
+def get_random_image(folder_path = "images/"):
     """
     Get a random image file from a specified folder.
 
