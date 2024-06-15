@@ -1,11 +1,12 @@
 package com.grupo6.votingapp.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import org.hibernate.internal.util.collections.IdentitySet;
 import org.springframework.data.domain.PageRequest;
@@ -95,7 +96,7 @@ public class VotingService {
             boolean userAlreadyVoted = userAlreadyVoted(voting.getId(), Long.parseLong(userId)); //! Tentar ver se dá para fazer isto numa só query.
             votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
             return votingWithNoRelationsDTO;
-        }).toList();
+        }).collect(Collectors.toList());
         
         if (alreadyvotedonly) {
             votingsWithNoRelations.removeIf(voting -> !voting.isUseralreadyvoted());
@@ -105,7 +106,9 @@ public class VotingService {
             votingsWithNoRelations.sort((v1, v2) -> v1.getVotes().compareTo(v2.getVotes()) * (order.equals("desc") ? -1 : 1));
         }
 
-        return votingsWithNoRelations.stream().map(v -> (VotingWithNoRelationsDTO) v).toList();
+        List<VotingWithNoRelationsDTO> result = new ArrayList<>(votingsWithNoRelations.size());
+        result.addAll(votingsWithNoRelations);
+        return result;
     }
 
     //* Obter todas as votações criadas por um user
