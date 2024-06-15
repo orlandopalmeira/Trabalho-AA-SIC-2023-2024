@@ -3,6 +3,7 @@ package com.grupo6.votingapp.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,7 +14,7 @@ public interface VotingRepository extends JpaRepository<Voting, Long>{
     List<Voting> findByUserId(String userId); //* Parece funcionar
 
     @Query("SELECT v FROM Voting v WHERE v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)")
-    List<Voting> findAccessibleVotingsToUser(String userId); //* Parece funcionar
+    List<Voting> findAccessibleVotingsToUser(String userId, Pageable pageable); //* Parece funcionar
 
     @Query("SELECT v FROM Voting v WHERE v.id = :votingId AND (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u))")
     Optional<Voting> findAccessibleVotingToUser(String userId, Long votingId);

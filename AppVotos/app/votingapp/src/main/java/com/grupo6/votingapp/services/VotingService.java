@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.hibernate.internal.util.collections.IdentitySet;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,15 +47,15 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class VotingService {
-    ImageService imageService;
-    UserService userService;
+    private ImageService imageService;
+    private UserService userService;
 
-    VotingRepository votingRepository;
-    VoteRepository  voteRepository;
-    QuestionRepository questionRepository;
-    OptionRepository optionRepository;
-    UserRepository userRepository;
-    StatsRepository statsRepository;
+    private VotingRepository votingRepository;
+    private VoteRepository  voteRepository;
+    private QuestionRepository questionRepository;
+    private OptionRepository optionRepository;
+    private UserRepository userRepository;
+    private StatsRepository statsRepository;
     
     //* Verificar se um user já votou numa votação
     private boolean userAlreadyVoted(Long votingId, Long userId) {
@@ -73,8 +76,10 @@ public class VotingService {
     }
 
     //* Obter todas as votações a que o user tem acesso
-    public List<VotingWithNoRelationsDTO> getAccessibleVotingsToUser(String userId, boolean alreadyvotedonly){
-        List<Voting> votings = votingRepository.findAccessibleVotingsToUser(userId);
+    public List<VotingWithNoRelationsDTO> getAccessibleVotingsToUser(String userId, boolean alreadyvotedonly, String orderBy, String order, int pageNumber, int pageSize){
+        Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy);
+        Pageable pageable = PageRequest.of(pageNumber-1, pageSize, sort);
+        List<Voting> votings = votingRepository.findAccessibleVotingsToUser(userId, pageable);
         List<Long> votingIds = votings.stream().map(Voting::getId).toList(); //* ids das votações para descobrir a contagem de votos em cada uma delas
         Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);//* N.º votos por cada votação -> formato {voting_id: votes_count}
         Stream<VotingWithNoRelationsDTO> votingsWithNoRelations = votings.stream()
