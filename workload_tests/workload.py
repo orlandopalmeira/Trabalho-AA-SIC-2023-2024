@@ -30,7 +30,7 @@ class LoginAndVoting(SequentialTaskSet):
     @task
     def login(self):
         credential = next(credentials_iter)
-        # print("\n!!!!Login and Voting!!!!\n")
+        print("\n!!!!LoginAndVoting!!!!\n")
 
         login_response = self.client.post("/auth/login", json=credential)
 
@@ -68,7 +68,7 @@ class RegisterAndVoting(SequentialTaskSet):
     
     @task
     def register(self):
-        # print("\n!!!!Register!!!!\n")
+        print("\n!!!!RegisterAndVoting!!!!\n")
         self.token = None
         self.sample_user = get_sample_user()
         avatar_path = get_random_image()
@@ -103,13 +103,13 @@ class RegisterAndVoting(SequentialTaskSet):
         
         selected_voting = random.choice(votings)
         self.selected_voting_id = selected_voting['id']
-        print(selected_voting)
+        # print(selected_voting)
 
     
     @task
     def getStats(self): # Ver estatisticas de uma votação
         v_id = self.selected_voting_id
-        response = self.client.get(f"/votings/{v_id}/stats", cookies={"token": self.token})
+        response = self.client.get(f"/votings/{v_id}/stats", cookies={"token": self.token}, name="/stats")
 
         if response.status_code == 200:
             print(f"Success in obtaining statistics from voting-{v_id}.")
@@ -121,11 +121,11 @@ class RegisterAndVoting(SequentialTaskSet):
 class RegisterAndCreateVoting(SequentialTaskSet):
 
     wait_time = constant(2)
-    voting_counter = 0 # WIP
+    voting_counter = 0
     
     @task
     def register(self):
-        # print("\n!!!!Register!!!!\n")
+        print("\n!!!!RegisterAndCreateVoting!!!!\n")
         self.token = None
         self.sample_user = get_sample_user()
         avatar_path = get_random_image()
@@ -195,12 +195,9 @@ class RegisterAndCreateVoting(SequentialTaskSet):
 
 
 class ExecuteTest(HttpUser):
-    tasks = [
+    tasks = {
         # LoginAndVoting,
-        RegisterAndVoting,
-        # RegisterAndCreateVoting,
-    ]
-    wait_time = constant(5)
-
-
-
+        # RegisterAndVoting,
+        RegisterAndCreateVoting,
+    }
+    wait_time = constant(1)
