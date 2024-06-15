@@ -52,15 +52,6 @@ public class User implements Comparable<User>{
         this.password = password;
     }
 
-    public Map<String,Object> claimsForJwt(){
-        Map<String,Object> claims = new HashMap<>();
-        claims.put("id", this.id);
-        claims.put("name", this.name);
-        claims.put("email", this.email);
-        claims.put("avatar", this.avatar != null ? this.avatar : "");
-        return claims;
-    }
-
     @Override
     public String toString() {
         return "User [email=" + email + ", id=" + id + ", name=" + name + ", password=" + password + "]";
