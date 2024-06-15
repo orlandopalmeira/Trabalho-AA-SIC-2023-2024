@@ -55,13 +55,13 @@
                                         <v-btn v-if="currentQuestionIndex < voting.questions.length-1"
                                             color="primary"
                                             @click="goNext"
-                                        >
+                                            :disabled="!voting.questions[currentQuestionIndex].selectedOption">
                                             Questão seguinte
                                         </v-btn>
                                         <v-btn v-else
                                             color="primary"
                                             @click="submitVote"
-                                        >
+                                            :disabled="!voting.questions[currentQuestionIndex].selectedOption">
                                             Submeter respostas
                                         </v-btn>
                                     </v-col>
