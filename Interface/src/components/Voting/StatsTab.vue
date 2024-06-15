@@ -60,7 +60,7 @@
                                 <v-list class="dark-lighter">
                                     <v-list-item v-for="(option, index) in winnerOptions" :key="index">
                                         <v-list-item-title class="font-weight-bold">{{ option.description }}</v-list-item-title>
-                                        <v-divider v-if="index !== winnerOptions.length - 1"></v-divider>
+                                        <v-divider v-if="index !== winnerOptions.length - 1" class="mt-4"></v-divider>
                                     </v-list-item>
                                 </v-list>
                             </v-card>
