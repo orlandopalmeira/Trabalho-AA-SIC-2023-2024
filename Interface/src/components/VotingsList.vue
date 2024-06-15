@@ -31,25 +31,27 @@
                 
                 <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
                 <v-data-table v-else class="dark"
-                :headers="headers"
-                :items="processedVotings"
-                :search="search"
-                v-model:sort-by="sortBy"
-                @click:row="rowClicked"
-                hover
+                    :headers="headers"
+                    :items="processedVotings"
+                    :search="search"
+                    v-model:sort-by="sortBy"
+                    @click:row="rowClicked"
+                    hover
+                    items-per-page-text="Votações por página"
+                    no-data-text="Sem votações"
                 >
-                <template v-slot:[`item.title`]="{ item }">
-                    <p :title="'Descrição: '+item.description" style="max-width: 200px; font-weight: 500; ">
-                        {{ item.title }}
-                    </p>
-                </template>
-                    <template v-slot:[`item.status`]="{ item }">
-                        <p v-if="item.active" style="color: green">Activa</p>
-                        <p v-else style="color: red">Terminada</p>
+                    <template v-slot:[`item.title`]="{ item }">
+                        <p :title="'Descrição: '+item.description" style="max-width: 200px; font-weight: 500; ">
+                            {{ item.title }}
+                        </p>
                     </template>
-                    <template v-slot:[`item.privatevoting`]="{ item }">
-                        <v-icon>{{ item.privatevoting }}</v-icon>
-                    </template>
+                        <template v-slot:[`item.status`]="{ item }">
+                            <p v-if="item.active" style="color: green">Activa</p>
+                            <p v-else style="color: red">Terminada</p>
+                        </template>
+                        <template v-slot:[`item.privatevoting`]="{ item }">
+                            <v-icon>{{ item.privatevoting }}</v-icon>
+                        </template>
                 </v-data-table>
             </v-card>
         </v-container>
