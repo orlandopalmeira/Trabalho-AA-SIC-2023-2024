@@ -63,51 +63,45 @@ class LoginAndVoting(SequentialTaskSet):
 
 
 class RegisterAndLoginAndVoting(SequentialTaskSet):
-    wait_time = between(3, 6)
+    wait_time = between(1, 4)
     
     @task
     def register(self):
+        self.token = None
         self.sample_user = get_sample_user()
         avatar_path = get_random_image("images/")
 
-        files = {
+        data_form = {
             'user': (None, json.dumps(self.sample_user), 'application/json'),
             'avatar': ('avatar.png', open(avatar_path, 'rb'), 'image/png')
         }
 
-        response = self.client.post("/auth/register", files=files)
-
+        response = self.client.post("/auth/register", files=data_form)
+        # print("Resposta ao Register: ", response.json())
         if response.status_code == 200:
             data = response.json()
-            print(f"User registered with ID: {data.id}, Name: {data.name}, Email: {data.email}")
+            # print("(Success) Json Data: ", data)
+            self.token = data['token']
+            print(f"User successfully registered with ID: {data['id']}, Name: {data['name']}, Email: {data['email']}")
         else:
-            raise Exception(f"Failed to register user: {response.status_code}")
+            print("(Failure) Json Data: ", (json.dumps(response, indent=4)))
+            raise Exception(f"Failed to register user {self.sample_user['name']}: {response.status_code}")
 
-
-    @task
-    def login(self):
-        credential = {
-            "email": self.sample_user.email,
-            "password": self.sample_user.password
-        }
-
-        login_response = self.client.post("/auth/login", json=credential)
-
-        if login_response.status_code == 200 and 'set-cookie' in login_response.headers:
-            self.token = login_response.json()['token']
-        else:
-            login_response.failure(f"Erro ao fazer login com {credential.email}.\nResponse: {login_response}")
 
     @task
     def getHome(self):
-        self.client.get("/votings")
+        response = self.client.get("/votings", cookies={"token": self.token})
+        if response.status_code == 200:
+            print("Success in obtaining /votings page")
+        else:
+            print("Failure in getting /votings page")
 
 
 
 class ExecuteTest(HttpUser):
     tasks = [
-        LoginAndVoting,
-        # RegisterAndLoginAndVoting,
+        # LoginAndVoting,
+        RegisterAndLoginAndVoting,
     ]
     wait_time = between(1, 5)
 

@@ -1,8 +1,10 @@
-import random, os
+import random, os, time
 from datetime import datetime, timedelta
 
 def gen_number():
-    return random.randint(1, 10_000_000_000)
+    rand_num = random.randint(1, 10_000)
+    ts = int(time.time())
+    return f"{rand_num}-{ts}"
 
 
 def get_sample_user():
@@ -13,7 +15,8 @@ def get_sample_user():
     name = random.choice(names)
     surname = random.choice(surnames)
     final_name = name + ' ' + surname
-    email = f'{name.lower()}.{surname.lower()}_{number}@example.com'
+    email = f'{name.lower()}.{surname.lower()}_{number}@e.c'
+
     return {
         "name": final_name,
         "email": email,
