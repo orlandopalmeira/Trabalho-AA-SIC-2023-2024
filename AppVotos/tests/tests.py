@@ -125,7 +125,7 @@ def arg_createusers(arguments: list):
 def arg_getuseraccessiblevotings(arguments: list):
     """Test for server get user accessible votings"""
     try:
-        url = f'{SERVER}/votings?orderBy=votes&order=asc&term=teste&votings_per_page=2&page=1'
+        url = f'{SERVER}/votings?alreadyvotedonly=true'
         token = login()
         if token:
             response = requests.get(url, cookies={'token': token})
@@ -220,6 +220,21 @@ def arg_getvotingstats(arguments: list):
 
     try:
         url = f'{SERVER}/votings/' + arguments[2] + '/stats'
+        token = login()
+        if token:
+            response = requests.get(url, cookies={'token': token})
+            print(json.dumps(response.json(), indent=2))
+        else:
+            print("Invalid credentials")
+    except requests.exceptions.ConnectionError:
+        print("Provavelmente o servidor aplicacional não está a correr")
+    except Exception as e: #* Qualquer outro erro
+        print(e)
+
+def arg_getuserhistory(arguments: list):
+    """Test for server get user history"""
+    try:
+        url = f'{SERVER}/votings/history?page=2&votings_per_page=2'
         token = login()
         if token:
             response = requests.get(url, cookies={'token': token})
