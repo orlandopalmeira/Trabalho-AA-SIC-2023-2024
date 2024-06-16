@@ -28,7 +28,7 @@
                         </div>
                     </v-col>
                 </v-row>
-                
+                {{ sortBy }}
                 <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
                 <v-data-table v-else class="dark"
                     :headers="headers"
@@ -46,7 +46,7 @@
                         </p>
                     </template>
                         <template v-slot:[`item.status`]="{ item }">
-                            <p v-if="item.active" style="color: green">Activa</p>
+                            <p v-if="item.active" style="color: green">Em Progresso</p>
                             <p v-else style="color: red">Terminada</p>
                         </template>
                         <template v-slot:[`item.privatevoting`]="{ item }">
@@ -123,7 +123,7 @@ export default {
         console.log(this.votingsRoute)
         axios.get(this.votingsRoute)
             .then(response => {
-                this.votings = response.data;
+                this.votings = response.data.votings;
                 this.loadingVotings = false
             })
             .catch(error => {
@@ -131,7 +131,35 @@ export default {
             }
         )
     },
+    watch: {
+        search(){
+            this.fetchData();
+        },
+        sortBy() {
+            this.fetchData();
+        },
+        sortDesc() {
+            this.fetchData();
+        },
+        page() {
+            this.fetchData();
+        },
+    },
     methods: {
+        async fetchData() {
+            try {
+                const response = await axios.get(this.votingsRoute, {
+                    params: {term: this.search},
+                    sortBy: this.sortBy,
+                    sortDesc: this.sortDesc,
+                    page: this.page,
+                    itemsPerPage: this.itemsPerPage,
+                });
+                this.votings = response.data.votings;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        },
         onClickCreateVoting(){
             router.push({name: 'createvoting'});
         },
