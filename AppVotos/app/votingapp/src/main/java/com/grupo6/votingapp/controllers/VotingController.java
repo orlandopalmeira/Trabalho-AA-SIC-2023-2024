@@ -65,6 +65,7 @@ public class VotingController {
         @RequestParam(value="creationdate_start", required = false, defaultValue = "") String creationdate_start,
         @RequestParam(value="creationdate_end", required = false, defaultValue = "") String creationdate_end,
         @RequestParam(value="privatevoting", required = false, defaultValue = "") String privatevoting,
+        @RequestParam(value="in_progress", required = false, defaultValue = "") String in_progress_filter,
         @RequestParam(value="orderBy", required = false, defaultValue = "enddate") String orderBy,
         @RequestParam(value="order", required = false, defaultValue = "asc") String order,
         @CookieValue(value = "token", defaultValue = "") String token
@@ -74,7 +75,8 @@ public class VotingController {
                 user_id, 
                 enddate_start, enddate_end,
                 creationdate_start, creationdate_end,
-                privatevoting,   
+                privatevoting,
+                in_progress_filter,
                 orderBy, order,             
                 page, pageSize
             ))
