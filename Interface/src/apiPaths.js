@@ -7,7 +7,7 @@ export const API_PATHS = {
     votingStats: (votingId) => `/votings/${votingId}/stats`,
     votings: (term, orderBy, reverseSort, page, itemsPerPage) => `votings?term=${term}&orderBy=${orderBy}&order=${reverseSort}&page=${page}&votings_per_page=${itemsPerPage}`,
     postVotings: "/votings",
-    votingsAlreadyVoted: "/votings?alreadyvotedonly=true",
+    historyVotings: "/votings/history",
     userVotings: "/votings/user",
     votes: "/votes",
     imageUrl: (image_name) => `/images/${image_name}`,
