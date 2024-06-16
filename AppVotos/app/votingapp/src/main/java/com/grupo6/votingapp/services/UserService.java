@@ -2,23 +2,22 @@ package com.grupo6.votingapp.services;
 
 import java.util.List;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.grupo6.votingapp.auth.PasswordUtil;
 import com.grupo6.votingapp.models.User;
 import com.grupo6.votingapp.repositories.UserRepository;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
-    private PasswordUtil passwordUtil;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserService(
-        UserRepository userRepository,
-        PasswordUtil passwordUtil
+        UserRepository userRepository
     ){
         this.userRepository = userRepository;
-        this.passwordUtil = passwordUtil;
+        this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     public List<User> getUsers(){ //* Parece funcionar
@@ -48,7 +47,7 @@ public class UserService {
      * @return the saved entity
      */
     public User saveUser(User user){ //* Parece funcionar
-        user.setPassword(passwordUtil.encodePassword(user.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -66,7 +65,7 @@ public class UserService {
     }
 
     public boolean checkPassword(String password, String encodedPassword){ //* Parece funcionar
-        return passwordUtil.checkPassword(password, encodedPassword);
+        return bCryptPasswordEncoder.matches(password, encodedPassword);
     }
 
 }
