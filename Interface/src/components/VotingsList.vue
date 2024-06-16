@@ -41,12 +41,12 @@
                 >
                     <template v-slot:bottom>
                         <v-row class="mt-2" align="center" justify="center">
-                            <v-col cols="3">
+                            <v-col cols="4">
                                 <v-pagination
                                     class="width mt-2"
                                     v-model="page"
                                     :length="totalPages"
-                                    :total-visible="12"
+                                    :total-visible="4"
                                 />
                             </v-col>
                             <v-col cols="1" class="mt-2">

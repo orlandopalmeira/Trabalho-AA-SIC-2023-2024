@@ -43,7 +43,7 @@
                 message="A sua pesquisa não retornou resultados."/>
             <VotingsContainer v-else :votings="this.votings"/>
             <v-row class="mt-4" align="center" justify="center">
-                <v-col cols="3">
+                <v-col cols="4">
                     <v-pagination
                     v-model="page"
                     :length="totalPages"
