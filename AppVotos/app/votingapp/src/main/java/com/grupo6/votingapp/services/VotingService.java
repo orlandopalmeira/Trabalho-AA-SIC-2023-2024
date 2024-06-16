@@ -113,11 +113,13 @@ public class VotingService {
     }
 
     //* Obter todas as votações criadas por um user
-    public List<VotingWithNoRelationsDTO> getVotingsFromCreatorId(String userId){
-        List<Voting> votings = votingRepository.findByUserId(userId);
-        List<Long> votingIds = votings.stream().map(Voting::getId).toList();
+    public Map<String,Object> getVotingsFromCreatorId(String userId, int pageNumber, int pageSize){
+        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
+        Page<Voting> votingsPage = votingRepository.findByUserId(userId, pageable);
+        List<Voting> votingsList = votingsPage.getContent();
+        List<Long> votingIds = votingsList.stream().map(Voting::getId).toList();
         Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);
-        return votings.stream()
+        List<VotingWithNoRelationsDTO> votings = votingsList.stream()
         .map(voting -> {
             Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
             VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
@@ -125,6 +127,7 @@ public class VotingService {
             votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
             return votingWithNoRelationsDTO;
         }).toList();
+        return Map.of("votings", votings, "totalPages", votingsPage.getTotalPages());
     }
 
     //* Obter as estatísticas de uma votação

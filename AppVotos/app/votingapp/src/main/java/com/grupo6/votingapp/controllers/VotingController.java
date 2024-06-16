@@ -62,9 +62,13 @@ public class VotingController {
     }
 
     @GetMapping("/user") //* Parece funcionar
-    public ResponseEntity<Object> getVotingsFromUser(@CookieValue(value = "token", defaultValue = "") String token) {
+    public ResponseEntity<Object> getVotingsFromUser(
+        @RequestParam(value="page", required = false, defaultValue = "1") int page,
+        @RequestParam(value="votings_per_page", required = false, defaultValue = "12") int pageSize,
+        @CookieValue(value = "token", defaultValue = "") String token
+    ) {
         return authMiddlewares.checkTokenSimple(token, user_id -> 
-            ResponseEntity.ok(votingService.getVotingsFromCreatorId(user_id))
+            ResponseEntity.ok(votingService.getVotingsFromCreatorId(user_id, page, pageSize))
         );
     }
 

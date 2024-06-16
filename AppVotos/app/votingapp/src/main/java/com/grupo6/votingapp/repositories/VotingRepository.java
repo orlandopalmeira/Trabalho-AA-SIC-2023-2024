@@ -12,7 +12,7 @@ import com.grupo6.votingapp.models.Voting;
 
 public interface VotingRepository extends JpaRepository<Voting, Long>{
     @Query("SELECT v FROM Voting v WHERE v.creator.id = :userId")
-    List<Voting> findByUserId(String userId); //* Parece funcionar
+    Page<Voting> findByUserId(String userId, Pageable pageable); //* Parece funcionar
 
     @Query("SELECT v FROM Voting v WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term%")
     Page<Voting> findAccessibleVotingsToUser(String userId, String term, Pageable pageable); //* Parece funcionar
