@@ -9,7 +9,7 @@ import VotingsList from '@/components/VotingsList.vue'
 export default {
     data() {
         return {
-            votingsRoute: API_PATHS.votingsAlreadyVoted
+            votingsRoute: API_PATHS.historyVotings
         }
     },
     components: {

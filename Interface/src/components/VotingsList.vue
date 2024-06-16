@@ -136,7 +136,7 @@ export default {
         search(){
             this.fetchData();
         },
-        sortBy() {
+        sortInfo() {
             this.fetchData();
         },
         page() {
@@ -146,15 +146,17 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get(this.votingsRoute, {
-                    params: {term: this.search},
-                    orderBy: this.sortInfo.key,
-                    order: this.sortInfo.order,
+                const params_ = {
+                    term: this.search,
+                    orderBy: this.sortInfo[0]?.key ?? "",
+                    order: this.sortInfo[0]?.order ?? "",
                     page: this.page,
-                    itemsPerPage: this.itemsPerPage,
-                });
+                    votings_per_page: this.itemsPerPage,
+                };
+                console.log("testing:  ", this.votingsRoute)
+                const response = await axios.get(this.votingsRoute, { params: params_ });
+                console.log('Request URL:', response.config.url);
                 this.votings = response.data.votings;
-                console.log(response.data)
                 this.totalPages = response.data.totalPages
             } catch (error) {
                 console.error('Error fetching data:', error);
