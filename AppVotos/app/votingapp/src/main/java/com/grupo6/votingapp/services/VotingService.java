@@ -105,9 +105,7 @@ public class VotingService {
             votingsWithNoRelations.removeIf(voting -> !voting.isUseralreadyvoted());
         }
 
-        List<VotingWithNoRelationsDTO> result = new ArrayList<>(votingsWithNoRelations.size());
-        result.addAll(votingsWithNoRelations);
-        return result;
+        return votingsWithNoRelations;
     }
 
     //* Obter todas as votações criadas por um user
