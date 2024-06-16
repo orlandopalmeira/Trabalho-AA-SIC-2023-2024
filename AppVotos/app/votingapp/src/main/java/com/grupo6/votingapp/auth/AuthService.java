@@ -83,7 +83,7 @@ public class AuthService {
         return userService.saveUser(user);
 
     }
-
+/* 
     public User register(String name, String email, String password, String avatar, MultipartFile a) throws UnauthorizedException {
         if(name == null) throw new UnauthorizedException("Name is null");
         if(email == null) throw new UnauthorizedException("Email is null");
@@ -96,16 +96,12 @@ public class AuthService {
         user.setPassword(password);
         user.setAvatar(avatar);
         return register(user, a);
-    }
+    }*/
 
     public boolean checkUserId(String token, String userId) {
         if(token == null || userId == null) return false;
         String id = jwtService.extractUserId(token);
         return userId.equals(id);
-    }
-
-    public boolean checkUserId(String token, Long userId) {
-        return checkIfIdHasEmail(token, Long.toString(userId));
     }
 
     /**
@@ -120,15 +116,6 @@ public class AuthService {
 
         String emailFromDatabase = userService.getEmailFromUserId(jwtService.extractUserId(token));
         return emailFromDatabase != null && emailFromDatabase.equals(email);
-    }
-
-    public boolean checkToken(String token) {
-        try {
-            return token != null && jwtService.isTokenValid(token, userService.getUser(jwtService.extractUserId(token)));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     public boolean checkTokenLight(String token) {

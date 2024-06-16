@@ -65,18 +65,6 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean isTokenValid(String token, User user) {
-        final String username = extractUsername(token);
-        final String userId = extractUserId(token);
-        final String email = extractEmail(token);
-        final String avatar = extractUserAvatar(token);
-        return (username.equals(user.getEmail())) && 
-               (userId.equals(Long.toString(user.getId()))) && 
-               (email.equals(user.getEmail())) && 
-               (avatar.equals(user.getAvatar())) &&
-               !isTokenExpired(token);
-    }
-
     /**
      * Versão light que verifica apenas a data de validade e a chave do token sem recorrer à obtenção do user da base de dados.
      * @param token
