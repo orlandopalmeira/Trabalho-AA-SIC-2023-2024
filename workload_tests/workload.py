@@ -51,12 +51,17 @@ class RegisterAndVoting(SequentialTaskSet):
     @task
     def getHome(self):
 
-        votings = VotingUtils.get_home(self.client, self.token)
+        response = VotingUtils.get_home(self.client, self.token)
+        votings = response.get('votings')
+        print(votings)
 
         votings = list(filter(lambda voting: not voting['privatevoting'] and voting['enddate'] == None , votings))
-        selected_voting = random.choice(votings)
-        self.selected_voting_id = selected_voting['id']
-        # print(selected_voting)
+        if len(votings) == 0:
+            selected_voting = random.choice(votings)
+            self.selected_voting_id = selected_voting['id']
+            # print(selected_voting)
+        else:
+            raise Exception("Não existem votings disponíveis")
 
     
     @task
@@ -90,8 +95,8 @@ class RegisterAndCreateVoting(SequentialTaskSet):
 
 class ExecuteTest(HttpUser):
     tasks = {
-        LoginAndVoting: 1,
-        RegisterAndVoting: 1,
-        # RegisterAndCreateVoting: 1,
+        # LoginAndVoting: 1,
+        # RegisterAndVoting: 1,
+        RegisterAndCreateVoting: 1,
     }
     wait_time = between(1,5)

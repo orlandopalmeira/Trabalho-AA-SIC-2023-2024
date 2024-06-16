@@ -28,13 +28,13 @@
                         </div>
                     </v-col>
                 </v-row>
-                {{ sortBy }}
+                {{ sortInfo }}
                 <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
                 <v-data-table v-else class="dark"
                     :headers="headers"
                     :items="processedVotings"
                     :search="search"
-                    v-model:sort-by="sortBy"
+                    v-model:sort-by="sortInfo"
                     @click:row="rowClicked"
                     hover
                     items-per-page-text="Votações por página"
@@ -108,7 +108,8 @@ export default {
             filters: null,
 
             // Default sort configuration
-            sortBy: [{ key: 'creationdate', order:'desc' }],
+            sortInfo: [{ key: 'creationdate', order:'desc' }],
+            totalPages: 0
         }
     },
     created() {
@@ -138,9 +139,6 @@ export default {
         sortBy() {
             this.fetchData();
         },
-        sortDesc() {
-            this.fetchData();
-        },
         page() {
             this.fetchData();
         },
@@ -150,12 +148,14 @@ export default {
             try {
                 const response = await axios.get(this.votingsRoute, {
                     params: {term: this.search},
-                    sortBy: this.sortBy,
-                    sortDesc: this.sortDesc,
+                    orderBy: this.sortInfo.key,
+                    order: this.sortInfo.order,
                     page: this.page,
                     itemsPerPage: this.itemsPerPage,
                 });
                 this.votings = response.data.votings;
+                console.log(response.data)
+                this.totalPages = response.data.totalPages
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
