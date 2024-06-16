@@ -28,14 +28,18 @@
                         </div>
                     </v-col>
                 </v-row>
-                {{ sortInfo }}
                 <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
                 <v-data-table v-else class="dark"
                     :headers="headers"
                     :items="processedVotings"
                     :search="search"
+                    :page="page"
+                    :items-per-page="itemsPerPage"
+                    :items-per-page-options="itemsPerPageOptions"
+                    :page-text="`Página ${page} de ${totalPages}`"
                     v-model:sort-by="sortInfo"
                     @click:row="rowClicked"
+                    @update:items-per-page="updateItemsPerPage"
                     hover
                     items-per-page-text="Votações por página"
                     no-data-text="Sem votações"
@@ -66,18 +70,18 @@ import axios from '@/axios'
 import router from '@/router'
 import ModalFiltering from '@/components/Modais/ModalFiltering.vue'
 import ToastManager from '@/components/Toast/ToastManager'
+import { useUserInfoStore } from '@/stores/userInfoStore'
 
 const table_headers = [
     { align: 'start', key: 'title',         title: 'Votação', sortable: true  },
     // {                 key: 'description',   title: 'Descrição', sortable: true  },
     {                 key: 'creationdate',  title: 'Data de Criação', sortable: true },
-    {                 key: 'status',        title: 'Estado', sortable: true },
+    {                 key: 'status',        title: 'Estado', sortable: false },
     {                 key: 'votes',         title: 'Votos', sortable: true },
     {                 key: 'privatevoting', title: 'Visibilidade', sortable: false },
 ]
 
 export default {
-
     props: {
         votingsRoute: {
             type: String,
@@ -109,7 +113,16 @@ export default {
 
             // Default sort configuration
             sortInfo: [{ key: 'creationdate', order:'desc' }],
-            totalPages: 0
+            totalPages: 0,
+            page: 1,
+            itemsPerPage: useUserInfoStore().historyItemsPerPage,
+            itemsPerPageOptions: [
+                {value: 10, title: '10'},
+                {value: 20, title: '20'},
+                {value: 30, title: '30'},
+                {value: 40, title: '40'},
+                {value: 50, title: '50'},
+            ]
         }
     },
     created() {
@@ -120,11 +133,22 @@ export default {
             this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
         }
 
+        const params_ = {
+            term: this.search,
+            orderBy: this.sortInfo[0]?.key ?? "",
+            order: this.sortInfo[0]?.order ?? "",
+            page: this.page,
+            votings_per_page: this.itemsPerPage,
+        }
+
         // Obter as votações pedidas
         console.log(this.votingsRoute)
-        axios.get(this.votingsRoute)
+        axios.get(this.votingsRoute, { params: params_ })
             .then(response => {
+                console.log(response.data.votings)
+                console.log(params_)
                 this.votings = response.data.votings;
+                this.totalPages = response.data.totalPages
                 this.loadingVotings = false
             })
             .catch(error => {
@@ -142,6 +166,10 @@ export default {
         page() {
             this.fetchData();
         },
+        itemsPerPage() {
+            useUserInfoStore().setHistoryItemsPerPage(this.itemsPerPage)
+            this.fetchData();
+        }
     },
     methods: {
         async fetchData() {
@@ -153,9 +181,8 @@ export default {
                     page: this.page,
                     votings_per_page: this.itemsPerPage,
                 };
-                console.log("testing:  ", this.votingsRoute)
+                console.log(params_)
                 const response = await axios.get(this.votingsRoute, { params: params_ });
-                console.log('Request URL:', response.config.url);
                 this.votings = response.data.votings;
                 this.totalPages = response.data.totalPages
             } catch (error) {
@@ -199,6 +226,9 @@ export default {
                 this.filters = filters
             }
             this.modalFiltering.opened = false
+        },
+        updateItemsPerPage(value) {
+            this.itemsPerPage = value
         }
     },
     computed: {
