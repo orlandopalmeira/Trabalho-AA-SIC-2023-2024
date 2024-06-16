@@ -10,12 +10,7 @@
                 <VotingCard :voting="voting"/>
             </v-sheet>
         </v-col>
-        <v-pagination
-            class="width mt-2"
-            v-model="page"
-            :length="pageCount"
-            :total-visible="12"
-        />
+        
     </v-row>
     <!--No caso de não haver votações disponíveis-->
     <div v-else>
@@ -44,20 +39,11 @@ export default {
     },
     data() {
         return {
-            page: 1
         }
     },
     props: {
-        itemsPerPage: { type: Number, required: true },
         votings: { type: Array, required: true },
-        pageCount: { type: Number, required: true}
     },
-    emits: ['page-changed'],
-    watch: {
-        page(newValue, oldValue) {
-            this.$emit('page-changed', newValue);
-        }
-    }
 }
 </script>
 

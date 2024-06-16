@@ -12,7 +12,7 @@
                     <v-btn @click="handleSearch" icon class="dark mr-2"> <v-icon>mdi-magnify</v-icon> </v-btn>
                     <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" density="compact" hide-details @keyup.enter="handleSearch"/>
                 </v-col>
-                <v-col cols="5">
+                <v-col cols="2">
                     <div class="flex">
                         <v-select style="width: 30%"
                             label="Ordenar por"
@@ -28,14 +28,7 @@
                             :icon="reverseSort ? 'mdi-arrow-down' : 'mdi-arrow-up'"
                             flat>
                         </v-btn>
-                        <v-select class="ml-5" style="width: 5%;"
-                            label="Votações por página"
-                            :items="[8, 16, 24, 32, 40]"
-                            variant="outlined"
-                            density="compact"
-                            v-model="itemsPerPage"
-                            hide-details
-                            />
+                        
                     </div>
                 </v-col>
                 <v-col class="flex justify-end pr-5 mb-1">
@@ -48,7 +41,27 @@
             <SimpleAlert
                 v-else-if="!loadingVotings && this.votings && this.votings.length > 0 && this.votings.length === 0"
                 message="A sua pesquisa não retornou resultados."/>
-            <VotingsContainer v-else :votings="this.votings" :itemsPerPage="itemsPerPage" :pageCount="pageCount" @page-changed="handlePageChanged"/>
+            <VotingsContainer v-else :votings="this.votings"/>
+            <v-row class="mt-4" align="center" justify="center">
+                <v-col cols="3">
+                    <v-pagination
+                    v-model="page"
+                    :length="totalPages"
+                    :total-visible="4"
+                    />
+                </v-col>
+                <v-col cols="1">
+                    <v-select 
+                    style="width: 140px;"
+                    class="ml-5 mt-2 mb-2"
+                    label="Votações por página"
+                    :items="[8, 12, 16, 20, 24, 28]"
+                    variant="outlined"
+                    v-model="itemsPerPage"
+                    hide-details
+                    />
+                </v-col>
+            </v-row>
         </v-container>
     </AuthenticatedLayout>
 </template>
@@ -97,7 +110,7 @@ export default {
             reverseSort: useUserInfoStore().homeReverseSort,
             page: 1,
             itemsPerPage: parseInt(useUserInfoStore().homeItemsPerPage),
-            pageCount: 0,
+            totalPages: 0,
         }
     },
     methods: {
@@ -137,7 +150,7 @@ export default {
             this.getVotings()
             .then(response => {
                 this.votings = response.votings
-                this.pageCount = response.totalPages
+                this.totalPages = response.totalPages
                 this.loadingVotings = false
             }).catch(error => {
                 this.votings = []
@@ -170,7 +183,10 @@ export default {
                 this.handleGetVotings()
             }
         },
-        itemsPerPage(newValue, oldValue) {
+        page(newValue) {
+            this.handlePageChanged(newValue)
+        },
+        itemsPerPage(newValue) {
             if (newValue != null) {
                 useUserInfoStore().setHomeItemsPerPage(newValue)
                 this.handleGetVotings()
