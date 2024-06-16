@@ -1,6 +1,7 @@
 package com.grupo6.votingapp.services;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -117,7 +118,7 @@ public class VotingService {
     }
 
     //* Função auxiliar que filtra as votações de acordo com os parâmetros passados
-    private List<Voting> filterVotings(List<Voting> votings, String enddate_start, String enddate_end, String creationdate_start, String creationdate_end, String privatevoting) {
+    private List<Voting> filterVotings(List<Voting> votings, String enddate_start, String enddate_end, String creationdate_start, String creationdate_end, String privatevoting, String in_progress_filter) {
         if(!enddate_start.isEmpty()) {
             Date enddateStart = stringToDate(enddate_start);
             votings = votings.stream().filter(voting -> {
@@ -146,14 +147,24 @@ public class VotingService {
             boolean privateVoting = Boolean.parseBoolean(privatevoting);
             votings = votings.stream().filter(voting -> voting.isPrivatevoting() == privateVoting).collect(Collectors.toList());
         }
+
+        Date now = new Date();
+        if(!in_progress_filter.isEmpty()){
+            boolean inProgress = Boolean.parseBoolean(in_progress_filter);
+            votings = votings.stream().filter(voting -> {
+                if (voting.getEnddate() == null) {return inProgress;} // true
+                else if(voting.getEnddate().after(now)) return inProgress; // true
+                else return !inProgress; // false
+            }).collect(Collectors.toList());
+        }
         return votings;
     }
 
     //* Obter o histórico de votações de um user
-    public Map<String,Object> getUserVotingHistory(String userId, String enddate_start, String enddate_end, String creationdate_start, String creationdate_end, String privatevoting, String orderBy, String order, int pageNumber, int pageSize) {
+    public Map<String,Object> getUserVotingHistory(String userId, String enddate_start, String enddate_end, String creationdate_start, String creationdate_end, String privatevoting, String in_progress_filter, String orderBy, String order, int pageNumber, int pageSize) {
         Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy.equals("votes") ? "enddate" : orderBy);
         List<Voting> votingsList = votingRepository.findUserVotingHistory(userId, sort);
-        votingsList = filterVotings(votingsList, enddate_start, enddate_end, creationdate_start, creationdate_end, privatevoting);
+        votingsList = filterVotings(votingsList, enddate_start, enddate_end, creationdate_start, creationdate_end, privatevoting, in_progress_filter);
         List<Long> votingIds = votingsList.stream().map(Voting::getId).toList();
         Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);
 
@@ -182,10 +193,10 @@ public class VotingService {
     }
 
     //* Obter todas as votações criadas por um user
-    public Map<String,Object> getVotingsFromCreatorId(String userId, String enddate_start, String enddate_end,String creationdate_start, String creationdate_end, String privatevoting, String orderBy, String order, int pageNumber, int pageSize){
+    public Map<String,Object> getVotingsFromCreatorId(String userId, String enddate_start, String enddate_end,String creationdate_start, String creationdate_end, String privatevoting, String in_progress_filter, String orderBy, String order, int pageNumber, int pageSize){
         Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy.equals("votes") ? "enddate" : orderBy);
         List<Voting> votingsList = votingRepository.findByUserId(userId, sort);
-        votingsList = filterVotings(votingsList, enddate_start, enddate_end, creationdate_start, creationdate_end, privatevoting);
+        votingsList = filterVotings(votingsList, enddate_start, enddate_end, creationdate_start, creationdate_end, privatevoting, in_progress_filter);
         List<Long> votingIds = votingsList.stream().map(Voting::getId).toList();
         Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);
 
