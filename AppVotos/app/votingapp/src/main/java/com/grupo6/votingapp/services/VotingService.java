@@ -81,19 +81,23 @@ public class VotingService {
         Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy);
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize, sort);
         
-        Page<Voting> votingsPage;
+        Page<Voting> votingsPage = null;
         List<Voting> votings;
-        if (orderBy.equals("votes")) {//* O campo votes não existe na base de dados, pelo que a ordenação tem de ser calculada de uma forma especial
-            pageable = PageRequest.of(pageNumber-1, pageSize);
-            if (order.equals("desc")) {
-                votingsPage = votingRepository.findAccessibleVotingsToUserOrderByVotesDesc(userId, term, pageable);
+        if(pageNumber > 0) { //* Se pageNumber for 0, então não é para fazer paginação
+            if (orderBy.equals("votes")) {//* O campo votes não existe na base de dados, pelo que a ordenação tem de ser calculada de uma forma especial
+                pageable = PageRequest.of(pageNumber-1, pageSize);
+                if (order.equals("desc")) {
+                    votingsPage = votingRepository.findAccessibleVotingsToUserOrderByVotesDesc(userId, term, pageable);
+                } else {
+                    votingsPage = votingRepository.findAccessibleVotingsToUserOrderByVotesAsc(userId, term, pageable);
+                }
             } else {
-                votingsPage = votingRepository.findAccessibleVotingsToUserOrderByVotesAsc(userId, term, pageable);
+                votingsPage = votingRepository.findAccessibleVotingsToUser(userId, term, pageable);
             }
+            votings = votingsPage.getContent();
         } else {
-            votingsPage = votingRepository.findAccessibleVotingsToUser(userId, term, pageable);
+            votings = votingRepository.findAccessibleVotingsToUser(userId, term);
         }
-        votings = votingsPage.getContent();
         
         List<VotingWithNoRelationsDTO> votingsWithNoRelations = votings.stream()
         .map(voting -> {
@@ -107,7 +111,7 @@ public class VotingService {
             votingsWithNoRelations.removeIf(voting -> !voting.isUseralreadyvoted());
         }
 
-        int totalPages = votingsPage.getTotalPages();
+        int totalPages = votingsPage == null ? -1 : votingsPage.getTotalPages();
 
         return Map.of("votings", votingsWithNoRelations, "totalPages", totalPages);
     }

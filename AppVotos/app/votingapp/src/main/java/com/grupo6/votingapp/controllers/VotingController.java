@@ -48,7 +48,7 @@ public class VotingController {
         @RequestParam(value="orderBy", required = false, defaultValue = "enddate") String orderBy,
         @RequestParam(value="order", required = false, defaultValue = "asc") String order,
         @RequestParam(value="page", required = false, defaultValue = "1") int page,
-        @RequestParam(value="votings_per_page", required = false, defaultValue = "12") int pageSize,
+        @RequestParam(value="votings_per_page", required = false, defaultValue = "0") int pageSize,
         @CookieValue(value = "token", defaultValue = "") String token
     ) {
         return authMiddlewares.checkTokenSimple(token, user_id -> {
@@ -65,6 +65,10 @@ public class VotingController {
     public ResponseEntity<Object> getVotingsFromUser(
         @RequestParam(value="page", required = false, defaultValue = "1") int page,
         @RequestParam(value="votings_per_page", required = false, defaultValue = "12") int pageSize,
+        @RequestParam(value="enddate_start", required = false, defaultValue = "") String enddate_start,
+        @RequestParam(value="enddate_end", required = false, defaultValue = "") String enddate_end,
+        @RequestParam(value="creationdate_start", required = false, defaultValue = "") String creationdate_start,
+        @RequestParam(value="creationdate_end", required = false, defaultValue = "") String creationdate_end,
         @CookieValue(value = "token", defaultValue = "") String token
     ) {
         return authMiddlewares.checkTokenSimple(token, user_id -> 

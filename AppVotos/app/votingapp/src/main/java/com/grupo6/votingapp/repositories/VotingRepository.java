@@ -17,6 +17,9 @@ public interface VotingRepository extends JpaRepository<Voting, Long>{
     @Query("SELECT v FROM Voting v WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term%")
     Page<Voting> findAccessibleVotingsToUser(String userId, String term, Pageable pageable); //* Parece funcionar
 
+    @Query("SELECT v FROM Voting v WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term%")
+    List<Voting> findAccessibleVotingsToUser(String userId, String term); //* Parece funcionar
+
     @Query("SELECT v FROM Voting v LEFT JOIN Vote vt ON vt.voting.id = v.id WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term% GROUP BY v.id ORDER BY COUNT(vt.id) DESC")
     Page<Voting> findAccessibleVotingsToUserOrderByVotesDesc(String userId, String term, Pageable pageable); //* Parece funcionar
 
