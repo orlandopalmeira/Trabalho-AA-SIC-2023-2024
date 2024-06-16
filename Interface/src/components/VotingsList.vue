@@ -143,7 +143,6 @@ export default {
             ToastManager.show(toast_message, 'success', 3000)
             this.$router.replace({ path: this.$route.path }); // para limpar a rota e não ter aquela query string feia ("?toast_message=...")
         }
-
         const params_ = {
             term: this.search,
             orderBy: this.sortInfo[0]?.key ?? "",
@@ -185,17 +184,19 @@ export default {
     methods: {
         async fetchData() {
             try {
+                const time_start = " 00:00:00"
+                const time_end = " 23:59:59"
                 const params_ = {
                     term: this.search,
                     orderBy: this.sortInfo[0]?.key ?? "",
                     order: this.sortInfo[0]?.order ?? "",
                     page: this.page,
                     votings_per_page: this.itemsPerPage,
-                    creationdate_start: this.filters.creationdate[0],
-                    creationdate_end: this.filters.creationdate[0],
-                    enddate_start: this.filters.enddate[0],
-                    enddate_end: this.filters.enddate[1],
-                    privatevoting: this.filters.privatevoting
+                    creationdate_start: this.filters?.creationdate ? this.filters.creationdate[0] + time_start : "",
+                    creationdate_end: this.filters?.creationdate ? this.filters.creationdate[1] + time_end : "",
+                    enddate_start: this.filters?.enddate ? this.filters.enddate[0] + time_start : "",
+                    enddate_end: this.filters?.enddate ? this.filters.enddate[1] + time_end : "",
+                    privatevoting: this.filters?.privatevoting ?? ""
                 };
                 const response = await axios.get(this.votingsRoute, { params: params_ });
                 this.votings = response.data.votings;
