@@ -192,8 +192,8 @@ export default {
             if(this.voting.accesstype === "creator") return true
 
             if(this.voting.showstats){
-                let now = new Date().toISOString().replace('T', ' ').slice(0,19)
-                let enddate = this.voting.enddate
+                let now = new Date()
+                let enddate = new Date(this.voting.enddate)
                 let active = enddate === null || enddate > now 
 
                 if (active) return this.voting.showstatsrealtime

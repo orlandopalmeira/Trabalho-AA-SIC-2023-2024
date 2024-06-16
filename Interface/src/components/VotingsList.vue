@@ -247,9 +247,10 @@ export default {
     },
     computed: {
         processedVotings() {
-            let now = new Date().toISOString().replace('T', ' ').slice(0,19)
+            let now = new Date()
             let processedVotings = this.votings.map(voting => {
-                let active = voting.enddate > now || voting.enddate === null
+                let enddate = voting.enddate ? new Date(voting.enddate) : null
+                let active = enddate > now || enddate === null
                 return {
                     ...voting,
                     creationdate: this.formatDateTime(voting.creationdate),
