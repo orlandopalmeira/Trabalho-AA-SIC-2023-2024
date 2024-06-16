@@ -177,7 +177,7 @@ public class VotingService {
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
         Page<VotingWithNoRelationsDTO> votingsPage = PaginationHelper.paginate(votings, pageable);
 
-        return Map.of("votings", votings, "totalPages", votingsPage.getTotalPages());
+        return Map.of("votings", votingsPage.getContent(), "totalPages", votingsPage.getTotalPages());
     }
 
     //* Obter todas as votações criadas por um user
@@ -210,7 +210,7 @@ public class VotingService {
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
         Page<VotingWithNoRelationsDTO> votingsPage = PaginationHelper.paginate(votings, pageable);
 
-        return Map.of("votings", votings, "totalPages", votingsPage.getTotalPages());
+        return Map.of("votings", votingsPage.getContent(), "totalPages", votingsPage.getTotalPages());
     }
 
     //* Obter as estatísticas de uma votação
