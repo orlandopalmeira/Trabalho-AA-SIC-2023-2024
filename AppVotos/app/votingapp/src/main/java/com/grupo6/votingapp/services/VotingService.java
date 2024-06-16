@@ -149,6 +149,7 @@ public class VotingService {
         return votings;
     }
 
+    //* Obter o histórico de votações de um user
     public Map<String,Object> getUserVotingHistory(String userId, String enddate_start, String enddate_end, String creationdate_start, String creationdate_end, String privatevoting, String orderBy, String order, int pageNumber, int pageSize) {
         Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy.equals("votes") ? "enddate" : orderBy);
         List<Voting> votingsList = votingRepository.findUserVotingHistory(userId, sort);
