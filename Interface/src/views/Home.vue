@@ -12,7 +12,7 @@
                     <v-btn @click="handleSearch" icon class="dark mr-2"> <v-icon>mdi-magnify</v-icon> </v-btn>
                     <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" density="compact" hide-details @keyup.enter="handleSearch"/>
                 </v-col>
-                <v-col cols="2">
+                <v-col cols="3">
                     <div class="flex">
                         <v-select style="width: 30%"
                             label="Ordenar por"
