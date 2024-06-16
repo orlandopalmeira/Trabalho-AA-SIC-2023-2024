@@ -15,6 +15,10 @@
                 width="400"
                 multiple="range"
                 />
+                <v-radio-group v-model="filters.in_progress" inline label="Estado da votação">
+                    <v-radio @click="toggleSelect('in_progress')" label="Em progresso" :value="true"></v-radio>
+                    <v-radio @click="toggleSelect('finished')" label="Terminada" :value="false"></v-radio>
+                </v-radio-group>
                 <v-radio-group v-model="filters.privatevoting" inline label="Tipo de votação">
                     <v-radio @click="toggleSelect('public')" label="Pública" :value="false"></v-radio>
                     <v-radio @click="toggleSelect('private')" label="Privada" :value="true"></v-radio>
@@ -40,18 +44,26 @@ export default {
             filters: {
                 creationdate: null,
                 enddate: null,
+                in_progress: null,
                 privatevoting: null,
             }
         }
     },
     methods: {
         toggleSelect(type) {
-            if(type === 'public') {
-                if (this.filters.privatevoting === false) {
-                    this.filters.privatevoting = null
-                }
-            } else if (this.filters.privatevoting === true) {
-                this.filters.privatevoting = null
+            switch(type) {
+                case 'in_progress':
+                    this.filters.in_progress = this.filters.in_progress === true ? null : true
+                    break
+                case 'finished':
+                    this.filters.in_progress = this.filters.in_progress === false ? null : false
+                    break
+                case 'public':
+                    this.filters.privatevoting = this.filters.privatevoting === false ? null : false
+                    break
+                case 'private':
+                    this.filters.privatevoting = this.filters.privatevoting === true ? null : true
+                    break
             }
         }
     },
@@ -68,6 +80,7 @@ export default {
             return {
                 creationdate: firstLast(this.filters.creationdate),
                 enddate: firstLast(this.filters.enddate),
+                in_progress: this.filters.in_progress,
                 privatevoting: this.filters.privatevoting
             }
         }

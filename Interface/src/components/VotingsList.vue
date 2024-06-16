@@ -196,6 +196,7 @@ export default {
                     creationdate_end: this.filters?.creationdate?.[1] != null ? this.filters.creationdate[1] + time_end : "",
                     enddate_start: this.filters?.enddate?.[0] != null ? this.filters.enddate[0] + time_start : "",
                     enddate_end: this.filters?.enddate?.[1] != null ? this.filters.enddate[1] + time_end : "",
+                    in_progress: this.filters?.in_progress ?? "",
                     privatevoting: this.filters?.privatevoting ?? ""
                 };
                 const response = await axios.get(this.votingsRoute, { params: params_ });
