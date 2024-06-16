@@ -1,5 +1,6 @@
 package com.grupo6.votingapp.services;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -105,10 +106,53 @@ public class VotingService {
         return Map.of("votings", votingsWithNoRelations, "totalPages", votingsPage.getTotalPages());
     }
 
-    public Map<String,Object> getUserVotingHistory(String userId, int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
-        Page<Voting> votingsPage = votingRepository.findUserVotingHistory(userId, pageable);
-        List<Voting> votingsList = votingsPage.getContent();
+    //* Função auxiliar que converte string para java.util.Date
+    private Date stringToDate(String date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return dateFormat.parse(date);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing date string to Date object");
+        }
+    }
+
+    //* Função auxiliar que filtra as votações de acordo com os parâmetros passados
+    private List<Voting> filterVotings(List<Voting> votings, String enddate_start, String enddate_end, String creationdate_start, String creationdate_end, String privatevoting) {
+        if(!enddate_start.isEmpty()) {
+            Date enddateStart = stringToDate(enddate_start);
+            votings = votings.stream().filter(voting -> {
+                if(voting.getEnddate() == null) return true;
+                return voting.getEnddate().equals(enddateStart) || voting.getEnddate().after(enddateStart);
+            }).collect(Collectors.toList());
+        }
+        if(!enddate_end.isEmpty()) {
+            Date enddateEnd = stringToDate(enddate_end);
+            votings = votings.stream().filter(voting -> {
+                if(voting.getEnddate() == null) return false;
+                return voting.getEnddate().equals(enddateEnd) || voting.getEnddate().before(enddateEnd);
+            }).collect(Collectors.toList());
+        }
+        if(!creationdate_start.isEmpty()) {
+            Date creationdateStart = stringToDate(creationdate_start);
+            votings = votings.stream().filter(voting -> voting.getCreationdate().equals(creationdateStart) || 
+                                                        voting.getCreationdate().after(creationdateStart)).collect(Collectors.toList());
+        }
+        if(!creationdate_end.isEmpty()) {
+            Date creationdateEnd = stringToDate(creationdate_end);
+            votings = votings.stream().filter(voting -> voting.getCreationdate().equals(creationdateEnd) || 
+                                                        voting.getCreationdate().before(creationdateEnd)).collect(Collectors.toList());
+        }
+        if(!privatevoting.isEmpty()) {
+            boolean privateVoting = Boolean.parseBoolean(privatevoting);
+            votings = votings.stream().filter(voting -> voting.isPrivatevoting() == privateVoting).collect(Collectors.toList());
+        }
+        return votings;
+    }
+
+    public Map<String,Object> getUserVotingHistory(String userId, String enddate_start, String enddate_end, String creationdate_start, String creationdate_end, String privatevoting, String orderBy, String order, int pageNumber, int pageSize) {
+        Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy.equals("votes") ? "enddate" : orderBy);
+        List<Voting> votingsList = votingRepository.findUserVotingHistory(userId, sort);
+        votingsList = filterVotings(votingsList, enddate_start, enddate_end, creationdate_start, creationdate_end, privatevoting);
         List<Long> votingIds = votingsList.stream().map(Voting::getId).toList();
         Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);
 
@@ -118,18 +162,32 @@ public class VotingService {
             VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
             votingWithNoRelationsDTO.setUseralreadyvoted(true);
             return votingWithNoRelationsDTO;
-        }).toList();
+        }).collect(Collectors.toList());
+
+        if(orderBy.equals("votes")) {
+            votings.sort((v1, v2) -> {
+                if(order.equals("desc")) {
+                    return Long.compare(votesCounts.getOrDefault(v2.getId(), 0L), votesCounts.getOrDefault(v1.getId(), 0L));
+                } else {
+                    return Long.compare(votesCounts.getOrDefault(v1.getId(), 0L), votesCounts.getOrDefault(v2.getId(), 0L));
+                }
+            });
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
+        Page<VotingWithNoRelationsDTO> votingsPage = PaginationHelper.paginate(votings, pageable);
 
         return Map.of("votings", votings, "totalPages", votingsPage.getTotalPages());
     }
 
     //* Obter todas as votações criadas por um user
-    public Map<String,Object> getVotingsFromCreatorId(String userId, int pageNumber, int pageSize){
-        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
-        Page<Voting> votingsPage = votingRepository.findByUserId(userId, pageable);
-        List<Voting> votingsList = votingsPage.getContent();
+    public Map<String,Object> getVotingsFromCreatorId(String userId, String enddate_start, String enddate_end,String creationdate_start, String creationdate_end, String privatevoting, String orderBy, String order, int pageNumber, int pageSize){
+        Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy.equals("votes") ? "enddate" : orderBy);
+        List<Voting> votingsList = votingRepository.findByUserId(userId, sort);
+        votingsList = filterVotings(votingsList, enddate_start, enddate_end, creationdate_start, creationdate_end, privatevoting);
         List<Long> votingIds = votingsList.stream().map(Voting::getId).toList();
         Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);
+
         List<VotingWithNoRelationsDTO> votings = votingsList.stream()
         .map(voting -> {
             Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
@@ -137,7 +195,21 @@ public class VotingService {
             boolean userAlreadyVoted = userAlreadyVoted(voting.getId(), Long.parseLong(userId));
             votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
             return votingWithNoRelationsDTO;
-        }).toList();
+        }).collect(Collectors.toList());
+
+        if(orderBy.equals("votes")) {
+            votings.sort((v1, v2) -> {
+                if(order.equals("desc")) {
+                    return Long.compare(votesCounts.getOrDefault(v2.getId(), 0L), votesCounts.getOrDefault(v1.getId(), 0L));
+                } else {
+                    return Long.compare(votesCounts.getOrDefault(v1.getId(), 0L), votesCounts.getOrDefault(v2.getId(), 0L));
+                }
+            });
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber-1, pageSize);
+        Page<VotingWithNoRelationsDTO> votingsPage = PaginationHelper.paginate(votings, pageable);
+
         return Map.of("votings", votings, "totalPages", votingsPage.getTotalPages());
     }
 

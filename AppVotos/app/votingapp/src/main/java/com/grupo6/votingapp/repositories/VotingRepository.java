@@ -13,7 +13,7 @@ import com.grupo6.votingapp.models.Voting;
 
 public interface VotingRepository extends JpaRepository<Voting, Long>{
     @Query("SELECT v FROM Voting v WHERE v.creator.id = :userId")
-    Page<Voting> findByUserId(String userId, Pageable pageable); //* Parece funcionar
+    List<Voting> findByUserId(String userId, Sort sort); //* Parece funcionar
 
     @Query("SELECT v FROM Voting v WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term%")
     Page<Voting> findAccessibleVotingsToUser(String userId, String term, Pageable pageable); //* Parece funcionar
@@ -28,7 +28,7 @@ public interface VotingRepository extends JpaRepository<Voting, Long>{
     Page<Voting> findAccessibleVotingsToUserOrderByVotesAsc(String userId, String term, Pageable pageable); //* Parece funcionar
 
     @Query("SELECT v FROM Voting v JOIN Vote vt ON vt.voting.id = v.id WHERE vt.voter.id = :userId")
-    Page<Voting> findUserVotingHistory(String userId, Pageable pageable); //* Parece funcionar    
+    List<Voting> findUserVotingHistory(String userId, Sort sort); //* Parece funcionar    
 
     @Query("SELECT v FROM Voting v WHERE v.id = :votingId AND (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u))")
     Optional<Voting> findAccessibleVotingToUser(String userId, Long votingId);

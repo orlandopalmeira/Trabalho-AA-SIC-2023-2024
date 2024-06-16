@@ -234,10 +234,13 @@ def arg_getvotingstats(arguments: list):
 def arg_getuserhistory(arguments: list):
     """Test for server get user history"""
     try:
-        url = f'{SERVER}/votings/history?page=2&votings_per_page=2'
+        url = f'{SERVER}/votings/history'
         token = login()
         if token:
-            response = requests.get(url, cookies={'token': token})
+            response = requests.get(url, cookies={'token': token}, params={
+                'enddate_start': '2024-06-01 16:00:00',
+                'enddate_end': '2024-06-30 16:00:00',
+            })
             print(json.dumps(response.json(), indent=2))
         else:
             print("Invalid credentials")
