@@ -153,11 +153,8 @@ export default {
         }
 
         // Obter as votações pedidas
-        console.log(this.votingsRoute)
         axios.get(this.votingsRoute, { params: params_ })
             .then(response => {
-                console.log(response.data.votings)
-                console.log(params_)
                 this.votings = response.data.votings;
                 this.totalPages = response.data.totalPages
                 this.loadingVotings = false
@@ -180,7 +177,10 @@ export default {
         itemsPerPage() {
             useUserInfoStore().setHistoryItemsPerPage(this.itemsPerPage)
             this.fetchData();
-        }
+        },
+        filters(newFilters, oldFilters) { //Talvez fazer um if new === old, não fazer fetch
+            this.fetchData();
+        },
     },
     methods: {
         async fetchData() {
@@ -191,6 +191,11 @@ export default {
                     order: this.sortInfo[0]?.order ?? "",
                     page: this.page,
                     votings_per_page: this.itemsPerPage,
+                    creationdate_start: this.filters.creationdate[0],
+                    creationdate_end: this.filters.creationdate[0],
+                    enddate_start: this.filters.enddate[0],
+                    enddate_end: this.filters.enddate[1],
+                    privatevoting: this.filters.privatevoting
                 };
                 const response = await axios.get(this.votingsRoute, { params: params_ });
                 this.votings = response.data.votings;
@@ -241,10 +246,8 @@ export default {
     computed: {
         processedVotings() {
             let now = new Date().toISOString().replace('T', ' ').slice(0,19)
-            // console.log(this.votings)
             let processedVotings = this.votings.map(voting => {
                 let active = voting.enddate > now || voting.enddate === null
-                // console.log(voting.creationdate)
                 return {
                     ...voting,
                     creationdate: this.formatDateTime(voting.creationdate),
@@ -252,24 +255,25 @@ export default {
                     active: active,
                 }
             })
-            const isPrivateVoting = v => (v.privatevoting === 'mdi-lock')
-            if(this.filters) {
-                if(this.filters.creationdate) {
-                    processedVotings = processedVotings.filter(v => {
-                        return v.creationdate >= this.filters.creationdate[0] && v.creationdate <= this.filters.creationdate[1]
-                    })
-                }
-                if(this.filters.enddate) {
-                    processedVotings = processedVotings.filter(v => {
-                        return v.enddate >= this.filters.enddate[0] && v.enddate <= this.filters.enddate[1]
-                    })
-                }
-                if(this.filters.privatevoting !== null) {
-                    processedVotings = processedVotings.filter(v => {
-                        return isPrivateVoting(v) === this.filters.privatevoting
-                    })
-                }
-            }
+
+            // const isPrivateVoting = v => (v.privatevoting === 'mdi-lock')
+            // if(this.filters) {
+            //     if(this.filters.creationdate) {
+            //         processedVotings = processedVotings.filter(v => {
+            //             return v.creationdate >= this.filters.creationdate[0] && v.creationdate <= this.filters.creationdate[1]
+            //         })
+            //     }
+            //     if(this.filters.enddate) {
+            //         processedVotings = processedVotings.filter(v => {
+            //             return v.enddate >= this.filters.enddate[0] && v.enddate <= this.filters.enddate[1]
+            //         })
+            //     }
+            //     if(this.filters.privatevoting !== null) {
+            //         processedVotings = processedVotings.filter(v => {
+            //             return isPrivateVoting(v) === this.filters.privatevoting
+            //         })
+            //     }
+            // }
             return processedVotings
         }
     }, 
