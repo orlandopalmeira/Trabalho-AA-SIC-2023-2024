@@ -20,6 +20,18 @@
                             </button>
                         </div>
                     </v-col>
+                    <v-col cols="3">
+                        <div class="flex">
+                            <v-select
+                                label="Votações por página"
+                                :items="[10, 20, 30, 40, 50]"
+                                variant="outlined"
+                                density="compact"
+                                v-model="itemsPerPage"
+                                hide-details
+                            />
+                        </div>
+                    </v-col>
                     <v-col>
                         <div class="flex justify-end" style="width: 100%">
                             <button class="buttoncreatevoting" @click="onClickCreateVoting">
@@ -33,17 +45,21 @@
                     :headers="headers"
                     :items="processedVotings"
                     :search="search"
-                    :page="page"
                     :items-per-page="itemsPerPage"
-                    :items-per-page-options="itemsPerPageOptions"
-                    :page-text="`Página ${page} de ${totalPages}`"
                     v-model:sort-by="sortInfo"
                     @click:row="rowClicked"
-                    @update:items-per-page="updateItemsPerPage"
                     hover
-                    items-per-page-text="Votações por página"
                     no-data-text="Sem votações"
                 >
+                    <template v-slot:bottom>
+
+                        <v-pagination
+                            class="width mt-2"
+                            v-model="page"
+                            :length="totalPages"
+                            :total-visible="12"
+                        />
+                    </template>
                     <template v-slot:[`item.title`]="{ item }">
                         <p :title="'Descrição: '+item.description" style="max-width: 200px; font-weight: 500; ">
                             {{ item.title }}
@@ -116,13 +132,6 @@ export default {
             totalPages: 0,
             page: 1,
             itemsPerPage: useUserInfoStore().historyItemsPerPage,
-            itemsPerPageOptions: [
-                {value: 10, title: '10'},
-                {value: 20, title: '20'},
-                {value: 30, title: '30'},
-                {value: 40, title: '40'},
-                {value: 50, title: '50'},
-            ]
         }
     },
     created() {
@@ -181,7 +190,6 @@ export default {
                     page: this.page,
                     votings_per_page: this.itemsPerPage,
                 };
-                console.log(params_)
                 const response = await axios.get(this.votingsRoute, { params: params_ });
                 this.votings = response.data.votings;
                 this.totalPages = response.data.totalPages
@@ -226,9 +234,6 @@ export default {
                 this.filters = filters
             }
             this.modalFiltering.opened = false
-        },
-        updateItemsPerPage(value) {
-            this.itemsPerPage = value
         }
     },
     computed: {
