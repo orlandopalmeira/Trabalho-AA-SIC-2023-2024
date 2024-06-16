@@ -125,7 +125,7 @@ def arg_createusers(arguments: list):
 def arg_getuseraccessiblevotings(arguments: list):
     """Test for server get user accessible votings"""
     try:
-        url = f'{SERVER}/votings?orderBy=votes&order=desc&page=1&votings_per_page=4'
+        url = f'{SERVER}/votings?orderBy=votes&order=asc'
         token = login()
         if token:
             response = requests.get(url, cookies={'token': token})

@@ -81,18 +81,21 @@ public class VotingService {
         Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy);
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize, sort);
 
-        if (orderBy.equals("votes")) {//* O campo votes não existe na base de dados, pelo que a ordenação tem de ser calculada em código
+        List<Voting> votings;
+        if (orderBy.equals("votes")) {//* O campo votes não existe na base de dados, pelo que a ordenação tem de ser calculada de uma forma especial
             pageable = PageRequest.of(pageNumber-1, pageSize);
+            if (order.equals("desc")) {
+                votings = votingRepository.findAccessibleVotingsToUserOrderByVotesDesc(userId, pageable);
+            } else {
+                votings = votingRepository.findAccessibleVotingsToUserOrderByVotesAsc(userId, pageable);
+            }
+        } else {
+            votings = votingRepository.findAccessibleVotingsToUser(userId, pageable);
         }
         
-        List<Voting> votings = votingRepository.findAccessibleVotingsToUser(userId, pageable);
-        List<Long> votingIds = votings.stream().map(Voting::getId).toList(); //* ids das votações para descobrir a contagem de votos em cada uma delas
-        Map<Long, Long> votesCounts = statsRepository.getCountVotesOfVotings(votingIds);//* N.º votos por cada votação -> formato {voting_id: votes_count}
-        
-        List<VotingNoRelationsVotesCountDTO> votingsWithNoRelations = votings.stream()
+        List<VotingWithNoRelationsDTO> votingsWithNoRelations = votings.stream()
         .map(voting -> {
-            Long votesCount = votesCounts.getOrDefault(voting.getId(), 0L);
-            VotingNoRelationsVotesCountDTO votingWithNoRelationsDTO = new VotingNoRelationsVotesCountDTO(voting, votesCount);
+            VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingWithNoRelationsDTO(voting);
             boolean userAlreadyVoted = userAlreadyVoted(voting.getId(), Long.parseLong(userId)); //! Tentar ver se dá para fazer isto numa só query.
             votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
             return votingWithNoRelationsDTO;
@@ -100,10 +103,6 @@ public class VotingService {
         
         if (alreadyvotedonly) {
             votingsWithNoRelations.removeIf(voting -> !voting.isUseralreadyvoted());
-        }
-
-        if(orderBy.equals("votes")) {//* O campo votes não existe na base de dados, pelo que a ordenação tem de ser calculada em código
-            votingsWithNoRelations.sort((v1, v2) -> v1.getVotes().compareTo(v2.getVotes()) * (order.equals("desc") ? -1 : 1));
         }
 
         List<VotingWithNoRelationsDTO> result = new ArrayList<>(votingsWithNoRelations.size());
