@@ -20,18 +20,6 @@
                             </button>
                         </div>
                     </v-col>
-                    <v-col cols="3">
-                        <div class="flex">
-                            <v-select
-                                label="Votações por página"
-                                :items="[10, 20, 30, 40, 50]"
-                                variant="outlined"
-                                density="compact"
-                                v-model="itemsPerPage"
-                                hide-details
-                            />
-                        </div>
-                    </v-col>
                     <v-col>
                         <div class="flex justify-end" style="width: 100%">
                             <button class="buttoncreatevoting" @click="onClickCreateVoting">
@@ -52,26 +40,40 @@
                     no-data-text="Sem votações"
                 >
                     <template v-slot:bottom>
-
-                        <v-pagination
-                            class="width mt-2"
-                            v-model="page"
-                            :length="totalPages"
-                            :total-visible="12"
-                        />
+                        <v-row class="mt-2" align="center" justify="center">
+                            <v-col cols="3">
+                                <v-pagination
+                                    class="width mt-2"
+                                    v-model="page"
+                                    :length="totalPages"
+                                    :total-visible="12"
+                                />
+                            </v-col>
+                            <v-col cols="1" class="mt-2">
+                                <v-select
+                                    label="Votações por página"
+                                    :items="[10, 20, 30, 40, 50]"
+                                    variant="outlined"
+                                    density="compact"
+                                    v-model="itemsPerPage"
+                                    hide-details
+                                    style="width: 140px;"
+                                />
+                            </v-col>
+                        </v-row>
                     </template>
                     <template v-slot:[`item.title`]="{ item }">
                         <p :title="'Descrição: '+item.description" style="max-width: 200px; font-weight: 500; ">
                             {{ item.title }}
                         </p>
                     </template>
-                        <template v-slot:[`item.status`]="{ item }">
-                            <p v-if="item.active" style="color: green">Em Progresso</p>
-                            <p v-else style="color: red">Terminada</p>
-                        </template>
-                        <template v-slot:[`item.privatevoting`]="{ item }">
-                            <v-icon>{{ item.privatevoting }}</v-icon>
-                        </template>
+                    <template v-slot:[`item.status`]="{ item }">
+                        <p v-if="item.active" style="color: green">Em Progresso</p>
+                        <p v-else style="color: red">Terminada</p>
+                    </template>
+                    <template v-slot:[`item.privatevoting`]="{ item }">
+                        <v-icon>{{ item.privatevoting }}</v-icon>
+                    </template>
                 </v-data-table>
             </v-card>
         </v-container>
