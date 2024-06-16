@@ -1,7 +1,7 @@
 <template>
     <v-row v-if="votings && votings.length > 0" class="dark pa-2 rounded-lg">
         <v-col style="padding: 0;"
-            v-for="(voting,index) in paginatedVotings"
+            v-for="(voting,index) in votings"
             :key="index"
             cols="12"
             sm="3">
@@ -10,14 +10,12 @@
                 <VotingCard :voting="voting"/>
             </v-sheet>
         </v-col>
-        <div class="mt-4 right width" v-if="votings.length > itemsPerPage">
-            <v-pagination
-                v-model="page"
-                :length="pageCount"
-                :total-visible="4"
-                @input="onPageChange"
-            />
-        </div>
+        <v-pagination
+            class="width mt-2"
+            v-model="page"
+            :length="pageCount"
+            :total-visible="12"
+        />
     </v-row>
     <!--No caso de não haver votações disponíveis-->
     <div v-else>
@@ -46,26 +44,18 @@ export default {
     },
     data() {
         return {
-            page: 1,
-            itemsPerPage: 8
+            page: 1
         }
     },
     props: {
-        votings: { type: Array, required: true }
+        itemsPerPage: { type: Number, required: true },
+        votings: { type: Array, required: true },
+        pageCount: { type: Number, required: true}
     },
-    computed: {
-        pageCount() {
-            return Math.ceil(this.votings.length / this.itemsPerPage);
-        },
-        paginatedVotings() {
-            const start = (this.page - 1) * this.itemsPerPage;
-            const end = start + this.itemsPerPage;
-            return this.votings.slice(start, end);
-        }
-    },
-    methods: {
-        onPageChange(page) {
-            this.page = page;
+    emits: ['page-changed'],
+    watch: {
+        page(newValue, oldValue) {
+            this.$emit('page-changed', newValue);
         }
     }
 }

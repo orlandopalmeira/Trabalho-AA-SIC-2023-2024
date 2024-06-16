@@ -88,7 +88,7 @@ export default {
                     formData.append('images', image);
                 });
                 
-                axios.post(API_PATHS.votings, formData, {
+                axios.post(API_PATHS.postVotings, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

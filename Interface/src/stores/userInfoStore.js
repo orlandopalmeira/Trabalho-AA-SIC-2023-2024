@@ -8,7 +8,8 @@ export const useUserInfoStore = defineStore('userinfo', {
         name: localStorage.getItem('name') || null,
         email: localStorage.getItem('email') || null,
         homeOrderBy: localStorage.getItem('homeOrderBy') || 'creationdate',
-        homeReverseSort: localStorage.getItem('homeReverseSort') === 'true'
+        homeReverseSort: localStorage.getItem('homeReverseSort') === 'true',
+        homeItemsPerPage: localStorage.getItem('homeItemsPerPage') || 8
     }),
     // getters, equivalentes aos computed properties
     getters: {
@@ -32,6 +33,9 @@ export const useUserInfoStore = defineStore('userinfo', {
         },
         getHomeReverseSort() {
             return this.homeReverseSort;
+        },
+        getHomeItemsPerPage() {
+            return this.homeItemsPerPage;
         }
     },
     // acções, equivalentes aos métodos
@@ -69,6 +73,10 @@ export const useUserInfoStore = defineStore('userinfo', {
         setHomeReverseSort(reverseSort) {
             this.homeReverseSort = reverseSort;
             localStorage.setItem('homeReverseSort', reverseSort);
+        },
+        setHomeItemsPerPage(itemsPerPage) {
+            this.homeItemsPerPage = itemsPerPage;
+            localStorage.setItem('homeItemsPerPage', itemsPerPage);
         }
     }
 });

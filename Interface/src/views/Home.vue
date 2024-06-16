@@ -8,25 +8,34 @@
 			@close-modal="redirectToLogin"/>
         <v-container>
             <v-row class="mt-3">
-                <v-col>
-                    <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" prepend-icon="mdi-magnify" density="compact" hide-details/>
+                <v-col cols="5" class="flex">
+                    <v-btn @click="handleSearch" icon class="dark mr-2"> <v-icon>mdi-magnify</v-icon> </v-btn>
+                    <v-text-field style="width: 90%" v-model="searchQuery" label="Pesquisar" density="compact" hide-details @keyup.enter="handleSearch"/>
                 </v-col>
-                <v-col cols="3">
+                <v-col cols="5">
                     <div class="flex">
-                        <v-select style="width: 60%"
+                        <v-select style="width: 30%"
                             label="Ordenar por"
                             :items="selectItems"
                             variant="outlined"
                             density="compact"
                             v-model="orderBy"
-                            clearable
-                            hide-details />
+                            hide-details 
+                            />
                         <v-btn :title="'Ordem ' + (reverseSort? 'descendente' : 'ascendente')" 
                             @click="onclickReverseSort" 
                             class="bg-transparent" 
                             :icon="reverseSort ? 'mdi-arrow-down' : 'mdi-arrow-up'"
                             flat>
                         </v-btn>
+                        <v-select class="ml-5" style="width: 5%;"
+                            label="Votações por página"
+                            :items="[8, 16, 24, 32, 40]"
+                            variant="outlined"
+                            density="compact"
+                            v-model="itemsPerPage"
+                            hide-details
+                            />
                     </div>
                 </v-col>
                 <v-col class="flex justify-end pr-5 mb-1">
@@ -37,9 +46,9 @@
             </v-row>
             <LoadingAlert v-if="loadingVotings" message="A carregar as votações, por favor aguarde." />
             <SimpleAlert
-                v-else-if="!loadingVotings && this.votings && this.votings.length > 0 && filteredSortedList.length === 0"
+                v-else-if="!loadingVotings && this.votings && this.votings.length > 0 && this.votings.length === 0"
                 message="A sua pesquisa não retornou resultados."/>
-            <VotingsContainer v-else :votings="filteredSortedList" />
+            <VotingsContainer v-else :votings="this.votings" :itemsPerPage="itemsPerPage" :pageCount="pageCount" @page-changed="handlePageChanged"/>
         </v-container>
     </AuthenticatedLayout>
 </template>
@@ -83,9 +92,12 @@ export default {
                 { title: 'Descrição', value: 'description' },
                 { title: 'Data de criação', value: 'creationdate' },
                 { title: 'Data de fim', value: 'enddate' },
-                { title: 'Número de votos', value: 'votes' }
+                { title: 'Populariade', value: 'votes' }
             ],
             reverseSort: useUserInfoStore().homeReverseSort,
+            page: 1,
+            itemsPerPage: parseInt(useUserInfoStore().homeItemsPerPage),
+            pageCount: 0,
         }
     },
     methods: {
@@ -105,8 +117,8 @@ export default {
         },
         async getVotings() {
             try {
-                let response = await axios.get(API_PATHS.votings) // votações a que o user tem acesso
-                this.loadingVotings = false 
+                let sort = this.reverseSort ? "asc" : "desc"
+                let response = await axios.get(API_PATHS.votings(this.searchQuery, this.orderBy, sort, this.page, this.itemsPerPage)) // votações a que o user tem acesso
                 return response.data
             } catch (error) {
                 let status = error.response.status
@@ -121,63 +133,47 @@ export default {
                 }
             }
         },
+        handleGetVotings(){
+            this.getVotings()
+            .then(response => {
+                this.votings = response.votings
+                this.pageCount = response.totalPages
+                this.loadingVotings = false
+            }).catch(error => {
+                this.votings = []
+                this.loadingVotings = false
+                console.error(error)
+            })
+        },
         onclickReverseSort(){
             this.reverseSort = !this.reverseSort
             useUserInfoStore().setHomeReverseSort(this.reverseSort)
+            this.handleGetVotings()
+        },
+        handlePageChanged(page) {
+            this.page = page
+            this.handleGetVotings()
+        },
+        handleSearch() {
+            this.handleGetVotings()
         }
     }, 
     created() {
         useUserInfoStore().setHomeOrderBy(this.orderBy)
         useUserInfoStore().setHomeReverseSort(this.reverseSort)
-        this.getVotings()
-        .then(votings => {
-            this.votings = votings
-            this.loadingVotings = false
-        }).catch(error => {
-            this.votings = []
-            this.loadingVotings = false
-            console.error(error)
-        })
-    },
-    computed: {
-        filteredSortedList(){
-            let sortFactor = this.reverseSort ? -1 : 1;
-            let filteredList = this.votings.slice();
-            if (this.searchQuery && this.searchQuery !== '') {
-                const query = this.searchQuery.toLowerCase();
-                filteredList = filteredList.filter(voting => {
-                    return Object.values(voting).some(fieldValue => 
-                        fieldValue && fieldValue.toString().toLowerCase().includes(query)
-                    );
-                });
-            }
-            
-            if (this.orderBy) {
-                filteredList = filteredList.sort((a, b) => {
-                    if (this.orderBy === 'enddate') {
-                        if(a.enddate === null) { // "a" não tem fim definido
-                            return 1*sortFactor;
-                        } else if (b.enddate === null) { // "b" não tem fim definido
-                            return -1*sortFactor;
-                        }
-                    }
-                    if (a[this.orderBy] < b[this.orderBy]) {
-                        return -1*sortFactor;
-                    }
-                    if (a[this.orderBy] > b[this.orderBy]) {
-                        return 1*sortFactor;
-                    }
-                    return 0;
-                });
-            }
-
-            return filteredList
-        }	
+        this.handleGetVotings()
     },
     watch: {
         orderBy(newValue, oldValue) {
             if (newValue != null) {
                 useUserInfoStore().setHomeOrderBy(newValue)
+                this.handleGetVotings()
+            }
+        },
+        itemsPerPage(newValue, oldValue) {
+            if (newValue != null) {
+                useUserInfoStore().setHomeItemsPerPage(newValue)
+                this.handleGetVotings()
             }
         }
     }
@@ -190,5 +186,22 @@ export default {
 }
 .space-between {
     justify-content: space-between;
+}
+
+.buttoncreatevoting {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+}
+.buttoncreatevoting:hover {
+    background-color: #45a049;
 }
 </style>
