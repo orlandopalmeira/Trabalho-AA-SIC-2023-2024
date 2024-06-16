@@ -44,15 +44,21 @@ public class VotingController {
     @GetMapping //* Parece funcionar
     public ResponseEntity<Object> getVotings(
         @RequestParam(value="alreadyvotedonly", required = false, defaultValue = "false") boolean alreadyvotedonly,
+        @RequestParam(value="term", required = false, defaultValue = "") String term,
         @RequestParam(value="orderBy", required = false, defaultValue = "enddate") String orderBy,
         @RequestParam(value="order", required = false, defaultValue = "asc") String order,
         @RequestParam(value="page", required = false, defaultValue = "1") int page,
         @RequestParam(value="votings_per_page", required = false, defaultValue = "12") int pageSize,
         @CookieValue(value = "token", defaultValue = "") String token
     ) {
-        return authMiddlewares.checkTokenSimple(token, user_id -> 
-            ResponseEntity.ok(votingService.getAccessibleVotingsToUser(user_id, alreadyvotedonly, orderBy, order, page, pageSize))
-        );
+        return authMiddlewares.checkTokenSimple(token, user_id -> {
+            Map<String, Object> votings = votingService.getAccessibleVotingsToUser(user_id, alreadyvotedonly, term, orderBy, order, page, pageSize);
+            if (!alreadyvotedonly) {
+                return ResponseEntity.ok(votings);
+            } else {
+                return ResponseEntity.ok(votings.get("votings"));
+            }
+        });
     }
 
     @GetMapping("/user") //* Parece funcionar

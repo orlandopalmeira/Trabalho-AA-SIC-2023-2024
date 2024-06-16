@@ -1,6 +1,5 @@
 package com.grupo6.votingapp.services;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.internal.util.collections.IdentitySet;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -76,22 +76,24 @@ public class VotingService {
         return result;
     }
 
-    //* Obter todas as votações a que o user tem acesso
-    public List<VotingWithNoRelationsDTO> getAccessibleVotingsToUser(String userId, boolean alreadyvotedonly, String orderBy, String order, int pageNumber, int pageSize){
+    //* Obter todas as votações a que o user tem acesso bem como o número de páginas que o conjunto de todas essas votações possui
+    public Map<String,Object> getAccessibleVotingsToUser(String userId, boolean alreadyvotedonly, String term, String orderBy, String order, int pageNumber, int pageSize){
         Sort sort = Sort.by(Sort.Direction.fromString(order), orderBy);
         Pageable pageable = PageRequest.of(pageNumber-1, pageSize, sort);
-
+        
+        Page<Voting> votingsPage;
         List<Voting> votings;
         if (orderBy.equals("votes")) {//* O campo votes não existe na base de dados, pelo que a ordenação tem de ser calculada de uma forma especial
             pageable = PageRequest.of(pageNumber-1, pageSize);
             if (order.equals("desc")) {
-                votings = votingRepository.findAccessibleVotingsToUserOrderByVotesDesc(userId, pageable);
+                votingsPage = votingRepository.findAccessibleVotingsToUserOrderByVotesDesc(userId, term, pageable);
             } else {
-                votings = votingRepository.findAccessibleVotingsToUserOrderByVotesAsc(userId, pageable);
+                votingsPage = votingRepository.findAccessibleVotingsToUserOrderByVotesAsc(userId, term, pageable);
             }
         } else {
-            votings = votingRepository.findAccessibleVotingsToUser(userId, pageable);
+            votingsPage = votingRepository.findAccessibleVotingsToUser(userId, term, pageable);
         }
+        votings = votingsPage.getContent();
         
         List<VotingWithNoRelationsDTO> votingsWithNoRelations = votings.stream()
         .map(voting -> {
@@ -105,7 +107,9 @@ public class VotingService {
             votingsWithNoRelations.removeIf(voting -> !voting.isUseralreadyvoted());
         }
 
-        return votingsWithNoRelations;
+        int totalPages = votingsPage.getTotalPages();
+
+        return Map.of("votings", votingsWithNoRelations, "totalPages", totalPages);
     }
 
     //* Obter todas as votações criadas por um user

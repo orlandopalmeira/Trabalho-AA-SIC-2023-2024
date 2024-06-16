@@ -3,6 +3,7 @@ package com.grupo6.votingapp.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,14 +14,14 @@ public interface VotingRepository extends JpaRepository<Voting, Long>{
     @Query("SELECT v FROM Voting v WHERE v.creator.id = :userId")
     List<Voting> findByUserId(String userId); //* Parece funcionar
 
-    @Query("SELECT v FROM Voting v WHERE v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)")
-    List<Voting> findAccessibleVotingsToUser(String userId, Pageable pageable); //* Parece funcionar
+    @Query("SELECT v FROM Voting v WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term%")
+    Page<Voting> findAccessibleVotingsToUser(String userId, String term, Pageable pageable); //* Parece funcionar
 
-    @Query("SELECT v FROM Voting v LEFT JOIN Vote vt ON vt.voting.id = v.id WHERE v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u) GROUP BY v.id ORDER BY COUNT(vt.id) DESC")
-    List<Voting> findAccessibleVotingsToUserOrderByVotesDesc(String userId, Pageable pageable); //* Parece funcionar
+    @Query("SELECT v FROM Voting v LEFT JOIN Vote vt ON vt.voting.id = v.id WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term% GROUP BY v.id ORDER BY COUNT(vt.id) DESC")
+    Page<Voting> findAccessibleVotingsToUserOrderByVotesDesc(String userId, String term, Pageable pageable); //* Parece funcionar
 
-    @Query("SELECT v FROM Voting v LEFT JOIN Vote vt ON vt.voting.id = v.id WHERE v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u) GROUP BY v.id ORDER BY COUNT(vt.id) ASC")
-    List<Voting> findAccessibleVotingsToUserOrderByVotesAsc(String userId, Pageable pageable); //* Parece funcionar
+    @Query("SELECT v FROM Voting v LEFT JOIN Vote vt ON vt.voting.id = v.id WHERE (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u)) AND v.title LIKE %:term% GROUP BY v.id ORDER BY COUNT(vt.id) ASC")
+    Page<Voting> findAccessibleVotingsToUserOrderByVotesAsc(String userId, String term, Pageable pageable); //* Parece funcionar
 
     @Query("SELECT v FROM Voting v WHERE v.id = :votingId AND (v.creator.id = :userId OR v.privatevoting = false OR :userId IN (SELECT u.id FROM v.privatevoters u))")
     Optional<Voting> findAccessibleVotingToUser(String userId, Long votingId);
