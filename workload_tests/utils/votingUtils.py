@@ -14,14 +14,20 @@ class VotingUtils:
             raise Exception(f"Failed to login: {response.status_code}")
 
     @staticmethod
-    def register(client):
+    def register(client, sample_user=None):
         """Retorna um token de autenticação."""
+        if sample_user == None:
+            sample_user = get_sample_user()
+            # print(sample_user)
 
-        sample_user = get_sample_user()
-        avatar_path = get_random_image()
+        ## Simula uma probabilidade do utilizador querer inserir foto de perfil ou não o querer.
+        avatar_value = None
+        if random.choice([True, False]):
+            avatar_path = get_random_image()
+            avatar_value = ('avatar.png', open(avatar_path, 'rb'), 'image/png')
         data_form = {
             'user': (None, json.dumps(sample_user), 'application/json'),
-            'avatar': ('avatar.png', open(avatar_path, 'rb'), 'image/png')
+            'avatar': avatar_value
         }
         response = client.post("/auth/register", files=data_form)
         if response.status_code == 200:
@@ -33,7 +39,8 @@ class VotingUtils:
     def get_home(client, token):
         response = client.get("/votings?orderBy=enddate&order=desc&page=1&votings_per_page=8", cookies={"token": token}, name = "/votings")
         if response.status_code == 200:
-            print("Success in obtaining /votings page")
+            # print("Success in obtaining /votings page")
+            pass
         else:
             raise Exception("Failure in getting /votings page")
         
@@ -42,8 +49,8 @@ class VotingUtils:
 
 
     @staticmethod
-    def vote(client, token, voting_id):
-        voting_response = client.get(f"/votings/{voting_id}", cookies={"token": token})
+    def vote(client, token, voting_id, vote_stat_name = "/votings/{id}"):
+        voting_response = client.get(f"/votings/{voting_id}", cookies={"token": token}, name="/votings/{id}")
         if voting_response.status_code != 200:
             raise Exception(f"Erro {voting_response.status_code}. Failed to get voting-{voting_id}.")
         
@@ -55,11 +62,14 @@ class VotingUtils:
         for question in voting["questions"] :
             vote["options"][question["id"]] = [random.choice(question["options"])["id"]]
 
-        with client.post("/votes", json=vote, cookies={"token": token}, catch_response=True) as vote_resp:
-            if vote_resp.status_code == 409:
-                print("Status code 409 (Conflict). Tentativa de votação dupla, o que não é propriamente falha de carga.")
-                # Requests are considered successful if the HTTP response code is OK (<400) -- https://docs.locust.io/en/stable/writing-a-locustfile.html#validating-responses
-                vote_resp.success()
+        client.post("/votes", json=vote, cookies={"token": token}, name = vote_stat_name)
+
+        ## Para caso quisesse interpretar double voting como o calhar
+        # with client.post("/votes", json=vote, cookies={"token": token}, catch_response=True) as vote_resp:
+        #     if vote_resp.status_code == 409:
+        #         print("Status code 409 (Conflict). Tentativa de votação dupla, o que não é propriamente falha de carga.")
+        #         # Requests are considered successful if the HTTP response code is OK (<400) -- https://docs.locust.io/en/stable/writing-a-locustfile.html#validating-responses
+        #         vote_resp.success()
 
     @staticmethod
     def create_voting(client, token, voting_counter):
@@ -101,16 +111,27 @@ class VotingUtils:
 
         if response.status_code == 200:
             data = response.json()
-            print(f"Vote created with ID: {data.get('id')}, Message: {data.get('message')}")
+            # print(f"Vote created with ID: {data.get('id')}, Message: {data.get('message')}")
             return data.get('id')
         else:
             print(f"Failed to create vote: {response.status_code}")
 
     @staticmethod
+    def delete_voting(client, token, voting_id):
+        response = client.delete(f"/votings/{voting_id}", cookies={'token': token}, name="/votings/{id}" )
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Deleted voting with ID: {data.get('id')}, Message: {data.get('message')}")
+            return data.get('id')
+        else:
+            print(f"Delete Voting: Erro {response.status_code} {(response.text)}")
+
+    @staticmethod
     def see_stats(client, token, voting_id):
-        response = client.get(f"/votings/{voting_id}/stats", cookies={"token": token}, name="/stats")
+        response = client.get(f"/votings/{voting_id}/stats", cookies={"token": token}, name="votings/{id}/stats")
 
         if response.status_code == 200:
-            print(f"Success in obtaining statistics from voting-{voting_id}.")
+            # print(f"Success in obtaining statistics from voting-{voting_id}.")
+            pass
         else:
             raise Exception(f"Failure in getting stats, with error {response.status_code}")

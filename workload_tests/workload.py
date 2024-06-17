@@ -53,15 +53,16 @@ class RegisterAndVoting(SequentialTaskSet):
 
         response = VotingUtils.get_home(self.client, self.token)
         votings = response.get('votings')
-        print(votings)
 
+        # Escolhe uma votação de acesso público e com data limite indefinida
         votings = list(filter(lambda voting: not voting['privatevoting'] and voting['enddate'] == None , votings))
         if len(votings) == 0:
             selected_voting = random.choice(votings)
             self.selected_voting_id = selected_voting['id']
             # print(selected_voting)
         else:
-            raise Exception("Não existem votings disponíveis")
+            print("AVISO: Não existem votings disponíveis")
+            self.interrupt(reschedule=False)
 
     
     @task
@@ -70,11 +71,10 @@ class RegisterAndVoting(SequentialTaskSet):
         VotingUtils.see_stats(self.client, self.token, v_id)
         
 
+voting_counter = 0
 
 class RegisterAndCreateVoting(SequentialTaskSet):
-    wait_time = between(1,5)
-
-    voting_counter = 0
+    wait_time = between(1,3)
 
     def on_start(self):
         self.register()
@@ -83,12 +83,19 @@ class RegisterAndCreateVoting(SequentialTaskSet):
         self.token = VotingUtils.register(self.client)
 
     @task
+    def getHome(self):
+        VotingUtils.get_home(self.client, self.token)
+
+
+    @task
     def createVoting(self):
         # print("\n!!!!  3  !!!!\n")
+        global voting_counter
 
-        self.voting_counter += 1
-        created_vote_id = VotingUtils.create_voting(self.client, self.token, self.voting_counter)
+        voting_counter += 1
+        created_vote_id = VotingUtils.create_voting(self.client, self.token, voting_counter)
         
+
 
 
 
