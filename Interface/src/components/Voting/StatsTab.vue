@@ -25,13 +25,13 @@
                 <v-row>
                     <v-col class="vcol1 dark-light">
                         <p class="text-h6 pl-2" style="font-weight: bold;">Número de votos</p>
-                        <p class="pl-2" style="font-size: 20pt;">{{ stats.numvotes }}</p>
+                        <p class="pl-2" style="font-size: 17pt;">{{ stats.numvotes }}</p>
                         <p class="pl-2">{{ privateParticipation }}</p>
                     </v-col>
                     <v-col class="vcol1 dark-light" cols="3.5">
                         <p class="text-h6 pl-2" style="font-weight: bold;">Mais votado</p>
                         <p v-if="winnerOptions.length === 0" class="pl-2" style="font-size: 14pt; word-break: break-word;">Nenhum voto registado</p>
-                        <p v-else-if="winnerOptions.length === 1" class="pl-2" style="font-size: 20pt; word-break: break-word;">
+                        <p v-else-if="winnerOptions.length === 1" class="pl-2" style="font-size: 17pt; word-break: break-word;">
                             {{ winnerOptions[0].description }}
                             <v-tooltip v-if="winnerOptions[0].image">
                                 <template v-slot:activator="{ props }">
@@ -49,7 +49,7 @@
                         </p>
                         <v-tooltip v-else location="top">
                             <template v-slot:activator="{ props }">
-                                <p class="pl-2" style="font-size: 18pt;" v-bind="props" text>
+                                <p class="pl-2" style="font-size: 17pt;" v-bind="props" text>
                                     <span class="hoverable" style="text-decoration: underline;">{{ winnerOptions.length }} opções empatadas</span>
                                 </p>
                             </template>
@@ -68,8 +68,8 @@
                         <p class="pl-2">{{ winnerOptions.countText }}</p>
                     </v-col>
                     <v-col class="vcol1 dark-light">
-                        <p class="text-h6 pl-2" style="font-weight: bold;">Tempo passado</p>
-                        <p class="pl-2" style="font-size: 20pt;">{{ timeElapsed }}</p>
+                        <p class="text-h6 pl-2" style="font-weight: bold;">Tempo decorrido</p>
+                        <p class="pl-2" style="font-size: 17pt;">{{ timeElapsed }}</p>
                         <p class="pl-2"> {{ timeLeft }} </p>
                     </v-col>
                 </v-row>
@@ -261,11 +261,17 @@ export default {
         timeElapsed(){
             let time = null;
             if (this.voting.enddate && (new Date(this.voting.enddate) - new Date()) < 0) { // Se a votação já terminou
-                time = new Date(this.voting.enddate) - new Date(this.voting.creationdate);
+                time = new Date(this.voting.enddate) - new Date(this.voting.creationdate); // Retorna o tempo que a votação durou
+                // console.log("Votação terminada")
             }
             else{
-                time = new Date() - new Date(this.voting.creationdate);
+                time = new Date() - new Date(this.voting.creationdate); // Retorna o tempo desde a criação da votação até agora
+                // console.log("Votação não terminada")
             }
+            // console.log("CreationDate: ", new Date(this.voting.creationdate))
+            // console.log("Endate: ", new Date(this.voting.enddate))
+            // console.log("Now: ", new Date())
+            // console.log("Ret time: ", time);
             return this.timestampToFormatedDate(time);
         },
         timeLeft(){
@@ -291,13 +297,13 @@ export default {
             let hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             let minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
             // let seconds = Math.floor((time % (1000 * 60)) / 1000);
-            let days_str = days > 0 ? days + 'd' : '';
-            let hours_str = hours > 0 ? hours + 'h' : '';
+            let days_str = days > 0 ? days + 'd ' : '';
+            let hours_str = hours > 0 ? hours + 'h ' : '';
             let minutes_str = minutes + 'min';
             if (days === 0 && hours === 0 && minutes < 1) return 'Menos de um minuto';
             if (days === 0 && hours === 0 && minutes === 1) return '1 minuto';
             if (days === 0 && hours === 0) minutes_str = minutes + ' minutos';
-            return `${days_str} ${hours_str} ${minutes_str}`;
+            return `${days_str}${hours_str}${minutes_str}`;
         },
         getImageUrl(image){
             return API_PATHS.getImageUrl(image)

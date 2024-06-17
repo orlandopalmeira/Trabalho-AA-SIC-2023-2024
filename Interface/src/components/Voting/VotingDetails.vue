@@ -54,7 +54,7 @@
                         prepend-icon="mdi-calendar"
                         v-model="updatedVoting.enddate"
                         label="Data do fim da votação"
-                        :min="new Date().toISOString().slice(0, 16)"
+                        :min="myISOString(new Date())"
                         />
                     <v-text-field v-else-if="updatedVoting.enddate"
                         v-model="updatedVoting.enddate"
@@ -159,6 +159,18 @@ export default {
         }
     },
     methods: {
+        myISOString(date) {
+            const pad = (num) => num.toString().padStart(2, '0');
+
+            const year = date.getFullYear();
+            const month = pad(date.getMonth() + 1); // Months are zero-based
+            const day = pad(date.getDate());
+            const hours = pad(date.getHours());
+            const minutes = pad(date.getMinutes());
+            const seconds = pad(date.getSeconds());
+
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        },
         getFieldRules(field) {
             let rules = [];
             switch (field) {
