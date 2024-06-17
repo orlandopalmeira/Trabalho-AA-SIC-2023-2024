@@ -5,11 +5,17 @@
         :message="modal.message"
         @close-modal="modal.onclose"/>
     <ModalYesNo
-        :isVisible="modalConfirm.opened"
-        :title="modalConfirm.title"
-        :message="modalConfirm.message"
-        @yes="modalConfirm.onyes"
-        @no="modalConfirm.onno"/>
+        :isVisible="modalConfirmDelete.opened"
+        :title="modalConfirmDelete.title"
+        :message="modalConfirmDelete.message"
+        @yes="modalConfirmDelete.onyes"
+        @no="modalConfirmDelete.onno"/>
+    <ModalYesNo
+        :isVisible="modalConfirmCloseVoting.opened"
+        :title="modalConfirmCloseVoting.title"
+        :message="modalConfirmCloseVoting.message"
+        @yes="modalConfirmCloseVoting.onyes"
+        @no="modalConfirmCloseVoting.onno"/>
     <div class="dark" style="padding-left: 10%; padding-right: 10%">
         <v-card class="dark">
             <v-card-title class="mb-5">
@@ -49,22 +55,24 @@
                         prepend-icon="mdi-calendar"
                         label="Data de início da votação"
                         :disabled="updatedVoting.accesstype === 'creator'"/>
-                    <v-text-field v-if="updatedVoting.accesstype === 'creator'"
-                        type="datetime-local"
-                        prepend-icon="mdi-calendar"
-                        v-model="updatedVoting.enddate"
-                        label="Data do fim da votação"
-                        :min="myISOString(new Date())"
-                        />
-                    <v-text-field v-else-if="updatedVoting.enddate"
-                        v-model="updatedVoting.enddate"
-                        prepend-icon="mdi-calendar"
-                        label="Data do fim da votação"
-                        readonly/>
-                    <v-text-field v-else
-                        prepend-icon="mdi-calendar"
-                        label="Fim da votação indefinido"
-                        readonly/>
+                    <div class="flex align-center">
+                        <v-text-field v-if="updatedVoting.accesstype === 'creator'"
+                            type="datetime-local"
+                            prepend-icon="mdi-calendar"
+                            v-model="updatedVoting.enddate"
+                            label="Data do fim da votação"
+                            :min="myISOString(new Date())"/>
+                        <v-text-field v-else-if="updatedVoting.enddate"
+                            v-model="updatedVoting.enddate"
+                            prepend-icon="mdi-calendar"
+                            label="Data do fim da votação"
+                            readonly/>
+                        <v-text-field v-else
+                            prepend-icon="mdi-calendar"
+                            label="Fim da votação indefinido"
+                            readonly/>
+                        <v-btn v-if="updatedVoting.accesstype === 'creator'" @click="closeVoting" color="error" class="ml-5 mb-5">Terminar Votação</v-btn>
+                    </div>
                     <v-checkbox
                         id="privatevoting"
                         name="privatevoting"
@@ -134,6 +142,7 @@ export default {
     data() {
         return {
             updatedVoting: JSON.parse(JSON.stringify(this.voting)), // deep copy do votação passada pelo props
+            originalVoting: JSON.parse(JSON.stringify(this.voting)), // votação com os dados originais para que o termino da votação não altere os outros campos
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
@@ -149,10 +158,17 @@ export default {
                 message: '',
                 onclose: null,
             },
-            modalConfirm: {
+            modalConfirmDelete: {
                 opened: false,
                 title: 'Eliminar votação',
                 message: 'Tem a certeza que deseja eliminar a votação?',
+                onyes: null,
+                onno: null
+            },
+            modalConfirmCloseVoting: {
+                opened: false,
+                title: 'Terminar votação',
+                message: 'Tem a certeza que deseja terminar a votação?',
                 onyes: null,
                 onno: null
             }
@@ -184,17 +200,33 @@ export default {
             }
             return rules;
         },
-        openModal(title,message, closemodal = () => this.modal.opened = false) {
+        openModal(title,message, closemodal = () => {
+                this.modal.opened = false
+
+                // redireciona para a página de detalhes da votação
+                const routePath = this.$router.resolve({
+                name: 'voting',
+                params: { id: this.updatedVoting.id },
+                query: { firstTab: 'detalhes' }
+                }).href;
+                window.location.href = window.location.origin + routePath;
+            }) {
             this.modal.title = title;
             this.modal.message = message;
             this.modal.opened = true;
             this.modal.onclose = closemodal;
         },
-        openModalConfirm(yes = () => this.modalConfirm.opened = false, 
-                         no = () => this.modalConfirm.opened = false) {
-            this.modalConfirm.onyes = yes;
-            this.modalConfirm.onno = no;
-            this.modalConfirm.opened = true;
+        openModalConfirmDelete(yes = () => this.modalConfirmDelete.opened = false, 
+                               no = () => this.modalConfirmDelete.opened = false) {
+            this.modalConfirmDelete.onyes = yes;
+            this.modalConfirmDelete.onno = no;
+            this.modalConfirmDelete.opened = true;
+        },
+        openModalConfirmCloseVoting(yes = () => this.modalConfirmCloseVoting.opened = false, 
+                                    no = () => this.modalConfirmCloseVoting.opened = false) {
+            this.modalConfirmCloseVoting.onyes = yes;
+            this.modalConfirmCloseVoting.onno = no;
+            this.modalConfirmCloseVoting.opened = true;
         },
         submitChanges() {
             let dataObj = {
@@ -214,8 +246,8 @@ export default {
                 });
         },
         deleteVoting() {
-            this.openModalConfirm(() => {// se o utilizador confirmar a eliminação
-                this.modalConfirm.opened = false; // fecha o modal de confirmação
+            this.openModalConfirmDelete(() => {// se o utilizador confirmar a eliminação
+                this.modalConfirmDelete.opened = false; // fecha o modal de confirmação
                 axios.delete(API_PATHS.votingId(this.updatedVoting.id)) // eliminação da votação
                 .then(() => {
                     this.openModal('Sucesso', 'Votação eliminada com sucesso.', () => {
@@ -238,10 +270,32 @@ export default {
                 .catch(() => {
                     ToastManager.show('Erro ao copiar o link para a área de transferência.', 'error');
                 });
+        },
+        closeVoting(){
+            this.openModalConfirmCloseVoting(() => {
+                this.modalConfirmCloseVoting.opened = false;
+                this.originalVoting.enddate = new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                const dataObj = {
+                    title: this.originalVoting.title,
+                    description: this.originalVoting.description,
+                    enddate: this.originalVoting.enddate.replace('T',' ').slice(0, 16) + ':00',
+                    showstats: this.originalVoting.showstats,
+                    showstatsrealtime: this.originalVoting.showstatsrealtime
+                };
+                axios.put(API_PATHS.votingId(this.originalVoting.id), dataObj)
+                .then(() => {
+                    this.openModal('Sucesso', 'Votação terminada com sucesso.');
+                })
+                .catch(error => {
+                    this.openModal('Erro', 'Ocorreu um erro ao terminar as votação.');
+                    console.log(error);
+                });
+            });
         }
     },
     created() {
         this.updatedVoting.enddate = this.updatedVoting.enddate ? this.updatedVoting.enddate.slice(0, 16) : null;
+        this.updatedVoting.creationdate = this.updatedVoting.creationdate.slice(0, 16);
     }
 }
 </script>
