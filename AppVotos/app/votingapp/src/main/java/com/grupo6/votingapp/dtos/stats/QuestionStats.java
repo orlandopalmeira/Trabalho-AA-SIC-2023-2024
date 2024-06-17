@@ -1,9 +1,7 @@
-package com.grupo6.votingapp.dtos.questions;
+package com.grupo6.votingapp.dtos.stats;
 
 import java.util.List;
 import java.util.Objects;
-
-import com.grupo6.votingapp.dtos.stats.OptionStats;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

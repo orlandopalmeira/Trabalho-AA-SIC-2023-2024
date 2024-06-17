@@ -1,7 +1,6 @@
 package com.grupo6.votingapp.services;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.grupo6.votingapp.dtos.questions.QuestionStats;
+import com.grupo6.votingapp.dtos.stats.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
 import com.grupo6.votingapp.dtos.users.UserStats;

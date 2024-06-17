@@ -2,7 +2,6 @@ package com.grupo6.votingapp.dtos.stats;
 
 import java.util.List;
 
-import com.grupo6.votingapp.dtos.questions.QuestionStats;
 import com.grupo6.votingapp.dtos.users.UserStats;
 
 import lombok.AllArgsConstructor;
