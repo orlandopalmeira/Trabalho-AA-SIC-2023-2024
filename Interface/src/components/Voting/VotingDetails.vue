@@ -273,7 +273,7 @@ export default {
         closeVoting(){
             this.openModalConfirmCloseVoting(() => {
                 this.modalConfirmCloseVoting.opened = false;
-                this.updatedVoting.enddate = new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                this.updatedVoting.enddate = this.myISOString(new Date());
                 const dataObj = {
                     title: this.updatedVoting.title,
                     description: this.updatedVoting.description,
