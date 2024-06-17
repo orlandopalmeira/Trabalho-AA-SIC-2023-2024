@@ -16,12 +16,24 @@
         :message="modalConfirmCloseVoting.message"
         @yes="modalConfirmCloseVoting.onyes"
         @no="modalConfirmCloseVoting.onno"/>
-    <div class="dark" style="padding-left: 10%; padding-right: 10%">
-        <v-card class="dark">
+    <div class="dark" style="padding-left: 10%; padding-right: 10%; display: flex; justify-content: center; align-items: center;" >
+        <v-card class="dark" width="700px">
             <v-card-title class="mb-5">
                 <div class="flex space-between">
                     <h4 v-if="updatedVoting.accesstype === 'creator'" style="font-weight: 600;">Detalhes da votação - Editar</h4>
                     <h4 v-else style="font-weight: 600;">Detalhes da votação</h4>
+                    <div class="mt-10">
+                        <v-row>
+                            <p class="mt-4">Criador:</p>
+                            <v-col cols="2">
+                                <Avatar :avatar="getImageUrl(creator.avatar)" :name="creator.name" :size="'35px'"/>
+                            </v-col>
+                            <v-col>
+                                <p style="font-size: 0.75em">{{ creator.name }}</p>
+                                <p style="font-size: 0.55em">{{ creator.email }}</p>
+                            </v-col>
+                        </v-row>
+                    </div>
                     <div class="flex">
                         <v-btn @click="shareVoting" title="Partilhar esta votação" color="secondary" style="z-index: 11"><v-icon>mdi-share-variant</v-icon></v-btn>
                         <v-btn class="ml-2" color="error" @click="deleteVoting" title="Eliminar esta votação" v-if="updatedVoting.accesstype === 'creator'"><v-icon>mdi-delete</v-icon></v-btn>
@@ -71,7 +83,7 @@
                             prepend-icon="mdi-calendar"
                             label="Fim da votação indefinido"
                             readonly/>
-                        <v-btn v-if="updatedVoting.accesstype === 'creator'" @click="closeVoting" color="error" class="ml-5 mb-5">Terminar Votação</v-btn>
+                        <v-btn v-if="updatedVoting.accesstype === 'creator' && !isVotingTerminated" @click="closeVoting" color="error" class="ml-5 mb-5" style="display: flex; padding-top: 25px; padding-bottom: 25px" >Terminar<br>Votação</v-btn>
                     </div>
                     <v-checkbox
                         id="privatevoting"
@@ -113,7 +125,7 @@
                         v-model="updatedVoting.secretvotes"
                         :disabled="updatedVoting.accesstype === 'creator'"/>
                     <div v-if="updatedVoting.accesstype === 'creator'" class="flex right">
-                        <v-btn color="primary" type="submit">Guardar alterações</v-btn>
+                        <v-btn color="primary" type="submit" :disabled="!hasChanges">Guardar alterações</v-btn>
                     </div>
                 </form>
                 <div v-if="updatedVoting.accesstype !== 'creator'" class="unclickable"></div>
@@ -127,6 +139,7 @@ import { API_PATHS } from '@/apiPaths';
 import ModalOk from '../Modais/ModalOk.vue';
 import ModalYesNo from '../Modais/ModalYesNo.vue';
 import ToastManager from '../Toast/ToastManager';
+import Avatar from '../Avatar.vue';
 
 export default {
     props: {
@@ -138,10 +151,14 @@ export default {
     components: {
         ModalOk,
         ModalYesNo,
+        Avatar
     },
     data() {
         return {
             updatedVoting: JSON.parse(JSON.stringify(this.voting)), // deep copy do votação passada pelo props
+            creator: null,
+            initialVoting: null,
+            isVotingTerminated: false,
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
@@ -290,11 +307,31 @@ export default {
                     console.log(error);
                 });
             });
+        },
+        getImageUrl(image){
+            return API_PATHS.getImageUrl(image)
         }
     },
     created() {
         this.updatedVoting.enddate = this.updatedVoting.enddate ? this.updatedVoting.enddate.slice(0, 16) : null;
         this.updatedVoting.creationdate = this.updatedVoting.creationdate.slice(0, 16);
+        this.creator = this.updatedVoting.creator;
+        if(this.updatedVoting.enddate){
+            this.isVotingTerminated = new Date(this.updatedVoting.enddate.replace(' ', 'T')) < new Date();
+        }
+    },
+    computed: {
+        hasChanges() {
+            for (let key in this.initialVoting) {
+                if (this.initialVoting[key] !== this.updatedVoting[key]) {
+                return true;
+                }
+            }
+            return false;
+        }
+    },
+    mounted() {
+        this.initialVoting = { ...this.updatedVoting };
     }
 }
 </script>
