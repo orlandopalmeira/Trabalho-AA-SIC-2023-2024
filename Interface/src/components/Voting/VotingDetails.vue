@@ -142,7 +142,6 @@ export default {
     data() {
         return {
             updatedVoting: JSON.parse(JSON.stringify(this.voting)), // deep copy do votação passada pelo props
-            originalVoting: JSON.parse(JSON.stringify(this.voting)), // votação com os dados originais para que o termino da votação não altere os outros campos
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 maxlength100: value => (value && value.length <= 100) || 'Máximo de 100 caracteres.',
@@ -274,15 +273,15 @@ export default {
         closeVoting(){
             this.openModalConfirmCloseVoting(() => {
                 this.modalConfirmCloseVoting.opened = false;
-                this.originalVoting.enddate = new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+                this.updatedVoting.enddate = new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
                 const dataObj = {
-                    title: this.originalVoting.title,
-                    description: this.originalVoting.description,
-                    enddate: this.originalVoting.enddate.replace('T',' ').slice(0, 16) + ':00',
-                    showstats: this.originalVoting.showstats,
-                    showstatsrealtime: this.originalVoting.showstatsrealtime
+                    title: this.updatedVoting.title,
+                    description: this.updatedVoting.description,
+                    enddate: this.updatedVoting.enddate.replace('T',' ').slice(0, 16) + ':00',
+                    showstats: this.updatedVoting.showstats,
+                    showstatsrealtime: this.updatedVoting.showstatsrealtime
                 };
-                axios.put(API_PATHS.votingId(this.originalVoting.id), dataObj)
+                axios.put(API_PATHS.votingId(this.updatedVoting.id), dataObj)
                 .then(() => {
                     this.openModal('Sucesso', 'Votação terminada com sucesso.');
                 })
