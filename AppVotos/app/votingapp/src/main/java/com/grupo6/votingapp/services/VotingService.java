@@ -18,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.grupo6.votingapp.dtos.stats.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
+import com.grupo6.votingapp.dtos.stats.UserStats;
 import com.grupo6.votingapp.dtos.stats.VotingStatsDTO;
-import com.grupo6.votingapp.dtos.users.UserStats;
 import com.grupo6.votingapp.dtos.users.UsersWithNoRelationsDTO;
 import com.grupo6.votingapp.dtos.votes.CreateVoteDTO;
 import com.grupo6.votingapp.dtos.votes.VoteWithNoRelationsDTO;

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.grupo6.votingapp.dtos.stats.OptionStats;
 import com.grupo6.votingapp.dtos.stats.QuestionStats;
 import com.grupo6.votingapp.dtos.stats.UserSelectedOptions;
-import com.grupo6.votingapp.dtos.users.UserStats;
+import com.grupo6.votingapp.dtos.stats.UserStats;
 
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;

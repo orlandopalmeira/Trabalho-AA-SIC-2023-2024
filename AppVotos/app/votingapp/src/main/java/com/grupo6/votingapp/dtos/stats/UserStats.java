@@ -1,4 +1,4 @@
-package com.grupo6.votingapp.dtos.users;
+package com.grupo6.votingapp.dtos.stats;
 
 import com.grupo6.votingapp.models.User;
 
