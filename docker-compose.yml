@@ -50,10 +50,6 @@ services:
 
   vite:
     build: ./Interface
-    environment:
-      VITE_BACKEND_SERVER_URL: http://nginx:8080 # Não funciona
-    # env_file:
-    #   - ./Interface/.env_docker
     ports:
       - "4173:4173"
     networks:
