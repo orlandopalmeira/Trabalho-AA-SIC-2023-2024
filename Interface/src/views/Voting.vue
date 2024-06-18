@@ -16,58 +16,60 @@
                 <v-tabs-window v-model="tab" >
                     <!--Tab para votar-->
                     <v-tabs-window-item value="votar" class="dark"> 
-                        <v-card class="mx-auto mb-2 dark-light" width="500">
-                            <!--Título da votação-->
-                            <v-card-title style="padding: 15px; text-align: center;" >
-                                <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
-                            </v-card-title>
-                            <!-- Se a votação já terminou -->
-                            <v-card-text v-if="!isVotingActive()">
-                                <SimpleAlert message="Esta votação já terminou"/>
-                            </v-card-text>
-                            <!--Se o utilizador já votou-->
-                            <v-card-text v-else-if="voting.useralreadyvoted">
-                                <SimpleAlert message="Já submeteu o seu voto para esta votação"/>
-                            </v-card-text>
-                            <!--Se o utilizador ainda não votou => apresenta as perguntas-->
-                            <v-card-text v-else-if="isVotingActive()">
-                                <v-alert closable type="info" class="mb-4 pa-2">
-                                    <p> {{ voting.secretvotes ? 'O voto é secreto.' : 'O voto não é secreto.' }} </p>
-                                </v-alert>
-                                <QuestionCard :key="currentQuestionIndex"
-                                    :questionIndex="currentQuestionIndex"
-                                    :question="voting.questions[currentQuestionIndex]"
-                                    @option-changed="optionChanged"/>
-                                <v-row class="mt-4">
-                                    <v-col cols="6">
-                                        <v-btn v-if="currentQuestionIndex > 0"
-                                            color="secondary"
-                                            @click="goPrevious">
-                                            Questão anterior
-                                        </v-btn>
-                                        <v-btn v-else
-                                            color="error"
-                                            @click="leave">
-                                            Sair
-                                        </v-btn>
-                                    </v-col>
-                                    <v-col cols="6" class="text-right">
-                                        <v-btn v-if="currentQuestionIndex < voting.questions.length-1"
-                                            color="primary"
-                                            @click="goNext"
-                                            :disabled="!voting.questions[currentQuestionIndex].selectedOption">
-                                            Questão seguinte
-                                        </v-btn>
-                                        <v-btn v-else
-                                            color="primary"
-                                            @click="submitVote"
-                                            :disabled="!voting.questions[currentQuestionIndex].selectedOption">
-                                            Submeter respostas
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                            </v-card-text>
-                        </v-card>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <v-card class="mx-auto mb-2 dark-light" style="min-width: 500px; display: inline-block;">
+                                <!--Título da votação-->
+                                <v-card-title style="padding: 15px; text-align: center;" >
+                                    <h3 style="font-weight: 600;"><span style="color: gray; font-weight: 600;">Votação: </span> {{ voting.title }}</h3>
+                                </v-card-title>
+                                <!-- Se a votação já terminou -->
+                                <v-card-text v-if="!isVotingActive()">
+                                    <SimpleAlert message="Esta votação já terminou"/>
+                                </v-card-text>
+                                <!--Se o utilizador já votou-->
+                                <v-card-text v-else-if="voting.useralreadyvoted">
+                                    <SimpleAlert message="Já submeteu o seu voto para esta votação"/>
+                                </v-card-text>
+                                <!--Se o utilizador ainda não votou => apresenta as perguntas-->
+                                <v-card-text v-else-if="isVotingActive()">
+                                    <v-alert closable type="info" class="mb-4 pa-2">
+                                        <p> {{ voting.secretvotes ? 'O voto é secreto.' : 'O voto não é secreto.' }} </p>
+                                    </v-alert>
+                                    <QuestionCard :key="currentQuestionIndex"
+                                        :questionIndex="currentQuestionIndex"
+                                        :question="voting.questions[currentQuestionIndex]"
+                                        @option-changed="optionChanged"/>
+                                    <v-row class="mt-4">
+                                        <v-col cols="6">
+                                            <v-btn v-if="currentQuestionIndex > 0"
+                                                color="secondary"
+                                                @click="goPrevious">
+                                                Questão anterior
+                                            </v-btn>
+                                            <v-btn v-else
+                                                color="error"
+                                                @click="leave">
+                                                Sair
+                                            </v-btn>
+                                        </v-col>
+                                        <v-col cols="6" class="text-right">
+                                            <v-btn v-if="currentQuestionIndex < voting.questions.length-1"
+                                                color="primary"
+                                                @click="goNext"
+                                                :disabled="!voting.questions[currentQuestionIndex].selectedOption">
+                                                Questão seguinte
+                                            </v-btn>
+                                            <v-btn v-else
+                                                color="primary"
+                                                @click="submitVote"
+                                                :disabled="!voting.questions[currentQuestionIndex].selectedOption">
+                                                Submeter respostas
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </v-card-text>
+                            </v-card>
+                        </div>
                     </v-tabs-window-item>
                     <!--Tab para estatísticas-->
                     <v-tabs-window-item v-if="allowedToViewStats()" value="estatisticas">
