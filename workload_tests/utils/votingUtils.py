@@ -49,12 +49,20 @@ class VotingUtils:
 
 
     @staticmethod
-    def vote(client, token, voting_id, vote_stat_name = "/votings/{id}"):
+    def get_voting(client, token, voting_id):
         voting_response = client.get(f"/votings/{voting_id}", cookies={"token": token}, name="/votings/{id}")
         if voting_response.status_code != 200:
             raise Exception(f"Erro {voting_response.status_code}. Failed to get voting-{voting_id}.")
         
         voting = voting_response.json()
+        return voting
+
+
+    @staticmethod
+    def vote(client, token, voting_id, vote_stat_name="/votings/{id}"):
+        
+        voting = VotingUtils.get_voting(client, token, voting_id)
+        
         vote = {
             "votingid": voting["id"],
             "options": {}

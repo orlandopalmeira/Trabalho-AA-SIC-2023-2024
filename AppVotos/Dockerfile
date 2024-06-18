@@ -1,14 +1,12 @@
-FROM ubuntu:22.04
-
-COPY ./app/votingapp /app
-
-RUN apt-get update && apt-get install -y openjdk-21-jdk && apt-get install -y maven
-
+# Stage 1: Build the application
+FROM maven:3.9.7 AS build
 WORKDIR /app
+COPY ./app/votingapp /app
+RUN mvn clean package -DskipTests
 
-RUN mvn clean
-RUN mvn package
-
+# Stage 2: Create the final image
+FROM openjdk:21-jdk
+WORKDIR /app
+COPY --from=build /app/target/votingapp-0.0.1-SNAPSHOT.war /app/votingapp.war
 EXPOSE 8080
-
-CMD ["java", "-jar", "target/votingapp-0.0.1-SNAPSHOT.war"]
+CMD ["java", "-jar", "/app/votingapp.war"]

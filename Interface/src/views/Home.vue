@@ -130,7 +130,7 @@ export default {
         },
         async getVotings() {
             try {
-                let sort = this.reverseSort ? "asc" : "desc"
+                let sort = this.reverseSort ? "desc" : "asc"
                 let response = await axios.get(API_PATHS.votings(this.searchQuery, this.orderBy, sort, this.page, this.itemsPerPage)) // votações a que o user tem acesso
                 return response.data
             } catch (error) {
