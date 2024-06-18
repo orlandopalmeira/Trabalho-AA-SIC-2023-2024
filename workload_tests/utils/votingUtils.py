@@ -136,6 +136,7 @@ class VotingUtils:
 
     @staticmethod
     def see_stats(client, token, voting_id):
+        """Carregar informação das estatísticas de uma votação"""
         response = client.get(f"/votings/{voting_id}/stats", cookies={"token": token}, name="votings/{id}/stats")
 
         if response.status_code == 200:

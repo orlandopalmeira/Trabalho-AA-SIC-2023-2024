@@ -147,6 +147,7 @@ export default {
             }
         },
         handleGetVotings(){
+            this.loadingVotings = true
             this.getVotings()
             .then(response => {
                 this.votings = response.votings

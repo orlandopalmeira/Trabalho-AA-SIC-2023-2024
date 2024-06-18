@@ -103,12 +103,18 @@ class RegisterOnceAndCreateVoting(SequentialTaskSet):
     def getVoting(self):
         VotingUtils.get_voting(self.client, self.token, self.created_vote_id)
 
+    ## Caso se decida fazer com que se veja estatísticas tbm
+    # @task
+    # def getStats(self): 
+    #     v_id = self.selected_voting_id
+    #     VotingUtils.see_stats(self.client, self.token, v_id)
+
 
 
 class ExecuteTest(HttpUser):
     tasks = {
-        # LoginAndCheckStats: 1,
+        LoginAndCheckStats: 1,
         RegisterAndVoting: 1,
-        # RegisterOnceAndCreateVoting: 1,
+        RegisterOnceAndCreateVoting: 1,
     }
     wait_time = between(1,5)
