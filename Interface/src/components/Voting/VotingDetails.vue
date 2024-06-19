@@ -29,10 +29,12 @@
                 </div>
                 <v-row>
                     <v-col align="right">
-                        <p style="font-size: 0.8em;">Criador:</p>
+                        <p style="font-size: 1em;">Criador:</p>
+                    </v-col>
+                    <v-col align="center" cols="1">
                         <Avatar :avatar="getImageUrl(creator.avatar)" :name="creator.name" :size="'35px'"/>
                     </v-col>
-                    <v-col align="center left" justify="center">
+                    <v-col align="left">
                         <p class="creator-name" :title="creator.name">{{ creator.name }}</p>
                         <p class="creator-email" :title="creator.email">{{ creator.email }}</p>
                     </v-col>
