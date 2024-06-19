@@ -32,7 +32,7 @@ export const GEN_IMAGES = {
 
         // Check if the full title fits
         let displayText = text;
-        const maxWidth = canvas.width - 20; // Adjust max width to fit within the canvas
+        const maxWidth = canvas.width - 40; // Adjust max width to fit within the canvas
 
         if (context.measureText(displayText).width > maxWidth) {
             // If text is too wide, use only the first letters of each word

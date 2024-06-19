@@ -6,10 +6,13 @@
         <div style="display: flex; align-items: center; justify-content:center">
             <p class="title" :title="voting.title" >{{ voting.title }}</p>
         </div>
-        <div>
-            <v-icon class="ml-2" v-if="voting.useralreadyvoted" title="Votou nesta votação">mdi-vote</v-icon>
-            <v-icon class="ml-2" color="red" v-if="voting.enddate && hasDatePassedToday(voting.enddate)" title="Período de votação acabou">mdi-calendar-remove</v-icon>
-            <v-icon class="ml-2" color="orange" v-else-if="voting.enddate && isEndingSoon(voting.enddate)" :title="'Período de votação perto de acabar.\nFalta ' + calculateTimeRemaining(voting.enddate)">mdi-clock-fast</v-icon>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <p :title=voting.creator.name style="color: #707070; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1;" >{{ voting.creator.name }}</p>
+            <div style="display: flex; flex-shrink: 0;">
+                <v-icon class="ml-2" v-if="voting.useralreadyvoted" title="Votou nesta votação">mdi-vote</v-icon>
+                <v-icon class="ml-2" color="red" v-if="voting.enddate && hasDatePassedToday(voting.enddate)" title="Período de votação acabou">mdi-calendar-remove</v-icon>
+                <v-icon class="ml-2" color="orange" v-else-if="voting.enddate && isEndingSoon(voting.enddate)" :title="'Período de votação perto de acabar.\nFalta ' + calculateTimeRemaining(voting.enddate)">mdi-clock-fast</v-icon>
+            </div>
         </div>
     </div>
 </template>
