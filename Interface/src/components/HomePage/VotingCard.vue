@@ -7,7 +7,7 @@
             <p class="title" :title="voting.title" >{{ voting.title }}</p>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <p :title=voting.creator.name style="color: #707070; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1;" >{{ voting.creator.name }}</p>
+            <p :title=voting.creator.name class="creator" >{{ voting.creator.name }}</p>
             <div style="display: flex; flex-shrink: 0;">
                 <v-icon class="ml-2" v-if="voting.useralreadyvoted" title="Votou nesta votação">mdi-vote</v-icon>
                 <v-icon class="ml-2" color="red" v-if="voting.enddate && hasDatePassedToday(voting.enddate)" title="Período de votação acabou">mdi-calendar-remove</v-icon>
@@ -75,11 +75,19 @@ img {
 .title {
     word-break: break-word;
     text-align: center;
-    font-size: 1.35rem;
+    font-size: 1.1rem;
     margin-top: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.creator {
+    color: #707070;
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
 }
 .dark-mode .card {
     background-color: #121212 !important;
