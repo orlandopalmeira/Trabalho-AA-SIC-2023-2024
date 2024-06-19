@@ -22,23 +22,21 @@
                 <div class="flex space-between">
                     <h4 v-if="updatedVoting.accesstype === 'creator'" style="font-weight: 600;">Detalhes da votação - Editar</h4>
                     <h4 v-else style="font-weight: 600;">Detalhes da votação</h4>
-                    <div class="mt-10">
-                        <v-row>
-                            <p class="mt-4">Criador:</p>
-                            <v-col cols="2">
-                                <Avatar :avatar="getImageUrl(creator.avatar)" :name="creator.name" :size="'35px'"/>
-                            </v-col>
-                            <v-col>
-                                <p style="font-size: 0.75em">{{ creator.name }}</p>
-                                <p style="font-size: 0.55em">{{ creator.email }}</p>
-                            </v-col>
-                        </v-row>
-                    </div>
                     <div class="flex">
                         <v-btn @click="shareVoting" title="Partilhar esta votação" color="secondary" style="z-index: 11"><v-icon>mdi-share-variant</v-icon></v-btn>
                         <v-btn class="ml-2" color="error" @click="deleteVoting" title="Eliminar esta votação" v-if="updatedVoting.accesstype === 'creator'"><v-icon>mdi-delete</v-icon></v-btn>
                     </div>
                 </div>
+                <v-row>
+                    <v-col align="right">
+                        <p style="font-size: 0.8em;">Criador:</p>
+                        <Avatar :avatar="getImageUrl(creator.avatar)" :name="creator.name" :size="'35px'"/>
+                    </v-col>
+                    <v-col align="center left" justify="center">
+                        <p class="creator-name" :title="creator.name">{{ creator.name }}</p>
+                        <p class="creator-email" :title="creator.email">{{ creator.email }}</p>
+                    </v-col>
+                </v-row>
             </v-card-title>
             <v-card-text>
                 <form @submit.prevent="submitChanges">
@@ -336,6 +334,20 @@ export default {
 }
 </script>
 <style scoped>
+.creator-name {
+    font-size: 0.75em;
+    max-width: 150px; /* Define a largura máxima desejada */
+    overflow: hidden; /* Esconde o texto que ultrapassa a largura máxima */
+    text-overflow: ellipsis; /* Adiciona "..." ao final do texto que ultrapassa a largura máxima */
+    white-space: nowrap; /* Impede que o texto quebre para a próxima linha */
+}
+.creator-email {
+    font-size: 0.55em;
+    max-width: 150px; /* Define a largura máxima desejada */
+    overflow: hidden; /* Esconde o texto que ultrapassa a largura máxima */
+    text-overflow: ellipsis; /* Adiciona "..." ao final do texto que ultrapassa a largura máxima */
+    white-space: nowrap; /* Impede que o texto quebre para a próxima linha */
+}
 .unclickable {
     position: absolute;
     top: 0;
