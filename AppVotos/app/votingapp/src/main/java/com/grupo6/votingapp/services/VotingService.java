@@ -95,12 +95,13 @@ public class VotingService {
         }
         List<Voting> votings = votingsPage.getContent();
         
-        List<VotingWithNoRelationsDTO> votingsWithNoRelations = votings.stream()
+        List<VotingWithNoCreatorDTO> votingsWithNoRelations = votings.stream()
         .map(voting -> {
-            VotingWithNoRelationsDTO votingWithNoRelationsDTO = new VotingWithNoRelationsDTO(voting);
+            VotingWithNoCreatorDTO votingWithNoCreatorDTO = new VotingWithNoCreatorDTO(voting);
             boolean userAlreadyVoted = userAlreadyVoted(voting.getId(), Long.parseLong(userId)); //! Tentar ver se dá para fazer isto numa só query.
-            votingWithNoRelationsDTO.setUseralreadyvoted(userAlreadyVoted);
-            return votingWithNoRelationsDTO;
+            votingWithNoCreatorDTO.setUseralreadyvoted(userAlreadyVoted);
+            votingWithNoCreatorDTO.setCreator(new UsersWithNoRelationsDTO(voting.getCreator()));
+            return votingWithNoCreatorDTO;
         }).toList();
         
         return Map.of("votings", votingsWithNoRelations, "totalPages", votingsPage.getTotalPages());
