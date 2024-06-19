@@ -83,20 +83,6 @@ public class AuthService {
         return userService.saveUser(user);
 
     }
-/* 
-    public User register(String name, String email, String password, String avatar, MultipartFile a) throws UnauthorizedException {
-        if(name == null) throw new UnauthorizedException("Name is null");
-        if(email == null) throw new UnauthorizedException("Email is null");
-        if(password == null) throw new UnauthorizedException("Password is null");
-        if(avatar == null) throw new UnauthorizedException("Avatar is null");
-
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setAvatar(avatar);
-        return register(user, a);
-    }*/
 
     public boolean checkUserId(String token, String userId) {
         if(token == null || userId == null) return false;
