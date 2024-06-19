@@ -1,6 +1,6 @@
 import itertools
 from locust import HttpUser, TaskSet, SequentialTaskSet, task, between, constant
-import random, json
+import random, json, os
 
 from utils.votingUtils import VotingUtils
 
@@ -112,9 +112,24 @@ class RegisterOnceAndCreateVoting(SequentialTaskSet):
 
 
 class ExecuteTest(HttpUser):
-    tasks = {
-        LoginAndCheckStats: 1,
-        RegisterAndVoting: 1,
-        RegisterOnceAndCreateVoting: 1,
+
+    ### TASK_SET=3 locust -f workload.py -u 50 -r 10 --host=http://localhost:8080 --headless
+    task_set_mapping = {
+        "1": LoginAndCheckStats,
+        "2": RegisterAndVoting,
+        "3": RegisterOnceAndCreateVoting
     }
+
+    selected_task_set = os.getenv('TASKS')
+    print("selected_task_set: ", selected_task_set)
+    if selected_task_set and selected_task_set in task_set_mapping:
+        tasks = {task_set_mapping[selected_task_set]: 1}
+    else:
+        tasks = {
+            LoginAndCheckStats: 1,
+            RegisterAndVoting: 1,
+            RegisterOnceAndCreateVoting: 1,
+        }
+    print("Tasks: ", tasks)
+
     wait_time = between(1,5)

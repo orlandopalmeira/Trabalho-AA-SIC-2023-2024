@@ -2,7 +2,7 @@
 
 # Variables
 DB_CONTAINER_NAME="mysql"
-# DB_CONTAINER_NAME="mysqldockercompose"
+DB_CONTAINER_NAME="mysqldockercompose"
 DB_USER="mysql"
 DB_PASSWORD="mysql"
 DB_NAME="votingapp"
