@@ -17,7 +17,7 @@
 
 </div>
 
-<b> Nota: X / 20 </b>
+### Nota: 19 / 20
 
 <h3><i>Keywords</i></h3>
 AA, SIC, Arquiteturas Aplicacionais, arquiteturas aplicacionais, Sistemas Interativos Confiáveis, sistemas interativos confiaveis, universidade do minho, uminho, miei, mei, engenharia informatica
